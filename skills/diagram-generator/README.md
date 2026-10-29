@@ -1,0 +1,195 @@
+# Diagram Generator
+
+Diagram Generator is a platform-neutral instruction pack for creating standalone technical system maps. It turns architecture briefs, codebase notes, deployment descriptions, trust-boundary narratives, and process explanations into a single browser-openable HTML file with inline SVG.
+
+The package is designed for agent environments such as Claude, Codex, Cursor, OpenCode, Windsurf, Gemini, GitHub Copilot, CodeBuddy, and Hermes. Shared behavior lives in `resources/`; platform files are intentionally thin adapters that route each platform to the same generation and audit workflow.
+
+## What It Produces
+
+- System architecture maps
+- Repository implementation maps
+- Infrastructure and runtime maps
+- Trust and security maps
+- Data movement maps
+- Deployment placement maps
+- Process and sequence-style maps
+
+## Output Contract
+
+Default output is `html-first`: one standalone `.html` file with:
+
+- inline SVG
+- embedded CSS
+- no external runtime or network dependency
+- SVG download
+- PNG download
+- PNG copy when the browser supports it
+- print/PDF support
+- a notes rail for system shape, critical flows, and operational notes
+
+Draw.io XML is optional and should only be requested when editability in draw.io or Confluence draw.io is part of the workflow.
+
+## Directory Layout
+
+```text
+diagram-generator/
+├── README.md
+├── SKILL.md
+├── AGENTS.md
+├── GEMINI.md
+├── COPILOT-INSTRUCTIONS.md
+├── CODEBUDDY.md
+├── HERMES.md
+├── agents/
+│   └── openai.yaml
+├── resources/
+│   ├── generation-rules.md
+│   ├── diagram-ir.md
+│   └── template.html
+├── examples/
+│   ├── architecture-brief.md
+│   ├── codex-cli-example.txt
+│   ├── codex-smoke-test-prompt.md
+│   ├── drawio-mode-prompt.md
+│   └── portable-agent-smoke-test-prompt.md
+├── tests/
+│   └── platform-smoke-tests/
+└── RELEASE_CHECKLIST.md
+```
+
+## Installation
+
+### Claude
+
+Place or link this directory under a Claude skills folder:
+
+```bash
+mkdir -p ~/.claude/skills
+ln -s /absolute/path/to/diagram-generator ~/.claude/skills/diagram-generator
+```
+
+Then ask:
+
+```text
+Use the diagram-generator skill to create a system map from this brief:
+
+[paste brief]
+```
+
+### Codex, Cursor, OpenCode, Windsurf
+
+Use `AGENTS.md` as the project instruction source and keep `resources/` available. The adapter points these platforms to the shared files, lens/output-mode selection, placeholder replacement, and the final audit. For Codex skill-style use:
+
+```bash
+mkdir -p ~/.codex/skills
+ln -s /absolute/path/to/diagram-generator ~/.codex/skills/diagram-generator
+```
+
+### Gemini
+
+Use `GEMINI.md` as the Gem or project instruction. Add `resources/generation-rules.md`, `resources/diagram-ir.md`, and `resources/template.html` as project knowledge when direct file access is unavailable.
+
+### GitHub Copilot
+
+Use `COPILOT-INSTRUCTIONS.md` as the custom instruction source, or copy its content into a repository instruction file.
+
+### CodeBuddy
+
+Use `CODEBUDDY.md` as the workspace rule file.
+
+### Hermes
+
+Use `HERMES.md` as the task specification and keep `resources/` available in the workspace.
+
+## Usage Pattern
+
+1. Provide a brief or ask the agent to inspect a codebase.
+2. Ask for the lens you want: system, implementation, infrastructure, trust, data movement, deployment, or process.
+3. Generate an `html-first` artifact unless draw.io editability is explicitly needed.
+4. Ask for a visual audit pass before publishing.
+
+## Smoke Tests
+
+Platform-specific smoke prompts live in `tests/platform-smoke-tests/`.
+
+Use them before publishing or after changing `resources/`:
+
+- `claude.md`
+- `codex.md`
+- `gemini.md`
+- `copilot.md`
+- `codebuddy.md`
+- `agents.md` for Cursor, OpenCode, Windsurf, and similar agents
+
+Each smoke test checks that the agent uses `html-first`, follows the atlas-style template, keeps draw.io hidden by default, emits a notes rail without placeholder text, and can preserve unrelated content when revising an existing diagram.
+
+## Quality Guidance
+
+- Keep reusable behavior in `resources/generation-rules.md`.
+- Keep the planning model in `resources/diagram-ir.md`.
+- Keep the HTML/SVG/CSS base in `resources/template.html`.
+- Keep platform files short; they should route the agent to the shared resources instead of restating them.
+- Keep platform adapters synchronized with `SKILL.md` when required behavior changes.
+- Use a two-step workflow for smaller-context models: first normalize the system into actors, components, stores, flows, and risks; then generate the final HTML from that normalized plan.
+- For existing-diagram edits, prefer local coordinate and connector changes over full regeneration.
+- Treat draw.io XML as an export adapter, not the default rendering target.
+
+## Output Modes
+
+### `html-first`
+
+The default mode. Prioritize visual clarity, readable labels, correct connectors, and a polished standalone HTML artifact.
+
+Prompt:
+
+```text
+Create a system map for this platform:
+
+[brief]
+```
+
+### `html + drawio xml`
+
+Experimental and opt-in. Use when the user wants a browser-viewable artifact plus model-generated draw.io XML. Import-test the XML in draw.io before relying on it.
+
+Prompt:
+
+```text
+Create a system map in html + drawio xml mode:
+
+[brief]
+```
+
+### `drawio-first`
+
+Planned. This mode is not production-ready until dedicated mxGraphModel rules, a template, and import validation are included.
+
+## Example Prompt
+
+```text
+Create a standalone HTML system map for:
+
+- Web and mobile clients enter through a CDN and API gateway.
+- Backend services include users, catalog, orders, payments, and notifications.
+- PostgreSQL stores transactional records.
+- Redis caches sessions and hot catalog reads.
+- Kafka carries order-created and payment-completed events.
+- Object storage keeps invoices and exports.
+- An external OIDC provider handles identity.
+- Everything runs in Kubernetes behind ingress.
+
+Use the default html-first mode. Keep visible text in English.
+```
+
+## Design Principles
+
+- A diagram should explain behavior, not merely inventory components.
+- Use one abstraction level per artifact.
+- Show ownership boundaries, durable state, async movement, trust controls, and operational watchpoints.
+- Keep the main path readable before adding secondary paths.
+- Prefer concise labels and put longer explanations in the notes rail.
+- Do not rely on external images, fonts, scripts, or build tools.
+
+## Publishing
+
+Before publishing, remove local smoke-test outputs and run `RELEASE_CHECKLIST.md`.

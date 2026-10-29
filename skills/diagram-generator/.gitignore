@@ -1,0 +1,25 @@
+.DS_Store
+*.log
+*.tmp
+*.bak
+
+# Generated diagram artifacts
+*.png
+*.svg
+*.pdf
+*-system-map.html
+*-architecture.html
+smoke-*.html
+
+# Local editor and agent state
+.idea/
+.vscode/
+.claude/
+.codex/
+.agents/
+.omc/
+
+# Dependency folders if local tooling is added later
+node_modules/
+.venv/
+__pycache__/

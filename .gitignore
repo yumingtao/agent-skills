@@ -1,0 +1,20 @@
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Node (validation scripts / future sync tooling)
+node_modules/
+*.log
+
+# Local scratch
+tmp/
+.cache/
+
+# Local agent session state
+.omc/
+.agents/

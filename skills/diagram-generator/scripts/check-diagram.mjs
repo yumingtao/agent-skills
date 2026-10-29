@@ -1,0 +1,348 @@
+#!/usr/bin/env node
+/**
+ * check-diagram.mjs — zero-runtime-dependency post-render checker
+ *
+ * Usage:
+ *   node scripts/check-diagram.mjs <path-to-diagram.html>
+ *
+ * Exit codes:
+ *   0  all checks passed
+ *   1  one or more checks failed (errors printed to stdout)
+ *
+ * Strategy (per R2 guidance):
+ *   - Use the embedded IR JSON (#diagram-ir) as the authoritative geometry
+ *     source when available (JSON.parse — no DOM parser needed).
+ *   - Use data-node-id / data-edge-id attributes to cross-check SVG elements
+ *     against the IR registry.
+ *   - Marker-reference integrity and placeholder detection use targeted regex
+ *     on the raw HTML string — safe because the patterns are template-scoped.
+ *   - No external npm packages. Requires Node 18+.
+ */
+
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+// ---------------------------------------------------------------------------
+// CLI
+// ---------------------------------------------------------------------------
+const [, , inputPath] = process.argv;
+if (!inputPath) {
+  console.error('Usage: node scripts/check-diagram.mjs <path-to-diagram.html>');
+  process.exit(1);
+}
+
+const html = readFileSync(resolve(inputPath), 'utf8');
+const errors = [];
+const warnings = [];
+
+function fail(msg) { errors.push(msg); }
+function warn(msg) { warnings.push(msg); }
+
+// ---------------------------------------------------------------------------
+// 1. Extract embedded IR JSON
+// ---------------------------------------------------------------------------
+let ir = null;
+const irMatch = html.match(/<script[^>]+id="diagram-ir"[^>]*>([\s\S]*?)<\/script>/);
+if (!irMatch) {
+  warn('No #diagram-ir slot found — running in legacy mode (geometry checks skipped).');
+} else {
+  try {
+    ir = JSON.parse(irMatch[1].trim());
+  } catch (e) {
+    fail(`#diagram-ir slot contains invalid JSON: ${e.message}`);
+  }
+}
+
+// Normalized node list, safe to use anywhere below even when the IR is
+// malformed (e.g. ir.nodes is missing or not an array). Section 3 below
+// already fails the check when nodes/edges aren't proper arrays; this just
+// prevents a TypeError from crashing the rest of the script afterward.
+const irNodes = ir && Array.isArray(ir.nodes) ? ir.nodes : [];
+
+function isFiniteNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function collectAttributeValues(attributeName) {
+  const values = new Set();
+  const pattern = new RegExp(`\\b${attributeName}\\s*=\\s*["']([^"']+)["']`, 'g');
+  for (const match of html.matchAll(pattern)) values.add(match[1]);
+  return values;
+}
+
+// ---------------------------------------------------------------------------
+// 2. Parse viewBox from SVG
+// ---------------------------------------------------------------------------
+const viewBoxMatch = html.match(/\bviewBox\s*=\s*["']([^"']+)["']/);
+let vbX = 0, vbY = 0, vbW = 1500, vbH = 900;
+if (viewBoxMatch) {
+  const parts = viewBoxMatch[1].trim().split(/[\s,]+/).map(Number);
+  if (parts.length === 4 && parts.every(n => !Number.isNaN(n))) {
+    [vbX, vbY, vbW, vbH] = parts;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 3. IR-based geometry checks
+// ---------------------------------------------------------------------------
+if (ir) {
+  if (typeof ir !== 'object' || Array.isArray(ir)) {
+    fail('#diagram-ir must contain a JSON object.');
+  }
+
+  const nodes = irNodes;
+  const edges = ir && Array.isArray(ir.edges) ? ir.edges : [];
+  if (!ir || !Array.isArray(ir.nodes) || !Array.isArray(ir.edges)) {
+    fail('#diagram-ir must define nodes and edges arrays.');
+  }
+  if (nodes.length === 0) {
+    fail('#diagram-ir must contain at least one node; empty IR cannot validate the rendered SVG.');
+  }
+  const nodeMap = {};
+  const nodeIds = new Set();
+  const edgeIds = new Set();
+
+  // 3a. Node bounds inside viewBox
+  for (const node of nodes) {
+    if (!node || typeof node !== 'object' || typeof node.id !== 'string' || node.id.trim() === '') {
+      fail(`IR node is missing a non-empty string id: ${JSON.stringify(node)}`);
+      continue;
+    }
+    if (nodeIds.has(node.id)) {
+      fail(`Duplicate IR node id: "${node.id}".`);
+      continue;
+    }
+    nodeIds.add(node.id);
+    const b = node.bounds;
+    if (!b || typeof b !== 'object') {
+      fail(`IR node "${node.id}" has no bounds.`);
+      continue;
+    }
+    if (![b.x, b.y, b.width, b.height].every(isFiniteNumber) || b.width <= 0 || b.height <= 0) {
+      fail(`IR node "${node.id}" has invalid bounds: ${JSON.stringify(b)}.`);
+      continue;
+    }
+    nodeMap[node.id] = b;
+
+    if (b.x < vbX) fail(`Node "${node.id}" left edge (${b.x}) is outside viewBox left (${vbX}).`);
+    if (b.y < vbY) fail(`Node "${node.id}" top edge (${b.y}) is outside viewBox top (${vbY}).`);
+    if (b.x + b.width > vbX + vbW) fail(`Node "${node.id}" right edge (${b.x + b.width}) exceeds viewBox right (${vbX + vbW}).`);
+    if (b.y + b.height > vbY + vbH) fail(`Node "${node.id}" bottom edge (${b.y + b.height}) exceeds viewBox bottom (${vbY + vbH}).`);
+  }
+
+  // 3b. Pairwise node overlap
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i], bNode = nodes[j];
+      const ab = a.bounds, bb = bNode.bounds;
+      if (!ab || !bb) continue;
+      const overlapX = ab.x < bb.x + bb.width && ab.x + ab.width > bb.x;
+      const overlapY = ab.y < bb.y + bb.height && ab.y + ab.height > bb.y;
+      if (overlapX && overlapY) {
+        fail(`Node "${a.id}" overlaps node "${bNode.id}" (IR bounds intersection).`);
+      }
+    }
+  }
+
+  // 3c. Edge endpoint reachability
+  for (const edge of edges) {
+    if (!edge || typeof edge !== 'object' || typeof edge.id !== 'string' || edge.id.trim() === '') {
+      fail(`IR edge is missing a non-empty string id: ${JSON.stringify(edge)}`);
+      continue;
+    }
+    if (edgeIds.has(edge.id)) {
+      fail(`Duplicate IR edge id: "${edge.id}".`);
+      continue;
+    }
+    edgeIds.add(edge.id);
+    if (typeof edge.from !== 'string' || edge.from.trim() === '') {
+      fail(`Edge "${edge.id}" is missing a source node id.`);
+    }
+    if (typeof edge.to !== 'string' || edge.to.trim() === '') {
+      fail(`Edge "${edge.id}" is missing a target node id.`);
+    }
+    const fromBounds = nodeMap[edge.from];
+    const toBounds = nodeMap[edge.to];
+    if (edge.from && !fromBounds) fail(`Edge "${edge.id}" references unknown source node "${edge.from}".`);
+    if (edge.to && !toBounds) fail(`Edge "${edge.id}" references unknown target node "${edge.to}".`);
+  }
+
+  // 3d/3e. Bidirectional data attribute cross-check
+  const svgNodeIds = collectAttributeValues('data-node-id');
+  const svgEdgeIds = collectAttributeValues('data-edge-id');
+  for (const id of nodeIds) {
+    if (!svgNodeIds.has(id)) fail(`IR node "${id}" has no matching data-node-id attribute in the SVG.`);
+  }
+  for (const id of edgeIds) {
+    if (!svgEdgeIds.has(id)) fail(`IR edge "${id}" has no matching data-edge-id attribute in the SVG.`);
+  }
+  for (const id of svgNodeIds) {
+    if (!nodeIds.has(id)) fail(`SVG data-node-id "${id}" is missing from the IR.`);
+  }
+  for (const id of svgEdgeIds) {
+    if (!edgeIds.has(id)) fail(`SVG data-edge-id "${id}" is missing from the IR.`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 4. Marker-reference integrity (regex-safe on template-scoped patterns)
+// ---------------------------------------------------------------------------
+// Collect all defined marker IDs
+const definedMarkers = new Map();
+for (const m of html.matchAll(/<marker\b[^>]+\bid\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/marker>/gi)) {
+  const fill = m[2].match(/\bfill\s*=\s*["']([^"']+)["']/i)?.[1];
+  definedMarkers.set(m[1], fill);
+}
+
+// Collect all used marker-end references
+const usedMarkers = new Set();
+for (const m of html.matchAll(/<[^>]+\bmarker-end\s*=\s*["']url\(#([^)]+)\)["'][^>]*>/gi)) {
+  usedMarkers.add(m[1]);
+  const stroke = m[0].match(/\bstroke\s*=\s*["']([^"']+)["']/i)?.[1];
+  const markerFill = definedMarkers.get(m[1]);
+  if (!definedMarkers.has(m[1])) {
+    fail(`marker-end references "#${m[1]}" but no <marker id="${m[1]}"> is defined in <defs>.`);
+  } else if (stroke && markerFill && stroke !== markerFill) {
+    fail(`marker "#${m[1]}" fill (${markerFill}) does not match connector stroke (${stroke}).`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 5. Placeholder text detection
+// ---------------------------------------------------------------------------
+const PLACEHOLDER_PATTERNS = [
+  /System Map Title/,
+  /One sentence that states the system boundary/,
+  /Summarize the runtime boundary/,
+  /Describe the primary request path/,
+  /List scale, resilience/,
+  /Record assumptions made because the source brief omitted/,
+];
+
+for (const pat of PLACEHOLDER_PATTERNS) {
+  if (pat.test(html)) {
+    fail(`Placeholder text still present: matches /${pat.source}/.`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 6. Structural presence checks
+// ---------------------------------------------------------------------------
+if (!/<aside\b[^>]*class="[^"]*notes[^"]*"/.test(html)) {
+  fail('Notes rail (<aside class="notes">) is missing.');
+}
+if (!/<nav\b[^>]*class="[^"]*toolbar[^"]*"/.test(html)) {
+  warn('Export toolbar (<nav class="toolbar">) not found — may be intentionally omitted.');
+}
+if (!/<script\b[^>]+id="diagram-ir"/.test(html)) {
+  // Already warned above; skip duplicate
+}
+if (!/<svg\b[^>]+id="system-map"/.test(html)) {
+  warn('SVG element with id="system-map" not found — export buttons may not work.');
+}
+
+// No external asset references (enforces self-contained rule)
+for (const m of html.matchAll(/(?:src|href)\s*=\s*["']([^"']+)["']/gi)) {
+  const value = m[1].trim();
+  if (/^(?:https?:)?\/\//i.test(value) || !/^(?:#|data:|about:|javascript:)/i.test(value)) {
+    fail(`External or relative asset reference found: ${value} — artifact must be self-contained.`);
+  }
+}
+const inlineCss = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(match => match[1]).join('\n');
+if (/(?:@import\s+|url\(\s*["']?)(?!(?:data:|#|about:|javascript:))/i.test(inlineCss)) {
+  fail('External CSS asset reference found via @import or url() — artifact must be self-contained.');
+}
+
+// ---------------------------------------------------------------------------
+// 7. Simple SVG connector endpoint checks
+// ---------------------------------------------------------------------------
+// Generated diagrams use simple absolute M/H/V paths. Keep this parser small
+// and dependency-free; unsupported path syntax is surfaced as a warning for
+// human review rather than guessed incorrectly.
+function parseSimplePathEndpoints(d) {
+  const tokens = d.match(/[a-zA-Z]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g) || [];
+  let command = null;
+  let current = { x: 0, y: 0 };
+  let start = null;
+  let index = 0;
+  let end = null;
+  while (index < tokens.length) {
+    if (/^[a-zA-Z]$/.test(tokens[index])) command = tokens[index++];
+    if (!command || !/^[MmHhVvLlZz]$/.test(command)) return null;
+    if (command === 'Z' || command === 'z') {
+      current = start || current;
+      end = { ...current };
+      command = null;
+      continue;
+    }
+    const relative = command === command.toLowerCase();
+    const upper = command.toUpperCase();
+    if (upper === 'H') {
+      if (index >= tokens.length || /^[a-zA-Z]$/.test(tokens[index])) return null;
+      const x = Number(tokens[index++]);
+      current = { x: relative ? current.x + x : x, y: current.y };
+    } else if (upper === 'V') {
+      if (index >= tokens.length || /^[a-zA-Z]$/.test(tokens[index])) return null;
+      const y = Number(tokens[index++]);
+      current = { x: current.x, y: relative ? current.y + y : y };
+    } else {
+      if (index + 1 >= tokens.length || /^[a-zA-Z]$/.test(tokens[index]) || /^[a-zA-Z]$/.test(tokens[index + 1])) return null;
+      const x = Number(tokens[index++]);
+      const y = Number(tokens[index++]);
+      current = { x: relative ? current.x + x : x, y: relative ? current.y + y : y };
+      if (!start) start = { ...current };
+      if (upper === 'M') command = relative ? 'l' : 'L';
+    }
+    end = { ...current };
+  }
+  return start && end ? { start, end } : null;
+}
+
+function pointOnRectEdge(point, bounds, tolerance = 2) {
+  const inX = point.x >= bounds.x - tolerance && point.x <= bounds.x + bounds.width + tolerance;
+  const inY = point.y >= bounds.y - tolerance && point.y <= bounds.y + bounds.height + tolerance;
+  const onVertical = (Math.abs(point.x - bounds.x) <= tolerance || Math.abs(point.x - (bounds.x + bounds.width)) <= tolerance) && inY;
+  const onHorizontal = (Math.abs(point.y - bounds.y) <= tolerance || Math.abs(point.y - (bounds.y + bounds.height)) <= tolerance) && inX;
+  return onVertical || onHorizontal;
+}
+
+const irEdges = ir && Array.isArray(ir.edges) ? new Map(ir.edges.filter(edge => edge?.id).map(edge => [edge.id, edge])) : new Map();
+for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)["'][^>]*\bd\s*=\s*["']([^"']+)["'][^>]*>/gi)) {
+  const edgeId = match[1];
+  const edge = irEdges.get(edgeId);
+  if (!edge || !ir) continue;
+  const endpoints = parseSimplePathEndpoints(match[2]);
+  if (!endpoints) {
+    warn(`Edge "${edgeId}" uses unsupported SVG path syntax; endpoint geometry was not checked.`);
+    continue;
+  }
+  const from = irNodes.find(node => node?.id === edge.from)?.bounds;
+  const to = irNodes.find(node => node?.id === edge.to)?.bounds;
+  if (from && !pointOnRectEdge(endpoints.start, from)) fail(`Edge "${edgeId}" starts away from source node "${edge.from}".`);
+  if (to && !pointOnRectEdge(endpoints.end, to)) fail(`Edge "${edgeId}" ends away from target node "${edge.to}".`);
+}
+
+// ---------------------------------------------------------------------------
+// 8. Report
+// ---------------------------------------------------------------------------
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+let exitCode = 0;
+
+if (warnings.length > 0) {
+  console.log(`\nWarnings (${warnings.length}):`);
+  for (const w of warnings) console.log(`  ⚠  ${w}`);
+}
+
+if (errors.length > 0) {
+  console.log(`\nErrors (${errors.length}):`);
+  for (const e of errors) console.log(`  ✗  ${e}`);
+  console.log(`\ncheck-diagram: FAILED (${errors.length} error(s))`);
+  exitCode = 1;
+} else {
+  console.log(`\ncheck-diagram: PASSED${warnings.length > 0 ? ` (${warnings.length} warning(s))` : ''}`);
+}
+
+process.exit(exitCode);

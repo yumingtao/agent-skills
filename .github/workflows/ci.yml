@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint sync scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+
+      - name: Syntax check
+        run: bash -n sync/*.sh
+
+      - name: Shellcheck
+        run: shellcheck sync/*.sh
+
+  validate:
+    name: Validate collection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Collection integrity
+        run: sync/check.sh --collection-only
+
+      - name: Diagram checker syntax
+        run: node --check skills/diagram-generator/scripts/check-diagram.mjs
