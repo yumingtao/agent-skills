@@ -110,12 +110,16 @@ platform_entry_for() {
   return 1
 }
 
+split_entry() {
+  IFS='|' read -r P_ID P_DISPLAY P_ROOT P_CHAIN P_DETECT <<<"$1"
+}
+
 detect_platforms() {
-  local entry id display install_root chain detect kind value
+  local entry kind value
   for entry in "${PLATFORM_TARGETS[@]}"; do
-    IFS='|' read -r id display install_root chain detect <<<"$entry"
-    kind="${detect%%:*}"
-    value="${detect#*:}"
+    split_entry "$entry"
+    kind="${P_DETECT%%:*}"
+    value="${P_DETECT#*:}"
     case "$kind" in
       dir)
         if [[ -d "$value" ]]; then
@@ -128,7 +132,7 @@ detect_platforms() {
         fi
         ;;
       *)
-        die "invalid detect rule in sync/manifest.sh for '$id': $detect"
+        die "invalid detect rule in sync/manifest.sh for '$P_ID': $P_DETECT"
         ;;
     esac
   done
@@ -217,11 +221,10 @@ target_root() {
 }
 
 preflight_target() {
-  local id="$1"
-  local display="$2"
-  local install_root="$3"
-  local chain="$4"
-  local skill="$5"
+  local display="$1"
+  local install_root="$2"
+  local chain="$3"
+  local skill="$4"
 
   local src="$repo_root/skills/$skill"
   local root
@@ -267,11 +270,10 @@ remove_target() {
 }
 
 apply_skill() {
-  local id="$1"
-  local display="$2"
-  local install_root="$3"
-  local chain="$4"
-  local skill="$5"
+  local display="$1"
+  local install_root="$2"
+  local chain="$3"
+  local skill="$4"
 
   local src="$repo_root/skills/$skill"
   local root
@@ -326,8 +328,7 @@ apply_skill() {
 }
 
 main() {
-  local entry id display install_root chain other
-  local skill
+  local entry skill
   local ok=0
 
   if [[ ${#platform_ids[@]} -gt 0 ]]; then
@@ -352,9 +353,9 @@ main() {
 
   if [[ "$force" -ne 1 ]]; then
     for entry in "${platforms[@]}"; do
-      IFS='|' read -r id display install_root chain other <<<"$entry"
+      split_entry "$entry"
       for skill in "${skills[@]}"; do
-        preflight_target "$id" "$display" "$install_root" "$chain" "$skill"
+        preflight_target "$P_DISPLAY" "$P_ROOT" "$P_CHAIN" "$skill"
       done
     done
 
@@ -367,10 +368,10 @@ main() {
   fi
 
   for entry in "${platforms[@]}"; do
-    IFS='|' read -r id display install_root chain other <<<"$entry"
-    log "== $display ($id) =="
+    split_entry "$entry"
+    log "== $P_DISPLAY ($P_ID) =="
     for skill in "${skills[@]}"; do
-      apply_skill "$id" "$display" "$install_root" "$chain" "$skill"
+      apply_skill "$P_DISPLAY" "$P_ROOT" "$P_CHAIN" "$skill"
       ok=$((ok + 1))
     done
     log ""

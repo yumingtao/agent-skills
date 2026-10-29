@@ -114,12 +114,16 @@ platform_entry_for() {
   return 1
 }
 
+split_entry() {
+  IFS='|' read -r P_ID P_DISPLAY P_ROOT P_CHAIN P_DETECT <<<"$1"
+}
+
 detect_platforms() {
-  local entry id display detect kind value
+  local entry kind value
   for entry in "${PLATFORM_TARGETS[@]}"; do
-    IFS='|' read -r id display _ _ detect <<<"$entry"
-    kind="${detect%%:*}"
-    value="${detect#*:}"
+    split_entry "$entry"
+    kind="${P_DETECT%%:*}"
+    value="${P_DETECT#*:}"
     case "$kind" in
       dir)
         if [[ -d "$value" ]]; then
@@ -132,7 +136,7 @@ detect_platforms() {
         fi
         ;;
       *)
-        die "invalid detect rule in sync/manifest.sh for '$id': $detect"
+        die "invalid detect rule in sync/manifest.sh for '$P_ID': $P_DETECT"
         ;;
     esac
   done
@@ -248,7 +252,7 @@ validate_readme_index() {
 }
 
 validate_manifest() {
-  local entry id display root chain other
+  local entry
   local seen
 
   seen=()
@@ -259,18 +263,18 @@ validate_manifest() {
   fi
 
   for entry in "${PLATFORM_TARGETS[@]}"; do
-    IFS='|' read -r id display root chain other <<<"$entry"
-    if [[ -z "$id" || -z "$display" || -z "$root" || -z "$chain" || -z "$other" ]]; then
+    split_entry "$entry"
+    if [[ -z "$P_ID" || -z "$P_DISPLAY" || -z "$P_ROOT" || -z "$P_CHAIN" || -z "$P_DETECT" ]]; then
       fail "sync/manifest.sh: malformed platform entry: $entry"
       continue
     fi
-    seen+=("$id")
+    seen+=("$P_ID")
   done
 
   for entry in "${PLATFORM_TARGETS[@]}"; do
-    IFS='|' read -r id display root chain other <<<"$entry"
-    if [[ "$(printf '%s\n' "${seen[@]}" | grep -Fcx "$id")" -gt 1 ]]; then
-      fail "sync/manifest.sh: duplicate platform id: $id"
+    split_entry "$entry"
+    if [[ "$(printf '%s\n' "${seen[@]}" | grep -Fcx "$P_ID")" -gt 1 ]]; then
+      fail "sync/manifest.sh: duplicate platform id: $P_ID"
     fi
   done
 
@@ -306,11 +310,10 @@ resolve_entrypoint() {
 }
 
 check_target() {
-  local id="$1"
-  local display="$2"
-  local install_root="$3"
-  local chain="$4"
-  local skill="$5"
+  local display="$1"
+  local install_root="$2"
+  local chain="$3"
+  local skill="$4"
 
   local src="$repo_root/skills/$skill"
   local root
@@ -357,7 +360,7 @@ check_target() {
 }
 
 main() {
-  local entry id display install_root chain skill
+  local entry id skill
 
   filter_skills
   build_diff_args
@@ -399,9 +402,9 @@ main() {
     else
       log "== installs =="
       for entry in "${platforms[@]}"; do
-        IFS='|' read -r id display install_root chain _ <<<"$entry"
+        split_entry "$entry"
         for skill in "${skills[@]}"; do
-          check_target "$id" "$display" "$install_root" "$chain" "$skill"
+          check_target "$P_DISPLAY" "$P_ROOT" "$P_CHAIN" "$skill"
         done
       done
       log ""

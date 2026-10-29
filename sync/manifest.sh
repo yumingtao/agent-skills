@@ -19,6 +19,11 @@
 #                     the file to point the agent at on that platform
 #   detect            "dir:PATH" or "cmd:NAME"; used to auto-detect the platform
 #                     when --platform is not passed
+#
+# This file is sourced, so its arrays are consumed by sync/apply.sh and
+# sync/check.sh rather than by this file itself.
+
+# shellcheck disable=SC2034
 
 PLATFORM_TARGETS=(
   "claude|Claude Code|$HOME/.claude/skills|SKILL.md|dir:$HOME/.claude"
