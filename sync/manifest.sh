@@ -46,3 +46,25 @@ SYNC_COPY_EXCLUDES=(
   "*.tmp"
   "*.bak"
 )
+
+# Identity hygiene for a public collection. Declared here so the rule lives in
+# one place; sync/check.sh enforces it on every tracked file.
+#
+#   SYNC_ALLOWED_EMAILS  the only email addresses permitted in tracked files
+#   SYNC_FORBIDDEN_PATHS path prefixes that must never appear (local machines)
+#
+# Keep these generic: never hard-code a private account, host, or repository
+# name here — the guard would publish exactly what it is meant to catch.
+#
+# This repo is public, so a corporate address in a commit is a permanent,
+# crawlable identifier. Commit as a personal address.
+
+SYNC_ALLOWED_EMAILS=(
+  "yumingtao2008@gmail.com"
+)
+
+SYNC_FORBIDDEN_PATHS=(
+  "/Users/"
+  "/home/"
+  "C:\\Users\\"
+)

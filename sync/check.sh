@@ -27,6 +27,7 @@ platforms=()
 skills=()
 failures=()
 diff_args=()
+tracked=()
 
 usage() {
   cat <<'USAGE'
@@ -281,6 +282,69 @@ validate_manifest() {
   log "ok   sync/manifest.sh declares ${#PLATFORM_TARGETS[@]} platform(s)"
 }
 
+tracked_files() {
+  local file
+
+  if [[ ! -d "$repo_root/.git" ]] && ! git -C "$repo_root" rev-parse --git-dir >/dev/null 2>&1; then
+    return
+  fi
+
+  while IFS= read -r file; do
+    if [[ -z "$file" || ! -f "$repo_root/$file" ]]; then
+      continue
+    fi
+    # The guard's own configuration/tooling is exempt: it has to name the
+    # patterns it forbids.
+    if [[ "$file" == "sync/manifest.sh" || "$file" == "sync/check.sh" ]]; then
+      continue
+    fi
+    tracked+=("$repo_root/$file")
+  done < <(git -C "$repo_root" ls-files)
+}
+
+validate_identity() {
+  local email entry allowed pattern file
+  local clean=1
+
+  tracked=()
+  tracked_files
+
+  if [[ ${#tracked[@]} -eq 0 ]]; then
+    log "skip identity guard (no tracked files)"
+    return
+  fi
+
+  while IFS= read -r email; do
+    if [[ -z "$email" ]]; then
+      continue
+    fi
+    allowed=0
+    for entry in "${SYNC_ALLOWED_EMAILS[@]}"; do
+      if [[ "$email" == "$entry" ]]; then
+        allowed=1
+        break
+      fi
+    done
+    if [[ "$allowed" -eq 0 ]]; then
+      fail "identity: '$email' appears in a tracked file but is not in SYNC_ALLOWED_EMAILS"
+      clean=0
+    fi
+  done < <(grep -rIoh -E "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}" "${tracked[@]}" 2>/dev/null | sort -u)
+
+  for pattern in "${SYNC_FORBIDDEN_PATHS[@]}"; do
+    while IFS= read -r file; do
+      if [[ -n "$file" ]]; then
+        fail "identity: tracked file contains local path pattern $pattern: ${file#"$repo_root"/}"
+        clean=0
+      fi
+    done < <(grep -rIl -F "$pattern" "${tracked[@]}" 2>/dev/null)
+  done
+
+  if [[ "$clean" -eq 1 ]]; then
+    log "ok   identity guard passed"
+  fi
+}
+
 target_root() {
   if [[ -n "$to_dir" ]]; then
     printf '%s\n' "$to_dir"
@@ -380,6 +444,7 @@ main() {
       validate_skill "$skill"
     done
     validate_readme_index
+    validate_identity
     log ""
   fi
 
