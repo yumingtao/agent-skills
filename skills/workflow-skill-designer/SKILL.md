@@ -315,7 +315,7 @@ When converting from command format to skill format:
 | `examples` | _(removed)_ | Examples moved to inline documentation |
 | `allowed-tools` | `allowed-tools` | Expand wildcards: `Skill(*)` → `Skill`, add commonly needed tools |
 | `group` | _(removed)_ | Embedded in `name` prefix |
-| _(none)_ | `session-mode` | Add: `run` if the skill creates a Run / writes `{run_dir}` artifacts, else `none` (maestro-style environments only; omit the field elsewhere). When `run`, also add the run lifecycle `<required_reading>` block if the environment provides one. |
+| _(none)_ | `session-mode` | Add: `run` if the skill creates a Run / writes `{run_dir}` artifacts, else `none` (only when the target environment ships a run lifecycle contract; omit the field elsewhere). When `run`, also add the run lifecycle `<required_reading>` block. |
 
 ## Orchestrator Content Mapping
 
@@ -365,8 +365,7 @@ session-mode: {run|none}
 ---
 
 <!-- Include only when session-mode: run AND the target environment ships a run
-     lifecycle contract (e.g. @~/.maestro/workflows/run-mode.md). Omit this
-     block in environments without one. -->
+     lifecycle contract. Omit this block in environments without one. -->
 
 # {Title}
 
@@ -478,7 +477,7 @@ When `workflowPreferences.autoYes === true`: {auto-mode behavior}.
 ## Output
 
 - **Variable**: `{variableName}` (e.g., `sessionId`)
-- **File**: `{run_dir}/outputs/{artifact}` — formal artifacts go under `{run_dir}/outputs/`; synthesis to `{run_dir}/report.md`, scratch to `{run_dir}/work/` (session-mode: run only, maestro-style environments). See the environment's run lifecycle contract.
+- **File**: `{run_dir}/outputs/{artifact}` — formal artifacts go under `{run_dir}/outputs/`; synthesis to `{run_dir}/report.md`, scratch to `{run_dir}/work/` (session-mode: run only). See the environment's run lifecycle contract.
 - **TodoWrite**: Mark Phase N completed, Phase N+1 in_progress
 
 ## Next Phase
