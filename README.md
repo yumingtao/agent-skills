@@ -60,4 +60,4 @@ The distribution map lives in `sync/manifest.sh` — see [sync/README.md](sync/R
 
 ## License
 
-[MIT](LICENSE). Skills in this collection carry the same MIT terms; see each folder for its license copy.
+[MIT](LICENSE). Skills in this collection are released under the same MIT terms.
