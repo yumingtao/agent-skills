@@ -2,6 +2,8 @@
 
 Original, platform-neutral agent skills — prompt assets that work across Claude Code, Codex, Cursor, OpenCode, Windsurf, Gemini, GitHub Copilot, CodeBuddy, and Hermes.
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 No runtime dependencies, no network calls, no build step. Each skill is a self-contained folder of instructions; where a skill supports multiple platforms, the platform files are thin adapters that route every agent to the same shared behavior.
 
 ## Skills
