@@ -11,7 +11,7 @@
 | Skill | 功能 |
 |---|---|
 | **[diagram-generator](skills/diagram-generator/)** | 将架构简介（architecture brief）与代码库笔记转化为独立 HTML/SVG 技术图：系统图、实现图、基础设施图、信任边界图、数据流转图、部署图、流程图。完整包：生成规则、规划 IR、HTML 模板、校验脚本、逐平台冒烟测试。 |
-| **[clarify-before-acting](skills/clarify-before-acting/)** | 面对非平凡请求的行为规则：先自行调研、一次只问一个关键问题、当剩余未知项不再影响工作方向时停止追问、决定继续时显式声明假设。 |
+| **[clarify-before-acting](skills/clarify-before-acting/)** | 面对非平凡请求的行为规则：先自行调研、复用记忆中已有的答案、按问题队列逐个提问直到所有影响方向的未知项全部澄清、方向上绝不靠猜。 |
 | **[insight-challenge](skills/insight-challenge/)** | 对代码审查发现的对抗式验证。用锚定到实际源码的反证逐条质询每个发现，输出结构化裁决 —— overturned（推翻）/ weakened（削弱）/ confirmed（确认）—— 而不是照单全收。 |
 | **[workflow-skill-designer](skills/workflow-skill-designer/)** | 设计 orchestrator + phases 结构化 workflow skill 的元技能：薄 `SKILL.md` 协调器 + 渐进加载的 `phases/` 文件，含 TodoWrite 模式、跨阶段数据流与校验清单。 |
 

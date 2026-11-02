@@ -1,6 +1,6 @@
 # Clarify Before Acting — Playbook
 
-Extended guidance for the core rule in [`../source/clarify.md`](../source/clarify.md).
+Extended guidance for the core rule in [`../SKILL.md`](../SKILL.md).
 Read this when a task is hard enough to warrant it. The core rule is enough for
 everyday use; this playbook is for the genuinely hard, ambiguous, or high-stakes
 ones.
@@ -45,6 +45,13 @@ When you ask, **cite the evidence** that prompted it:
 is far better than "How does auth work here?" — it shows you looked, and it lets
 the person confirm instead of re-explain.
 
+Homework includes **memory**. On platforms that offer memory or past-session
+recall, search it for questions this user has already answered — preferences,
+prior decisions, settled trade-offs. A recorded answer retires a queued
+question without a round-trip; say which memory you reused so the person can
+correct it if it is stale. Memory shrinks the queue; it does not authorize
+guessing past an unanswered direction-changing unknown.
+
 ## 3. The clarity checklist — find the weakest spot
 
 Treat these as the dimensions of "do I understand this?" Aim each question at
@@ -61,7 +68,40 @@ State the targeting out loud in one line when it helps: *"The goal is clear, but
 success criteria are the weakest part, so:"* — it keeps the conversation legible
 and stops you from circling the part you already understand.
 
-## 4. Map the scope before you drill
+## 4. The question queue — one at a time, in order
+
+The core rule says work a queue; this is how to keep it from degrading.
+
+**Why a queue at all.** Dumping every question in one message turns a
+conversation into a questionnaire — people skim, half-answer, and you learn
+less per round. Asking whatever comes to mind next loses ordering: you burn
+patience on a detail before settling the goal it depends on. The queue holds
+both failure modes apart: everything is visible, but only one question is live
+at a time.
+
+**The loop, per item:**
+
+1. Ask the top question — just that one.
+2. Listen. If the answer is itself ambiguous on a direction-changing point,
+   probe it *before* moving on ("when you say X, always, or only on cold
+   start?").
+3. Reflect the answer back in one line so a misread surfaces now, not in review.
+4. Mark it resolved, apply it to the queue (new unknowns in, dead questions
+   out), and only then ask the next.
+
+**Queue hygiene.**
+
+- Every item must be direction-changing; reversible detail belongs to the
+  assumptions list, not the queue. If the queue keeps growing past ~5 items,
+  the real problem is usually an unconfirmed scope shape — go map the scope
+  (§5) before continuing.
+- Three or more open items: show the numbered list when you ask, so the person
+  sees the remaining shape and can reorder it ("answer 3 first, I have opinions
+  there").
+- An answer that resolves several items at once is common and good — collapse
+  the queue explicitly rather than asking now-redundant questions.
+
+## 5. Map the scope before you drill
 
 Before going deep on the most-described piece, list the top-level pieces of the
 work — the parts that can each succeed or fail independently. Depth-first
@@ -73,7 +113,7 @@ vividly, while a quieter sibling stays dangerously vague.
 
 Confirm the shape first, then clarify each piece until none is direction-vague.
 
-## 5. Questioning lenses — for when you're stuck
+## 6. Questioning lenses — for when you're stuck
 
 If a few rounds haven't converged, rotate the lens you question through. Use each
 once, then return to normal questioning:
@@ -108,7 +148,7 @@ These actions are ways to reveal unknowns, not reasons to postpone action
 indefinitely. Stop the sweep once no remaining unknown would change the goal,
 scope, owner, data model, or approach.
 
-## 6. Knowing when to stop — the directional test
+## 7. Knowing when to stop — the directional test
 
 Do not chase a number. The test is qualitative:
 
@@ -136,17 +176,36 @@ Signals you are *not* ready (any one is enough):
 Signals you *are* ready: you could write the goal, the constraints, and at least
 one testable success criterion right now without inventing anything material.
 
-### Respecting "just do it"
+### Respecting "just do it" — and telling it apart from "you ask too much"
 
-If the person says stop, stop — but be honest about the trade:
+Two different messages often arrive in similar words:
 
-> "Proceeding now. Still unclear: the retry behavior on partial failure. I'll
-> assume fail-fast and surface it; flag me if that's wrong."
+- **An explicit stop** — "don't ask, just do it", "stop asking and start".
+  End the queue. Convert each remaining item into a stated assumption with its
+  risk (§8), and say so plainly:
 
-Stopping on request is fine. Stopping *silently* on a direction-changing unknown
-is not.
+  > "Proceeding now. Still unclear: the retry behavior on partial failure. I'll
+  > assume fail-fast and surface it; flag me if that's wrong."
 
-## 7. When you proceed on assumptions, record them
+- **A pace complaint** — "you ask too much", "can we go faster". Not a stop.
+  The membership of the queue is unchanged: every direction-changing unknown
+  still gets asked, one at a time, each fully resolved before the next. What
+  changes is form — shorter questions, tighter evidence, no re-asking what an
+  answer already covered.
+
+Reading a pace complaint as a stop silently drops unknowns the person still
+expects you to resolve; the queue shrinks by answers, not by impatience. When
+genuinely unsure which one you heard, ask once, cheaply: "To be clear — skip
+the remaining questions and assume, or keep going one at a time?"
+
+## 8. When you proceed on assumptions, record them
+
+The queue is where direction-changing unknowns go; the assumptions list is
+where *non-directional* ones go. Never move an item from the first to the
+second because asking felt slow — that is the silent guess this skill exists
+to prevent. The only legitimate transfers: the person explicitly stopped the
+questioning (an unambiguous "stop asking" — a pace complaint is not one, see
+§7), or a fresh answer (or memory) revealed the unknown was detail all along.
 
 Whenever you act past an unresolved point, make the assumption visible so it can
 be caught cheaply:
@@ -161,7 +220,7 @@ This turns a silent guess into a reviewable decision. It is the single highest-
 leverage habit in this playbook: it lets you keep moving without pretending you
 were certain.
 
-## 8. Task contracts — make clarified work executable
+## 9. Task contracts — make clarified work executable
 
 Use a task contract at the end of clarification when another agent will execute
 the work, or when an unresolved assumption materially affects execution. It is
@@ -219,9 +278,10 @@ For honesty about scope, and to keep it portable across agents, this skill does
 **not** include:
 
 - **Numeric ambiguity scoring / thresholds.** Pseudo-precision. The directional
-  test in §6 replaces it.
+  test in §7 replaces it.
 - **State files, resume, or persistence.** Platform-specific; out of scope for a
-  portable rule.
+  portable rule. (This is about the skill not keeping *its own* state — checking
+  memory your platform already provides, as §2 says, is the opposite of that.)
 - **Pipeline handoffs / orchestration.** This skill shapes *how you think before
   acting*; it does not decide *who executes*.
 

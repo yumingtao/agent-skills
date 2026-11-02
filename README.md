@@ -11,7 +11,7 @@ No runtime dependencies, no network calls, no build step. Each skill is a self-c
 | Skill | What it does |
 |---|---|
 | **[diagram-generator](skills/diagram-generator/)** | Turns architecture briefs and codebase notes into standalone HTML/SVG technical maps: system, implementation, infrastructure, trust, data movement, deployment, and process views. Full package: generation rules, planning IR, HTML template, validation script, per-platform smoke tests. |
-| **[clarify-before-acting](skills/clarify-before-acting/)** | A behavior rule for non-trivial requests: do your own homework first, ask one targeted question at a time, stop when no remaining unknown would change the direction of the work, and state assumptions explicitly when proceeding anyway. |
+| **[clarify-before-acting](skills/clarify-before-acting/)** | A behavior rule for non-trivial requests: do your own homework first, reuse answers already in memory, work a question queue one item at a time until every direction-changing unknown is resolved, and never guess where direction is at stake. |
 | **[insight-challenge](skills/insight-challenge/)** | Adversarial verification of code-review findings. Challenges each claim with counter-evidence anchored to actual source code and emits structured verdicts — overturned / weakened / confirmed — instead of trusting findings as-is. |
 | **[workflow-skill-designer](skills/workflow-skill-designer/)** | Meta-skill that designs orchestrator + phases workflow skills: a thin `SKILL.md` coordinator plus progressively loaded `phases/` files, with TodoWrite patterns, inter-phase data flow, and validation checklists. |
 
