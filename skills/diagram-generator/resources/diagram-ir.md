@@ -91,7 +91,10 @@ Edges describe movement or control between nodes.
   label: HTTPS
   role: entry
   route: orthogonal
+  labelAnchor: { x: 296, y: 286, width: 46 }
 ```
+
+Optional `labelAnchor` records where the connector label sits: `x`/`y` is the label's anchor point (baseline for SVG text) and `width` its estimated box (`chars × per-glyph × font-size + 16`). When present, `check-diagram.mjs` verifies the label box does not overlap any node rectangle; when absent, label placement stays a render-time concern.
 
 Supported `kind` values:
 

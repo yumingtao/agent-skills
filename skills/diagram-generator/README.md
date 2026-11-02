@@ -40,12 +40,15 @@ diagram-generator/
 ├── COPILOT-INSTRUCTIONS.md
 ├── CODEBUDDY.md
 ├── HERMES.md
+├── LICENSE
 ├── agents/
 │   └── openai.yaml
 ├── resources/
 │   ├── generation-rules.md
 │   ├── diagram-ir.md
 │   └── template.html
+├── scripts/
+│   └── check-diagram.mjs
 ├── examples/
 │   ├── architecture-brief.md
 │   ├── codex-cli-example.txt
@@ -53,7 +56,9 @@ diagram-generator/
 │   ├── drawio-mode-prompt.md
 │   └── portable-agent-smoke-test-prompt.md
 ├── tests/
-│   └── platform-smoke-tests/
+│   ├── platform-smoke-tests/
+│   └── fixtures/
+│       └── example-commerce-system-map.html
 └── RELEASE_CHECKLIST.md
 ```
 
@@ -122,6 +127,18 @@ Use them before publishing or after changing `resources/`:
 - `agents.md` for Cursor, OpenCode, Windsurf, and similar agents
 
 Each smoke test checks that the agent uses `html-first`, follows the atlas-style template, keeps draw.io hidden by default, emits a notes rail without placeholder text, and can preserve unrelated content when revising an existing diagram.
+
+## Output Checker
+
+Every generated artifact must pass the zero-dependency validator before it is returned:
+
+```bash
+node scripts/check-diagram.mjs <output-file.html>
+```
+
+It verifies placeholder removal, notes-rail presence, self-containment, marker integrity, IR geometry (node bounds, overlaps, edge endpoints, region bounds), `data-node-id`/`data-edge-id` cross-checks against the IR, and optional `labelAnchor` overlap checks. Warnings do not block; errors exit 1.
+
+A known-good reference artifact lives at `tests/fixtures/example-commerce-system-map.html` — it renders the Example Prompt brief below and passes the checker with zero errors and zero warnings. CI re-runs the checker against it on every push, so keep it green when changing checker rules or the template.
 
 ## Quality Guidance
 
@@ -192,4 +209,4 @@ Use the default html-first mode. Keep visible text in English.
 
 ## Publishing
 
-Before publishing, remove local smoke-test outputs and run `RELEASE_CHECKLIST.md`.
+Before publishing, remove local smoke-test outputs (the checked-in fixture under `tests/fixtures/` stays) and run `RELEASE_CHECKLIST.md`.

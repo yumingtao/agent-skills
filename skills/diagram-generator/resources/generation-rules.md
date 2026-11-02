@@ -145,7 +145,7 @@ Choose the SVG viewBox after estimating node count and region count:
 | Wide | 14-20 components, 3-6 regions | `0 0 1760 1020` |
 | Process | 6-12 ordered steps | `0 0 1320 920` |
 
-Reserve at least 56px below the lowest component for the map key. Increase height before drawing if a region, key, or label would be clipped.
+Reserve a band of at least 56px from the lowest component's bottom edge to the viewBox bottom, and the map key must fit entirely inside that band. Increase height before drawing if a region, key, or label would be clipped.
 
 ## Connector Rules
 
@@ -216,26 +216,26 @@ Optional replacement sections:
 
 ## Release Check
 
-Before final output, run `node scripts/check-diagram.mjs <output.html>`. If the checker is unavailable, manually verify:
+Before final output, run `node scripts/check-diagram.mjs <output.html>`. The checker covers the items marked **[machine]** below (placeholder text, marker integrity, IR geometry, data-attribute cross-checks, region bounds, connector endpoints, self-containment). Items marked **[manual]** need eyes or judgment — the checker cannot see rendered output. If the checker is unavailable, manually verify both groups:
 
-- **Render the diagram to a raster image and look at it** — coordinate review alone misses overlaps, clipping, and arrows that fall short. Re-render after every fix until the picture is clean.
-- No label overflows its pill or its node, and no box paints over a label or region title.
-- No arrowhead ends in empty canvas; every connector touches its target node's edge.
-- Control/policy/dependency edges follow the real direction of dependence, not parallel fans.
-- No placeholder text remains.
-- The selected lens matches the user's request.
-- All visible text uses one language.
-- Every visible component maps to the brief or a clearly marked assumption.
-- The main path is easy to follow without reading the notes first.
-- Stage regions do not hide or collide with components.
-- Connectors terminate at component edges.
-- Connector arrowheads match connector stroke colors.
-- Connector labels do not cover component labels.
-- Data persistence and async movement are visible when relevant.
-- Trust or policy boundaries are visually distinct when relevant.
-- The map key fits inside the viewBox.
-- The notes rail is concise and not a second diagram.
-- Export buttons reference the generated SVG ID.
-- The document opens without a build step, network access, or external assets.
-- Every `marker-end` URL reference resolves to a matching `<marker>` definition in `<defs>`.
-- Vertical gutters between adjacent rows or stacked regions are intentionally consistent, unless they encode a deliberate boundary.
+- **[manual] Render the diagram to a raster image and look at it** — coordinate review alone misses overlaps, clipping, and arrows that fall short. Re-render after every fix until the picture is clean.
+- **[manual]** No label overflows its pill or its node, and no box paints over a label or region title. If edges carry `labelAnchor` geometry, overlap with node boxes is **[machine]**; everything else is visual.
+- **[machine]** No arrowhead ends in empty canvas; every connector touches its target node's edge.
+- **[manual]** Control/policy/dependency edges follow the real direction of dependence, not parallel fans.
+- **[machine]** No placeholder text remains.
+- **[manual]** The selected lens matches the user's request.
+- **[manual]** All visible text uses one language.
+- **[manual]** Every visible component maps to the brief or a clearly marked assumption.
+- **[manual]** The main path is easy to follow without reading the notes first.
+- **[manual]** Stage regions do not hide or collide with components.
+- **[machine]** Connectors terminate at component edges.
+- **[machine]** Connector arrowheads match connector stroke colors.
+- **[manual]** Connector labels do not cover component labels.
+- **[manual]** Data persistence and async movement are visible when relevant.
+- **[manual]** Trust or policy boundaries are visually distinct when relevant.
+- **[manual]** The map key fits inside the viewBox and sits fully inside the 56px reserve band below the lowest component.
+- **[manual]** The notes rail is concise and not a second diagram.
+- **[machine]** Export buttons reference the generated SVG ID (warning-level).
+- **[machine]** The document opens without a build step, network access, or external assets.
+- **[machine]** Every `marker-end` URL reference resolves to a matching `<marker>` definition in `<defs>`.
+- **[manual]** Vertical gutters between adjacent rows or stacked regions are intentionally consistent, unless they encode a deliberate boundary.

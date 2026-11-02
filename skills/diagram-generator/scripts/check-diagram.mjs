@@ -14,6 +14,9 @@
  *     source when available (JSON.parse — no DOM parser needed).
  *   - Use data-node-id / data-edge-id attributes to cross-check SVG elements
  *     against the IR registry.
+ *   - Validate IR regions (bounds inside viewBox, contains reference known
+ *     nodes), remind revise-mode artifacts to carry edit_scope, and check
+ *     optional edge labelAnchor geometry against node boxes.
  *   - Marker-reference integrity and placeholder detection use targeted regex
  *     on the raw HTML string — safe because the patterns are template-scoped.
  *   - No external npm packages. Requires Node 18+.
@@ -92,7 +95,7 @@ if (ir) {
 
   const nodes = irNodes;
   const edges = ir && Array.isArray(ir.edges) ? ir.edges : [];
-  if (!ir || !Array.isArray(ir.nodes) || !Array.isArray(ir.edges)) {
+  if (!Array.isArray(ir.nodes) || !Array.isArray(ir.edges)) {
     fail('#diagram-ir must define nodes and edges arrays.');
   }
   if (nodes.length === 0) {
@@ -144,6 +147,59 @@ if (ir) {
     }
   }
 
+  // 3b-2. Region integrity: bounds inside viewBox, contains reference known
+  // nodes. Nested regions (a region inside another region's bounds) are a
+  // legitimate pattern and are NOT flagged.
+  const regions = Array.isArray(ir.regions) ? ir.regions : null;
+  if (ir.regions !== undefined && regions === null) {
+    fail('#diagram-ir regions must be an array when present.');
+  }
+  const regionIds = new Set();
+  if (regions) {
+    for (const region of regions) {
+      if (!region || typeof region !== 'object' || typeof region.id !== 'string' || region.id.trim() === '') {
+        fail(`IR region is missing a non-empty string id: ${JSON.stringify(region)}`);
+        continue;
+      }
+      if (regionIds.has(region.id)) {
+        fail(`Duplicate IR region id: "${region.id}".`);
+        continue;
+      }
+      regionIds.add(region.id);
+      const rb = region.bounds;
+      if (!rb || typeof rb !== 'object') {
+        fail(`IR region "${region.id}" has no bounds.`);
+        continue;
+      }
+      if (![rb.x, rb.y, rb.width, rb.height].every(isFiniteNumber) || rb.width <= 0 || rb.height <= 0) {
+        fail(`IR region "${region.id}" has invalid bounds: ${JSON.stringify(rb)}.`);
+        continue;
+      }
+      if (rb.x < vbX || rb.y < vbY || rb.x + rb.width > vbX + vbW || rb.y + rb.height > vbY + vbH) {
+        fail(`IR region "${region.id}" bounds exceed the viewBox.`);
+      }
+      if (region.contains !== undefined) {
+        if (!Array.isArray(region.contains)) {
+          fail(`IR region "${region.id}" contains must be an array when present.`);
+        } else {
+          for (const cid of region.contains) {
+            if (typeof cid !== 'string' || !nodeIds.has(cid)) {
+              fail(`IR region "${region.id}" contains unknown node id: ${JSON.stringify(cid)}.`);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Revise artifacts should record their edit scope.
+  if (ir.mode === 'revise') {
+    const scopeValue = ir.edit_scope;
+    if (scopeValue === undefined || scopeValue === null || String(scopeValue).trim() === '') {
+      warn('IR mode is "revise" but edit_scope is missing — record the revision scope.');
+    }
+  }
+
   // 3c. Edge endpoint reachability
   for (const edge of edges) {
     if (!edge || typeof edge !== 'object' || typeof edge.id !== 'string' || edge.id.trim() === '') {
@@ -165,6 +221,29 @@ if (ir) {
     const toBounds = nodeMap[edge.to];
     if (edge.from && !fromBounds) fail(`Edge "${edge.id}" references unknown source node "${edge.from}".`);
     if (edge.to && !toBounds) fail(`Edge "${edge.id}" references unknown target node "${edge.to}".`);
+
+    // Optional label geometry: when a renderer records where a connector label
+    // sits, verify it does not sit on top of any node box (the most common
+    // visual defect). Absence of labelAnchor simply skips the check.
+    if (edge.labelAnchor !== undefined && edge.labelAnchor !== null) {
+      const la = edge.labelAnchor;
+      if (typeof la !== 'object' || !isFiniteNumber(la.x) || !isFiniteNumber(la.y)) {
+        fail(`Edge "${edge.id}" has invalid labelAnchor: ${JSON.stringify(la)}.`);
+      } else {
+        const halfW = isFiniteNumber(la.width) && la.width > 0 ? la.width / 2 : 0;
+        // Approximate 10px label box around a baseline-anchored text point.
+        const left = la.x - halfW, right = la.x + halfW;
+        const top = la.y - 10, bottom = la.y + 2;
+        for (const [nid, nb] of Object.entries(nodeMap)) {
+          const overlapX = left < nb.x + nb.width && right > nb.x;
+          const overlapY = top < nb.y + nb.height && bottom > nb.y;
+          if (overlapX && overlapY) {
+            fail(`Edge "${edge.id}" labelAnchor sits on node "${nid}".`);
+            break;
+          }
+        }
+      }
+    }
   }
 
   // 3d/3e. Bidirectional data attribute cross-check
@@ -325,9 +404,6 @@ for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)
 // ---------------------------------------------------------------------------
 // 8. Report
 // ---------------------------------------------------------------------------
-function escapeRegex(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 let exitCode = 0;
 

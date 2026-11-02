@@ -402,22 +402,42 @@
           <g id="map-key" transform="translate(48 842)" font-family="SFMono-Regular, JetBrains Mono, monospace">
             <text x="0" y="0" fill="#172033" font-size="11" font-weight="700">Map key</text>
             <g transform="translate(0 18)">
+              <rect x="0" y="0" width="16" height="9" rx="2" fill="#ccfbf1" stroke="#0f766e"/>
+              <text x="22" y="8" fill="#647084" font-size="9">Actor</text>
+            </g>
+            <g transform="translate(82 18)">
+              <rect x="0" y="0" width="16" height="9" rx="2" fill="#dbeafe" stroke="#2563eb"/>
+              <text x="22" y="8" fill="#647084" font-size="9">Entry</text>
+            </g>
+            <g transform="translate(169 18)">
               <rect x="0" y="0" width="16" height="9" rx="2" fill="#dcfce7" stroke="#15803d"/>
               <text x="22" y="8" fill="#647084" font-size="9">Compute</text>
             </g>
-            <g transform="translate(98 18)">
+            <g transform="translate(267 18)">
               <rect x="0" y="0" width="16" height="9" rx="2" fill="#ede9fe" stroke="#7c3aed"/>
               <text x="22" y="8" fill="#647084" font-size="9">State</text>
             </g>
-            <g transform="translate(178 18)">
+            <g transform="translate(354 18)">
               <rect x="0" y="0" width="16" height="9" rx="2" fill="#ffedd5" stroke="#c2410c"/>
               <text x="22" y="8" fill="#647084" font-size="9">Message</text>
             </g>
-            <g transform="translate(282 18)">
+            <g transform="translate(452 18)">
+              <rect x="0" y="0" width="16" height="9" rx="2" fill="#ffe4e6" stroke="#be123c"/>
+              <text x="22" y="8" fill="#647084" font-size="9">Control</text>
+            </g>
+            <g transform="translate(550 18)">
+              <rect x="0" y="0" width="16" height="9" rx="2" fill="#fef3c7" stroke="#a16207"/>
+              <text x="22" y="8" fill="#647084" font-size="9">Telemetry</text>
+            </g>
+            <g transform="translate(659 18)">
+              <rect x="0" y="0" width="16" height="9" rx="2" fill="#f1f5f9" stroke="#475569"/>
+              <text x="22" y="8" fill="#647084" font-size="9">External</text>
+            </g>
+            <g transform="translate(762 18)">
               <path d="M 0 5 H 34" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow-external)"/>
               <text x="44" y="8" fill="#647084" font-size="9">Sync</text>
             </g>
-            <g transform="translate(370 18)">
+            <g transform="translate(866 18)">
               <path d="M 0 5 H 34" stroke="#c2410c" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#arrow-message)"/>
               <text x="44" y="8" fill="#647084" font-size="9">Async or side path</text>
             </g>
@@ -459,11 +479,13 @@
 
   <!--
     Diagram IR slot — machine-readable planning model embedded in the artifact.
-    Renderers fill this with the JSON representation of the Diagram IR used to
-    generate the SVG. The revise workflow reads this slot first; if it is absent
-    (legacy artifact), the revise path falls back to reading the SVG directly.
-    Do NOT remove or rename this element; check-diagram.mjs and the revise
-    workflow depend on id="diagram-ir".
+    The JSON below matches the sample SVG above one-to-one (same region, node,
+    and edge ids, plus optional edge labelAnchor geometry), so the template
+    demonstrates the exact IR ↔ SVG contract the checker enforces. Renderers
+    replace both the sample SVG and this JSON together. The revise workflow
+    reads this slot first; if it is absent (legacy artifact), the revise path
+    falls back to reading the SVG directly. Do NOT remove or rename this
+    element; check-diagram.mjs and the revise workflow depend on id="diagram-ir".
   -->
   <script type="application/json" id="diagram-ir">
   {
@@ -473,10 +495,39 @@
     "language": "en",
     "mode": "create",
     "canvas": { "complexity": "standard", "viewBox": "0 0 1500 900" },
-    "regions": [],
-    "nodes": [],
-    "edges": [],
-    "notes": [],
+    "regions": [
+      { "id": "runtime", "label": "Runtime Boundary", "role": "infrastructure", "bounds": { "x": 360, "y": 100, "width": 850, "height": 570 }, "contains": ["entry_control", "api_gateway", "core_services"] },
+      { "id": "application_services", "label": "Application Services", "role": "runtime", "bounds": { "x": 585, "y": 175, "width": 470, "height": 205 }, "contains": ["api_gateway", "core_services"] },
+      { "id": "durable_state", "label": "Durable State and Messaging", "role": "data", "bounds": { "x": 610, "y": 485, "width": 520, "height": 125 }, "contains": ["database", "cache", "events"] },
+      { "id": "trust_control", "label": "Trust Control", "role": "trust", "bounds": { "x": 1088, "y": 144, "width": 108, "height": 98 }, "contains": ["identity"] }
+    ],
+    "nodes": [
+      { "id": "actor", "label": "Actor", "role": "actor", "responsibility": "web, mobile, and CLI entry traffic", "bounds": { "x": 60, "y": 248, "width": 150, "height": 104 } },
+      { "id": "entry_control", "label": "Entry Control", "role": "entry", "responsibility": "edge gateway", "bounds": { "x": 382, "y": 252, "width": 130, "height": 96 } },
+      { "id": "api_gateway", "label": "API Gateway", "role": "entry", "responsibility": "auth, routing, limits", "bounds": { "x": 620, "y": 245, "width": 160, "height": 110 } },
+      { "id": "core_services", "label": "Core Services", "role": "compute", "responsibility": "business capability", "technology": "stateless runtime", "bounds": { "x": 830, "y": 235, "width": 170, "height": 130 } },
+      { "id": "identity", "label": "Identity", "role": "control", "responsibility": "token validation", "bounds": { "x": 1108, "y": 178, "width": 78, "height": 48 } },
+      { "id": "external_api", "label": "External API", "role": "external", "responsibility": "partner SaaS", "bounds": { "x": 1240, "y": 258, "width": 156, "height": 84 } },
+      { "id": "database", "label": "Database", "role": "state", "responsibility": "transactional records", "bounds": { "x": 650, "y": 520, "width": 130, "height": 70 } },
+      { "id": "cache", "label": "Cache", "role": "state", "responsibility": "hot reads", "bounds": { "x": 840, "y": 520, "width": 130, "height": 70 } },
+      { "id": "events", "label": "Events", "role": "message", "responsibility": "async", "bounds": { "x": 1030, "y": 520, "width": 80, "height": 70 } },
+      { "id": "observability", "label": "Observability Surface", "role": "telemetry", "responsibility": "logs, metrics, traces, alerts, audits", "bounds": { "x": 585, "y": 735, "width": 740, "height": 70 } }
+    ],
+    "edges": [
+      { "id": "client_to_entry", "from": "actor", "to": "entry_control", "kind": "sync", "label": "HTTPS", "role": "actor", "route": "orthogonal", "labelAnchor": { "x": 296, "y": 286, "width": 46 } },
+      { "id": "entry_to_gateway", "from": "entry_control", "to": "api_gateway", "kind": "sync", "label": "route", "role": "entry", "route": "orthogonal", "labelAnchor": { "x": 566, "y": 286, "width": 46 } },
+      { "id": "gateway_to_services", "from": "api_gateway", "to": "core_services", "kind": "sync", "label": "API", "role": "compute", "route": "orthogonal", "labelAnchor": { "x": 805, "y": 286, "width": 34 } },
+      { "id": "services_to_identity", "from": "core_services", "to": "identity", "kind": "control", "label": "token check", "role": "control", "route": "orthogonal", "labelAnchor": { "x": 910, "y": 196, "width": 82 } },
+      { "id": "services_to_database", "from": "core_services", "to": "database", "kind": "sync", "label": "write", "role": "state", "route": "orthogonal", "labelAnchor": { "x": 805, "y": 420, "width": 46 } },
+      { "id": "services_to_events", "from": "core_services", "to": "events", "kind": "async", "label": "event", "role": "message", "route": "orthogonal", "labelAnchor": { "x": 1010, "y": 420, "width": 46 } },
+      { "id": "services_to_telemetry", "from": "core_services", "to": "observability", "kind": "telemetry", "label": "telemetry", "role": "telemetry", "route": "orthogonal", "labelAnchor": { "x": 1194, "y": 688, "width": 70 } },
+      { "id": "services_to_external", "from": "core_services", "to": "external_api", "kind": "sync", "label": "external call", "role": "external", "route": "orthogonal", "labelAnchor": { "x": 1120, "y": 286, "width": 94 } }
+    ],
+    "notes": [
+      { "title": "System Shape", "bullets": ["Runtime boundary and major responsibility groups."] },
+      { "title": "Critical Flows", "bullets": ["Primary request path from actor to stateful outcome."] },
+      { "title": "Operational Notes", "bullets": ["Scale, resilience, monitoring, and failure-domain concerns."] }
+    ],
     "assumptions": []
   }
   </script>

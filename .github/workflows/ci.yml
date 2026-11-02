@@ -37,3 +37,6 @@ jobs:
 
       - name: Diagram checker syntax
         run: node --check skills/diagram-generator/scripts/check-diagram.mjs
+
+      - name: Diagram checker behavior gate (known-good fixture)
+        run: node skills/diagram-generator/scripts/check-diagram.mjs skills/diagram-generator/tests/fixtures/example-commerce-system-map.html

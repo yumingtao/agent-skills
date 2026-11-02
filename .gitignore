@@ -18,3 +18,8 @@ tmp/
 # Local agent session state
 .omc/
 .agents/
+
+# Generated diagram artifacts (local smoke-test outputs).
+# Checked-in skill assets (template + known-good fixture) are re-included below.
+*.html
+!skills/diagram-generator/**/*.html
