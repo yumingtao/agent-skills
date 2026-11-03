@@ -24,3 +24,14 @@ Use `CODEBUDDY.md` as the workspace rule and create a standalone HTML system map
 - Kafka carries domain events.
 - Object storage stores invoices and exports.
 - Observability receives logs, metrics, traces, and alerts.
+
+## Self-Check
+
+After generating the diagram, run the output checker against the generated
+file and fix anything it reports before delivering it:
+
+```bash
+node scripts/check-diagram.mjs <generated-file.html>
+```
+
+The run must end with `check-diagram: PASSED` with zero errors.

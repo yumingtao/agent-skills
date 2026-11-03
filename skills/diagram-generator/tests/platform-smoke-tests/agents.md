@@ -30,3 +30,14 @@ Generate a standalone HTML system map from the brief below.
 - Object storage stores invoices and exports.
 - External payment processor handles authorization.
 - Observability stack collects logs, metrics, traces, and alerts.
+
+## Self-Check
+
+After generating the diagram, run the output checker against the generated
+file and fix anything it reports before delivering it:
+
+```bash
+node scripts/check-diagram.mjs <generated-file.html>
+```
+
+The run must end with `check-diagram: PASSED` with zero errors.

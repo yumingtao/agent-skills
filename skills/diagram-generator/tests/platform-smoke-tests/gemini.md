@@ -28,3 +28,14 @@ Attach or paste these files if Gemini cannot read local files:
 - PostgreSQL, Redis, Kafka, and object storage provide durable and cached state.
 - Payment processor is an external dependency.
 - Monitoring stack receives metrics, logs, traces, and alerts.
+
+## Self-Check
+
+After generating the diagram, run the output checker against the generated
+file and fix anything it reports before delivering it:
+
+```bash
+node scripts/check-diagram.mjs <generated-file.html>
+```
+
+The run must end with `check-diagram: PASSED` with zero errors.

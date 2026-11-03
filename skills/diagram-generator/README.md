@@ -140,6 +140,8 @@ It verifies placeholder removal, notes-rail presence, self-containment, marker i
 
 A known-good reference artifact lives at `tests/fixtures/example-commerce-system-map.html` — it renders the Example Prompt brief below and passes the checker with zero errors and zero warnings. CI re-runs the checker against it on every push, so keep it green when changing checker rules or the template.
 
+A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the known-good artifact with three injected defects (a template placeholder residue, a node whose bounds leave the viewBox, and a region `contains` entry referencing a nonexistent node). CI asserts the checker rejects it (non-zero exit) and reports all three defect classes; this proves the checker fails closed, not just that it passes a good sample.
+
 ## Quality Guidance
 
 - Keep reusable behavior in `resources/generation-rules.md`.

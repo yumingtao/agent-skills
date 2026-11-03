@@ -22,3 +22,14 @@ Use `COPILOT-INSTRUCTIONS.md` as the custom instruction source and generate a st
 - Kubernetes hosts user, catalog, order, payment, and notification services.
 - PostgreSQL, Redis, Kafka, and object storage back the runtime.
 - Payment processor and observability stack are external or supporting dependencies.
+
+## Self-Check
+
+After generating the diagram, run the output checker against the generated
+file and fix anything it reports before delivering it:
+
+```bash
+node scripts/check-diagram.mjs <generated-file.html>
+```
+
+The run must end with `check-diagram: PASSED` with zero errors.

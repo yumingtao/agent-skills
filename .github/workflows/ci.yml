@@ -40,3 +40,21 @@ jobs:
 
       - name: Diagram checker behavior gate (known-good fixture)
         run: node skills/diagram-generator/scripts/check-diagram.mjs skills/diagram-generator/tests/fixtures/example-commerce-system-map.html
+
+      - name: Diagram checker rejection gate (bad fixture)
+        run: |
+          set +e
+          out=$(node skills/diagram-generator/scripts/check-diagram.mjs skills/diagram-generator/tests/fixtures/bad-injected-defects.html)
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "::error::checker accepted a known-bad fixture"
+            echo "$out"
+            exit 1
+          fi
+          echo "$out" | grep -q "Placeholder text still present" \
+            && echo "$out" | grep -q "exceeds viewBox" \
+            && echo "$out" | grep -q "unknown node id" \
+            || { echo "::error::checker failed without reporting the injected defects"; echo "$out"; exit 1; }
+          echo "checker correctly rejected the bad fixture:"
+          echo "$out" | grep -E "✗|FAILED" || true
