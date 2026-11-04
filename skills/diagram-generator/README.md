@@ -136,11 +136,11 @@ Every generated artifact must pass the zero-dependency validator before it is re
 node scripts/check-diagram.mjs <output-file.html>
 ```
 
-It verifies placeholder removal, notes-rail presence, self-containment, marker integrity, IR geometry (node bounds, overlaps, edge endpoints, region bounds), `data-node-id`/`data-edge-id` cross-checks against the IR, and optional `labelAnchor` overlap checks. Warnings do not block; errors exit 1.
+It verifies placeholder removal, notes-rail presence, self-containment, marker integrity, IR geometry (node bounds, overlaps, edge endpoints, region bounds, region containment with a minimum 10px gutter on every side), `data-node-id`/`data-edge-id` cross-checks against the IR, and optional `labelAnchor` overlap checks. Warnings do not block; errors exit 1.
 
 A known-good reference artifact lives at `tests/fixtures/example-commerce-system-map.html` — it renders the Example Prompt brief below and passes the checker with zero errors and zero warnings. CI re-runs the checker against it on every push, so keep it green when changing checker rules or the template.
 
-A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the known-good artifact with three injected defects (a template placeholder residue, a node whose bounds leave the viewBox, and a region `contains` entry referencing a nonexistent node). CI asserts the checker rejects it (non-zero exit) and reports all three defect classes; this proves the checker fails closed, not just that it passes a good sample.
+A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the known-good artifact with four injected defects (a template placeholder residue, a node whose bounds leave the viewBox, a region `contains` entry referencing a nonexistent node, and a node sitting flush against its region border). CI asserts the checker rejects it (non-zero exit) and reports all four defect classes; this proves the checker fails closed, not just that it passes a good sample.
 
 ## Quality Guidance
 

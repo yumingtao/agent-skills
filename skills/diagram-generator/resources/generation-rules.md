@@ -130,6 +130,7 @@ Use solid connectors for request/response or data writes, dashed connectors for 
 - Keep labels short enough to fit inside nodes. Use notes for assumptions and long explanations.
 - Use consistent gutters between sibling boxes in the same lane. A visible jump in spacing is a defect unless it encodes a deliberate boundary.
 - Keep vertical gutters between adjacent rows or stacked regions consistent within about 5px unless the extra space encodes a deliberate boundary.
+- **Nodes must sit inside their region frame with breathing room.** A node listed in a region's `contains` keeps at least 10px of clear gutter on every side — the checker enforces this floor. A node flush with the region border makes the two strokes paint on top of each other and reads as a broken frame. Widen the region or shrink the node before letting edge coordinates drive the layout.
 - Center related lanes and child groups visually within their parent region. Do not leave a large dead band above or below one subsection while adjacent sections are dense.
 - When adding a new row or column to an existing diagram, rebalance neighboring nodes instead of only appending into leftover space.
 - Reserve clear gutters for connector labels and branch points before finalizing box positions.

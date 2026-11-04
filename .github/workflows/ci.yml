@@ -55,6 +55,8 @@ jobs:
           echo "$out" | grep -q "Placeholder text still present" \
             && echo "$out" | grep -q "exceeds viewBox" \
             && echo "$out" | grep -q "unknown node id" \
+            && echo "$out" | grep -q "escapes the region bounds" \
+            && echo "$out" | grep -q "sits too close to region" \
             || { echo "::error::checker failed without reporting the injected defects"; echo "$out"; exit 1; }
           echo "checker correctly rejected the bad fixture:"
           echo "$out" | grep -E "✗|FAILED" || true

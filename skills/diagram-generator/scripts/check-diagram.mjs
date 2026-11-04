@@ -192,6 +192,42 @@ if (ir) {
     }
   }
 
+  // 3b-3. Region containment and gutter: a node listed in region.contains must
+  // sit fully inside the region with a visible gutter on every side. A node
+  // flush with the region border (0px gutter) makes the two strokes paint on
+  // top of each other and reads as a broken frame in the render — the most
+  // common region defect that pure viewBox/bounds checks miss.
+  const MIN_REGION_GUTTER = 10;
+  if (regions) {
+    for (const region of regions) {
+      if (!region || typeof region !== 'object') continue;
+      const rb = region.bounds;
+      if (!rb || ![rb.x, rb.y, rb.width, rb.height].every(isFiniteNumber)) continue;
+      if (!Array.isArray(region.contains)) continue;
+      for (const cid of region.contains) {
+        const nb = nodeMap[cid];
+        if (!nb) continue; // unknown ids already failed in 3b
+        const escapes = nb.x < rb.x || nb.y < rb.y ||
+          nb.x + nb.width > rb.x + rb.width || nb.y + nb.height > rb.y + rb.height;
+        if (escapes) {
+          fail(`Node "${cid}" in region "${region.id}" escapes the region bounds.`);
+          continue;
+        }
+        const gutters = {
+          left: nb.x - rb.x,
+          top: nb.y - rb.y,
+          right: rb.x + rb.width - (nb.x + nb.width),
+          bottom: rb.y + rb.height - (nb.y + nb.height),
+        };
+        const tight = Object.entries(gutters).filter(([, g]) => g < MIN_REGION_GUTTER);
+        if (tight.length > 0) {
+          const detail = tight.map(([side, g]) => `${side}: ${g}px`).join(', ');
+          fail(`Node "${cid}" sits too close to region "${region.id}" border (${detail}; minimum ${MIN_REGION_GUTTER}px).`);
+        }
+      }
+    }
+  }
+
   // Revise artifacts should record their edit scope.
   if (ir.mode === 'revise') {
     const scopeValue = ir.edit_scope;
