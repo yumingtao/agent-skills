@@ -78,7 +78,7 @@
           </g>
 
           <g id="connectors" font-family="SFMono-Regular, JetBrains Mono, monospace" font-size="10" fill="#334155">
-            <path data-edge-id="users_to_cdn" d="M 170 240 V 200 H 220" stroke="#0f766e" stroke-width="2" fill="none" marker-end="url(#arrow-actor)"/>
+            <path data-edge-id="users_to_cdn" d="M 170 240 H 195 V 200 H 220" stroke="#0f766e" stroke-width="2" fill="none" marker-end="url(#arrow-actor)"/>
             <text x="195" y="188" text-anchor="middle">HTTPS</text>
 
             <path data-edge-id="cdn_to_lb" d="M 290 240 V 300" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-entry)"/>
@@ -105,16 +105,16 @@
             <path data-edge-id="rdsA_to_rdsB" d="M 650 465 H 1040" stroke="#7c3aed" stroke-width="2" stroke-dasharray="7 5" fill="none" marker-end="url(#arrow-state)"/>
             <text x="845" y="455" text-anchor="middle">logical replication</text>
 
-            <path data-edge-id="k8sA_to_object" d="M 700 325 V 560 H 1720 V 205 H 1690" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#arrow-state)"/>
+            <path data-edge-id="k8sA_to_object" d="M 700 325 H 720 V 560 H 1720 V 205 H 1690" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#arrow-state)"/>
             <text x="1734" y="380" text-anchor="start">S3 objects</text>
 
-            <path data-edge-id="k8sA_to_queue" d="M 700 340 V 560 H 1615 V 380" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 5" fill="none" marker-end="url(#arrow-message)"/>
+            <path data-edge-id="k8sA_to_queue" d="M 700 340 H 740 V 560 H 1615 V 380" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 5" fill="none" marker-end="url(#arrow-message)"/>
             <text x="1629" y="470" text-anchor="start">queue</text>
 
-            <path data-edge-id="k8sA_to_observability" d="M 600 380 H 430 V 780 H 500" stroke="#a16207" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-telemetry)"/>
+            <path data-edge-id="k8sA_to_observability" d="M 600 380 V 410 H 430 V 750 H 480 V 780" stroke="#a16207" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-telemetry)"/>
             <text x="416" y="580" text-anchor="end">metrics</text>
 
-            <path data-edge-id="k8sB_to_observability" d="M 1140 380 H 1520 V 780 H 1140" stroke="#a16207" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-telemetry)"/>
+            <path data-edge-id="k8sB_to_observability" d="M 1140 380 V 410 H 1520 V 750 H 1140 V 780" stroke="#a16207" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-telemetry)"/>
             <text x="1534" y="580" text-anchor="start">logs</text>
           </g>
 

@@ -572,6 +572,32 @@ function segmentRunsAlongRegionBorder(seg, rect) {
 // required gap in pixels; anything closer reads as a merged or overlapping line.
 const MIN_NODE_CLEARANCE = 3;
 
+// A connector segment must not run collinearly along any node's edge (including
+// its own source or target) for more than a short stub. The endpoint is allowed
+// to touch the edge at a single point, but a segment that coincides with the
+// edge for an extended distance merges visually with the node border.
+const NODE_EDGE_OVERLAP_TOL = 4;
+
+function segmentRunsAlongNodeEdge(seg, rect) {
+  const { x1, y1, x2, y2 } = seg;
+  const rx = rect.x, ry = rect.y, rRight = rx + rect.width, rBottom = ry + rect.height;
+  const EDGE_TOL = 1.5;
+  if (y1 === y2) {
+    const cy = y1;
+    if (Math.abs(cy - ry) > EDGE_TOL && Math.abs(cy - rBottom) > EDGE_TOL) return false;
+    const xL = Math.min(x1, x2), xR = Math.max(x1, x2);
+    const overlap = Math.max(0, Math.min(xR, rRight) - Math.max(xL, rx));
+    return overlap > NODE_EDGE_OVERLAP_TOL;
+  } else if (x1 === x2) {
+    const cx = x1;
+    if (Math.abs(cx - rx) > EDGE_TOL && Math.abs(cx - rRight) > EDGE_TOL) return false;
+    const yB = Math.min(y1, y2), yT = Math.max(y1, y2);
+    const overlap = Math.max(0, Math.min(yT, rBottom) - Math.max(yB, ry));
+    return overlap > NODE_EDGE_OVERLAP_TOL;
+  }
+  return false;
+}
+
 const irEdges = ir && Array.isArray(ir.edges) ? new Map(ir.edges.filter(edge => edge?.id).map(edge => [edge.id, edge])) : new Map();
 const nodeBoundsMap = new Map(irNodes.filter(n => n?.id && n.bounds).map(n => [n.id, n.bounds]));
 const regionBoundsList = (Array.isArray(ir.regions) ? ir.regions : [])
@@ -602,6 +628,19 @@ for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)
     for (const seg of segments) {
       if (segmentRectMinDistance(seg, nb) < MIN_NODE_CLEARANCE) {
         fail(`Edge "${edgeId}" path passes through or hugs node "${nid}" (${segmentRectMinDistance(seg, nb).toFixed(1)}px clearance).`);
+        break;
+      }
+    }
+  }
+
+  // 1b. A connector segment (including the terminal one that lands on the
+  //     source/target) must not run collinearly along a node's edge. The
+  //     endpoint may touch the edge at one point, but a segment that coincides
+  //     with the edge for an extended stretch merges with the node border.
+  for (const [nid, nb] of nodeBoundsMap) {
+    for (const seg of segments) {
+      if (segmentRunsAlongNodeEdge(seg, nb)) {
+        fail(`Edge "${edgeId}" runs along node "${nid}" border (collinear overlap > ${NODE_EDGE_OVERLAP_TOL}px).`);
         break;
       }
     }
