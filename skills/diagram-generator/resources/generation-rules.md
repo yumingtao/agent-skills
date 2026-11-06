@@ -225,7 +225,7 @@ Before final output, run `node scripts/check-diagram.mjs <output.html>`. The che
 - **[manual]** No label overflows its pill or its node, and no box paints over a label or region title. If edges carry `labelAnchor` geometry, overlap with node boxes is **[machine]**; everything else is visual.
 - **[machine]** No arrowhead ends in empty canvas; every connector touches its target node's edge.
 - **[machine]** No connector segment passes through or hugs any node rectangle (source and target nodes excluded); connectors must keep at least 3px clearance from every other node border.
-- **[machine]** No connector segment runs collinearly along a node's edge (including its own source or target) for more than a short stub. The endpoint may touch the edge at a single point, but the terminal segment must approach the edge perpendicularly so it does not merge with the node border.
+- **[machine]** No connector segment runs collinearly along a node's edge (including its own source or target). A segment may touch a node edge only at its endpoint and only when perpendicular to that edge; any collinear segment that overlaps or merely touches an edge (e.g. exiting a node at a corner and continuing along the border line) is rejected because it visually extends the node stroke.
 - **[machine]** No connector segment runs collinearly along a region border for more than a short stub; perpendicular crossings of region borders are allowed.
 - **[manual]** Control/policy/dependency edges follow the real direction of dependence, not parallel fans.
 - **[machine]** No placeholder text remains.
