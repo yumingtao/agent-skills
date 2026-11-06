@@ -6,6 +6,8 @@ The package is designed for agent environments such as Claude, Codex, Cursor, Op
 
 ## What It Produces
 
+![Example system map: the commerce platform rendered from the known-good fixture](docs/example-system-map.png)
+
 - System architecture maps
 - Repository implementation maps
 - Infrastructure and runtime maps
@@ -55,10 +57,13 @@ diagram-generator/
 │   ├── codex-smoke-test-prompt.md
 │   ├── drawio-mode-prompt.md
 │   └── portable-agent-smoke-test-prompt.md
+├── docs/
+│   └── example-system-map.png
 ├── tests/
 │   ├── platform-smoke-tests/
 │   └── fixtures/
-│       └── example-commerce-system-map.html
+│       ├── example-commerce-system-map.html
+│       └── bad-injected-defects.html
 └── RELEASE_CHECKLIST.md
 ```
 

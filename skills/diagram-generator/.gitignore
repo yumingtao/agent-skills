@@ -10,8 +10,9 @@
 *-system-map.html
 *-architecture.html
 smoke-*.html
-# Checked-in known-good fixture stays tracked
+# Checked-in known-good fixture and curated docs screenshots stay tracked
 !tests/fixtures/**
+!docs/**
 
 # Local editor and agent state
 .idea/
