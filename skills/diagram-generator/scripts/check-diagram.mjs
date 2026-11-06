@@ -501,8 +501,83 @@ function segmentIntersectsRectInterior(x1, y1, x2, y2, rx, ry, rw, rh) {
   return tMin < tMax;
 }
 
+// Minimum distance from a point to an axis-aligned rectangle. Returns 0 when
+// the point is inside or on the rectangle border.
+function pointRectDistance(px, py, rx, ry, rw, rh) {
+  const dx = Math.max(rx - px, 0, px - (rx + rw));
+  const dy = Math.max(ry - py, 0, py - (ry + rh));
+  return Math.hypot(dx, dy);
+}
+
+// Minimum distance from an axis-aligned (horizontal/vertical) segment to a
+// rectangle. Diagonal segments fall back to sampling endpoints + midpoint,
+// which is conservative (may over-report closeness) — generated diagrams use
+// only orthogonal connectors so this path is rarely hit.
+function segmentRectMinDistance(seg, rect) {
+  const { x1, y1, x2, y2 } = seg;
+  const rx = rect.x, ry = rect.y, rw = rect.width, rh = rect.height;
+  const rRight = rx + rw, rBottom = ry + rh;
+  if (y1 === y2) {
+    const cy = y1;
+    const xL = Math.min(x1, x2), xR = Math.max(x1, x2);
+    if (xR < rx) {
+      return Math.hypot(rx - xR, Math.max(0, ry - cy, cy - rBottom));
+    } else if (xL > rRight) {
+      return Math.hypot(xL - rRight, Math.max(0, ry - cy, cy - rBottom));
+    }
+    return Math.max(0, ry - cy, cy - rBottom);
+  } else if (x1 === x2) {
+    const cx = x1;
+    const yB = Math.min(y1, y2), yT = Math.max(y1, y2);
+    if (yT < ry) {
+      return Math.hypot(Math.max(0, rx - cx, cx - rRight), ry - yT);
+    } else if (yB > rBottom) {
+      return Math.hypot(Math.max(0, rx - cx, cx - rRight), yB - rBottom);
+    }
+    return Math.max(0, rx - cx, cx - rRight);
+  }
+  return Math.min(
+    pointRectDistance(x1, y1, rx, ry, rw, rh),
+    pointRectDistance(x2, y2, rx, ry, rw, rh),
+    pointRectDistance((x1 + x2) / 2, (y1 + y2) / 2, rx, ry, rw, rh)
+  );
+}
+
+// A connector segment that runs collinearly along a region's border for more
+// than a short stub looks like a merged/double line. Perpendicular crossings of
+// region borders are allowed; only long collinear overlaps are defects.
+function segmentRunsAlongRegionBorder(seg, rect) {
+  const { x1, y1, x2, y2 } = seg;
+  const rx = rect.x, ry = rect.y, rRight = rx + rect.width, rBottom = ry + rect.height;
+  const EDGE_TOL = 1.5;     // how close to the edge counts as "along"
+  const MIN_OVERLAP = 12;   // minimum collinear overlap length to flag
+  if (y1 === y2) {
+    const cy = y1;
+    if (Math.abs(cy - ry) > EDGE_TOL && Math.abs(cy - rBottom) > EDGE_TOL) return false;
+    const xL = Math.min(x1, x2), xR = Math.max(x1, x2);
+    const overlap = Math.max(0, Math.min(xR, rRight) - Math.max(xL, rx));
+    return overlap > MIN_OVERLAP;
+  } else if (x1 === x2) {
+    const cx = x1;
+    if (Math.abs(cx - rx) > EDGE_TOL && Math.abs(cx - rRight) > EDGE_TOL) return false;
+    const yB = Math.min(y1, y2), yT = Math.max(y1, y2);
+    const overlap = Math.max(0, Math.min(yT, rBottom) - Math.max(yB, ry));
+    return overlap > MIN_OVERLAP;
+  }
+  return false;
+}
+
+// Connectors must keep clear of every node border (except their own source and
+// target, which the endpoints legitimately touch). MIN_NODE_CLEARANCE is the
+// required gap in pixels; anything closer reads as a merged or overlapping line.
+const MIN_NODE_CLEARANCE = 3;
+
 const irEdges = ir && Array.isArray(ir.edges) ? new Map(ir.edges.filter(edge => edge?.id).map(edge => [edge.id, edge])) : new Map();
 const nodeBoundsMap = new Map(irNodes.filter(n => n?.id && n.bounds).map(n => [n.id, n.bounds]));
+const regionBoundsList = (Array.isArray(ir.regions) ? ir.regions : [])
+  .filter(r => r && r.bounds)
+  .map(r => ({ id: r.id, bounds: r.bounds }));
+
 for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)["'][^>]*\bd\s*=\s*["']([^"']+)["'][^>]*>/gi)) {
   const edgeId = match[1];
   const edge = irEdges.get(edgeId);
@@ -517,18 +592,28 @@ for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)
   if (from && !pointOnRectEdge(endpoints.start, from)) fail(`Edge "${edgeId}" starts away from source node "${edge.from}".`);
   if (to && !pointOnRectEdge(endpoints.end, to)) fail(`Edge "${edgeId}" ends away from target node "${edge.to}".`);
 
-  // No connector segment may pass through any node rectangle except the
-  // connector's own source and target nodes (which the endpoints legitimately
-  // touch). A line that crosses a box is a routing defect.
   const segments = parsePathSegments(match[2]);
-  if (segments) {
-    for (const [nid, nb] of nodeBoundsMap) {
-      if (nid === edge.from || nid === edge.to) continue;
-      for (const seg of segments) {
-        if (segmentIntersectsRectInterior(seg.x1, seg.y1, seg.x2, seg.y2, nb.x, nb.y, nb.width, nb.height)) {
-          fail(`Edge "${edgeId}" path passes through node "${nid}".`);
-          break;
-        }
+  if (!segments) continue;
+
+  // 1. No connector segment may pass through or run along any node rectangle
+  //    except the connector's own source and target nodes.
+  for (const [nid, nb] of nodeBoundsMap) {
+    if (nid === edge.from || nid === edge.to) continue;
+    for (const seg of segments) {
+      if (segmentRectMinDistance(seg, nb) < MIN_NODE_CLEARANCE) {
+        fail(`Edge "${edgeId}" path passes through or hugs node "${nid}" (${segmentRectMinDistance(seg, nb).toFixed(1)}px clearance).`);
+        break;
+      }
+    }
+  }
+
+  // 2. No connector segment may run collinearly along a region border for more
+  //    than a short stub. Perpendicular crossings of region borders are fine.
+  for (const region of regionBoundsList) {
+    for (const seg of segments) {
+      if (segmentRunsAlongRegionBorder(seg, region.bounds)) {
+        fail(`Edge "${edgeId}" runs along region "${region.id}" border.`);
+        break;
       }
     }
   }
