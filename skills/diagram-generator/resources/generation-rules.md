@@ -152,6 +152,8 @@ Reserve a band of at least 56px from the lowest component's bottom edge to the v
 
 - Route connectors with simple horizontal/vertical segments whenever possible.
 - Stop connectors at node edges, not at text centers.
+- **A connector must not pass through any node rectangle.** Route orthogonal segments around obstacles using the clear channels between rows and columns; if no channel exists, widen the gap or expand the canvas rather than letting a line cross a box. The checker enforces this: every segment of every connector path is tested against every node's bounds (except the connector's own source and target). A segment that penetrates a box's interior fails the build.
+- **Reserve routing channels, then place boxes.** Treat the gaps between node columns and rows as dedicated connector corridors (the system-map equivalent of sequence-diagram lifelines). Lay out boxes so the vertical and horizontal strips between them stay clear; run connectors inside those strips. Never let a box expand into an existing channel — move the box or widen the canvas first.
 - Every connector must begin and end **on a node edge**: the final point's `x` equals the target's left or right edge, or its `y` equals the target's top or bottom edge (account for the arrowhead `refX` so the tip touches the border). An arrowhead that stops in empty canvas is a defect — extend it to the box or delete the connector.
 - Draw control, policy, and dependency edges in the **real direction of dependence**. If component A consults component B (a registry, lookup table, policy store, or config), draw the chain `B → A → target`, not two parallel arrows both pointing at the target. Parallel fans imply two independent gates where there is really one.
 - Place connector labels near the middle of the route with a small background pill when the line crosses a busy area.
@@ -217,11 +219,12 @@ Optional replacement sections:
 
 ## Release Check
 
-Before final output, run `node scripts/check-diagram.mjs <output.html>`. The checker covers the items marked **[machine]** below (placeholder text, marker integrity, IR geometry, data-attribute cross-checks, region bounds, connector endpoints, self-containment). Items marked **[manual]** need eyes or judgment — the checker cannot see rendered output. If the checker is unavailable, manually verify both groups:
+Before final output, run `node scripts/check-diagram.mjs <output.html>`. The checker covers the items marked **[machine]** below (placeholder text, marker integrity, IR geometry, data-attribute cross-checks, region bounds, connector endpoints, connector routing around nodes, self-containment). Items marked **[manual]** need eyes or judgment — the checker cannot see rendered output. If the checker is unavailable, manually verify both groups:
 
 - **[manual] Render the diagram to a raster image and look at it** — coordinate review alone misses overlaps, clipping, and arrows that fall short. Re-render after every fix until the picture is clean.
 - **[manual]** No label overflows its pill or its node, and no box paints over a label or region title. If edges carry `labelAnchor` geometry, overlap with node boxes is **[machine]**; everything else is visual.
 - **[machine]** No arrowhead ends in empty canvas; every connector touches its target node's edge.
+- **[machine]** No connector segment passes through any node rectangle (source and target nodes excluded).
 - **[manual]** Control/policy/dependency edges follow the real direction of dependence, not parallel fans.
 - **[machine]** No placeholder text remains.
 - **[manual]** The selected lens matches the user's request.

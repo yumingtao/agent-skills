@@ -421,7 +421,88 @@ function pointOnRectEdge(point, bounds, tolerance = 2) {
   return onVertical || onHorizontal;
 }
 
+// Parse a simple M/H/V/L/Z path into its constituent line segments. Returns
+// null for unsupported path syntax (caller falls back to a warning). Each
+// segment is { x1, y1, x2, y2 } in absolute coordinates.
+function parsePathSegments(d) {
+  const tokens = d.match(/[a-zA-Z]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g) || [];
+  const segments = [];
+  let command = null;
+  let current = { x: 0, y: 0 };
+  let subpathStart = null;
+  let index = 0;
+  while (index < tokens.length) {
+    if (/^[a-zA-Z]$/.test(tokens[index])) command = tokens[index++];
+    if (!command || !/^[MmHhVvLlZz]$/.test(command)) return null;
+    if (command === 'Z' || command === 'z') {
+      if (subpathStart) {
+        segments.push({ x1: current.x, y1: current.y, x2: subpathStart.x, y2: subpathStart.y });
+        current = { ...subpathStart };
+      }
+      command = null;
+      continue;
+    }
+    const relative = command === command.toLowerCase();
+    const upper = command.toUpperCase();
+    let next;
+    if (upper === 'H') {
+      if (index >= tokens.length || /^[a-zA-Z]$/.test(tokens[index])) return null;
+      const x = Number(tokens[index++]);
+      next = { x: relative ? current.x + x : x, y: current.y };
+    } else if (upper === 'V') {
+      if (index >= tokens.length || /^[a-zA-Z]$/.test(tokens[index])) return null;
+      const y = Number(tokens[index++]);
+      next = { x: current.x, y: relative ? current.y + y : y };
+    } else {
+      if (index + 1 >= tokens.length || /^[a-zA-Z]$/.test(tokens[index]) || /^[a-zA-Z]$/.test(tokens[index + 1])) return null;
+      const x = Number(tokens[index++]);
+      const y = Number(tokens[index++]);
+      next = { x: relative ? current.x + x : x, y: relative ? current.y + y : y };
+    }
+    if (upper !== 'M') {
+      segments.push({ x1: current.x, y1: current.y, x2: next.x, y2: next.y });
+    } else {
+      subpathStart = { ...next };
+    }
+    current = next;
+    if (upper === 'M') command = relative ? 'l' : 'L'; // implicit line-to after move
+  }
+  return segments;
+}
+
+// Return true when the segment (x1,y1)-(x2,y2) passes through the *strict
+// interior* of the rectangle [rx, rx+rw] x [ry, ry+rh]. Endpoints and segments
+// lying exactly on a rectangle edge do NOT count — only segments that cross the
+// box. Uses the parametric t-interval of the open rectangle; an empty overlap
+// means the segment does not penetrate the interior.
+function segmentIntersectsRectInterior(x1, y1, x2, y2, rx, ry, rw, rh) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  let tMin = 0;
+  let tMax = 1;
+  if (dx > 0) {
+    tMin = Math.max(tMin, (rx - x1) / dx);
+    tMax = Math.min(tMax, (rx + rw - x1) / dx);
+  } else if (dx < 0) {
+    tMin = Math.max(tMin, (rx + rw - x1) / dx);
+    tMax = Math.min(tMax, (rx - x1) / dx);
+  } else if (!(x1 > rx && x1 < rx + rw)) {
+    return false;
+  }
+  if (dy > 0) {
+    tMin = Math.max(tMin, (ry - y1) / dy);
+    tMax = Math.min(tMax, (ry + rh - y1) / dy);
+  } else if (dy < 0) {
+    tMin = Math.max(tMin, (ry + rh - y1) / dy);
+    tMax = Math.min(tMax, (ry - y1) / dy);
+  } else if (!(y1 > ry && y1 < ry + rh)) {
+    return false;
+  }
+  return tMin < tMax;
+}
+
 const irEdges = ir && Array.isArray(ir.edges) ? new Map(ir.edges.filter(edge => edge?.id).map(edge => [edge.id, edge])) : new Map();
+const nodeBoundsMap = new Map(irNodes.filter(n => n?.id && n.bounds).map(n => [n.id, n.bounds]));
 for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)["'][^>]*\bd\s*=\s*["']([^"']+)["'][^>]*>/gi)) {
   const edgeId = match[1];
   const edge = irEdges.get(edgeId);
@@ -435,6 +516,22 @@ for (const match of html.matchAll(/<path\b[^>]*\bdata-edge-id\s*=\s*["']([^"']+)
   const to = irNodes.find(node => node?.id === edge.to)?.bounds;
   if (from && !pointOnRectEdge(endpoints.start, from)) fail(`Edge "${edgeId}" starts away from source node "${edge.from}".`);
   if (to && !pointOnRectEdge(endpoints.end, to)) fail(`Edge "${edgeId}" ends away from target node "${edge.to}".`);
+
+  // No connector segment may pass through any node rectangle except the
+  // connector's own source and target nodes (which the endpoints legitimately
+  // touch). A line that crosses a box is a routing defect.
+  const segments = parsePathSegments(match[2]);
+  if (segments) {
+    for (const [nid, nb] of nodeBoundsMap) {
+      if (nid === edge.from || nid === edge.to) continue;
+      for (const seg of segments) {
+        if (segmentIntersectsRectInterior(seg.x1, seg.y1, seg.x2, seg.y2, nb.x, nb.y, nb.width, nb.height)) {
+          fail(`Edge "${edgeId}" path passes through node "${nid}".`);
+          break;
+        }
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
