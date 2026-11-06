@@ -6,15 +6,39 @@ The package is designed for agent environments such as Claude, Codex, Cursor, Op
 
 ## What It Produces
 
-![Example system map: the commerce platform rendered from the known-good fixture](docs/example-system-map.png)
+The generator picks one of seven lenses and renders a standalone HTML/SVG map. Below are examples of the lenses in action, each rendered from a short brief and validated with `scripts/check-diagram.mjs`.
 
-- System architecture maps
-- Repository implementation maps
-- Infrastructure and runtime maps
-- Trust and security maps
-- Data movement maps
-- Deployment placement maps
-- Process and sequence-style maps
+### System lens
+
+![System map: a commerce platform with clients, API gateway, services, PostgreSQL, Redis, Kafka, object storage, and an OIDC provider](docs/example-system-map.png)
+
+Service relationships, user entry points, storage ownership, external integrations, and operational context.
+
+### Infrastructure lens
+
+![Infrastructure map: a multi-region deployment with CDN, global load balancer, two Kubernetes regions, managed databases, object storage, and a message bus](docs/example-infrastructure-map.png)
+
+Regions, clusters, networks, gateways, managed services, object stores, queues, containers, and deployment placement.
+
+### Trust lens
+
+![Trust map: public clients crossing a trust boundary where auth, token validation, policy, and secrets are enforced before private services run](docs/example-trust-map.png)
+
+Identity providers, public/private boundaries, privileged operations, secrets, policy checks, token validation, and administrative paths.
+
+### Data movement lens
+
+![Data movement map: web and IoT producers feeding an event stream that fans out to a warehouse, search index, and object store](docs/example-data-movement-map.png)
+
+Ingestion, replication, event streams, durable records, transformations, search indexes, exports, and reporting.
+
+### Process lens
+
+![Process map: an ordered CI/CD pipeline from commit through build, test, approval, staging, and production with a monitoring feedback loop](docs/example-process-map.png)
+
+Ordered interactions, approval chains, incident response, automation pipelines, and sequence-like flows.
+
+Also supported: **implementation maps** (repository-derived stages, script execution chains, generated artifacts) and **deployment placement maps** (workload-to-infra allocation).
 
 ## Output Contract
 
@@ -58,7 +82,11 @@ diagram-generator/
 │   ├── drawio-mode-prompt.md
 │   └── portable-agent-smoke-test-prompt.md
 ├── docs/
-│   └── example-system-map.png
+│   ├── example-system-map.png
+│   ├── example-infrastructure-map.png
+│   ├── example-trust-map.png
+│   ├── example-data-movement-map.png
+│   └── example-process-map.png
 ├── tests/
 │   ├── platform-smoke-tests/
 │   └── fixtures/
