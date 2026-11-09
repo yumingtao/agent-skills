@@ -205,12 +205,13 @@ The challenge produces a markdown report:
 
 ### Single Finding Challenge
 ```
-Skill(skill="insight-challenge", args='{"id":"HIGH-01","title":"...","file":"src/types.ts","line":58,...}')
+Invoke the insight-challenge skill with:
+{"id":"HIGH-01","title":"...","file":"src/types.ts","line":58,...}
 ```
 
 ### Batch Challenge
 ```
-Skill(skill="insight-challenge", args='findings.json')
+Invoke the insight-challenge skill with: findings.json
 ```
 
 ### Inline Challenge

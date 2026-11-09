@@ -30,6 +30,20 @@ Meta-skill for creating structured workflow skills following the orchestrator + 
   config     generated   0N-*.md     skill pkg
 ```
 
+## Environment Compatibility
+
+This skill was authored against Claude Code conventions. Other agent environments support the same patterns but differ in paths and tool names:
+
+| Concept | Claude Code | DeepSeek Harness |
+|---------|-------------|------------------|
+| Project skill root | `.claude/skills/` | `.dsh/skills/` or `.agents/skills/` |
+| User skill root | `~/.claude/skills/` | `$DSH_HOME/skills` or `~/.agents/skills/` |
+| Preference collection | `AskUserQuestion` | host interactive prompt (no fixed tool name) |
+| Task tracking | `TodoWrite` | host task/todo tool |
+| Inter-skill routing | `Skill(skill=..., args=...)` | host-specific invocation |
+
+When generating a skill for a non-Claude environment, translate the paths and tool names above. Treat `.claude/skills/` in the phase documents as `{skill-root}/`.
+
 ## Target Output Structure
 
 The skill this meta-skill produces follows this structure:
