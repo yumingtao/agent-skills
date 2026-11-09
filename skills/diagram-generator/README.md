@@ -173,6 +173,34 @@ node scripts/check-diagram.mjs <output-file.html>
 
 It verifies placeholder removal, notes-rail presence, self-containment, marker integrity, IR geometry (node bounds, overlaps, edge endpoints, region bounds, region containment with a minimum 10px gutter on every side), `data-node-id`/`data-edge-id` cross-checks against the IR, and optional `labelAnchor` overlap checks. Warnings do not block; errors exit 1.
 
+### Error codes
+
+Every checker message carries a stable, machine-greppable code prefix (`[Exxx]` errors, `[Wxxx]` warnings) so callers can classify failures without parsing prose:
+
+| Code | Category | Notes |
+|------|----------|-------|
+| E001 | Usage | No input path given |
+| E002 | IR parse | `#diagram-ir` slot is not valid JSON |
+| E003 | Regions | Region ids/bounds/containment violations |
+| E004 | IR structure | Missing/duplicate ids, missing nodes/edges arrays |
+| E005 | Bounds | Node/region bounds invalid or outside the viewBox |
+| E006 | Node overlap | Two node bounds intersect |
+| E007 | Edge references | Missing or unknown source/target node |
+| E008 | SVG–IR mismatch | `data-node-id`/`data-edge-id` not cross-consistent |
+| E009 | Markers | Undefined marker reference or fill mismatch |
+| E010 | Placeholder | Template placeholder text still present |
+| E011 | Notes rail | `<aside class="notes">` missing |
+| E012 | Self-containment | External or relative asset reference |
+| E013 | Label anchor | `labelAnchor` invalid or sitting on a node |
+| E014 | Connector geometry | Endpoint off-node, path through node, border-hugging |
+| E099 | Uncategorized | Any error not yet mapped — report it so it gets a code |
+| W001 | Legacy mode | No IR slot found; geometry checks skipped |
+| W002 | Revise scope | `mode: revise` without `edit_scope` |
+| W003 | Export UI | Optional toolbar / `#system-map` SVG absent |
+| W004 | Path syntax | Unsupported SVG path syntax; endpoint geometry unchecked — review manually |
+
+Exit codes: `0` when there are no errors (warnings allowed), `1` when any error exists.
+
 A known-good reference artifact lives at `tests/fixtures/example-commerce-system-map.html` — it renders the Example Prompt brief below and passes the checker with zero errors and zero warnings. CI re-runs the checker against it on every push, so keep it green when changing checker rules or the template.
 
 A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the known-good artifact with four injected defects (a template placeholder residue, a node whose bounds leave the viewBox, a region `contains` entry referencing a nonexistent node, and a node sitting flush against its region border). CI asserts the checker rejects it (non-zero exit) and reports all four defect classes; this proves the checker fails closed, not just that it passes a good sample.

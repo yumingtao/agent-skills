@@ -38,8 +38,36 @@ const html = readFileSync(resolve(inputPath), 'utf8');
 const errors = [];
 const warnings = [];
 
-function fail(msg) { errors.push(msg); }
-function warn(msg) { warnings.push(msg); }
+// Stable error/warning codes — keep in sync with the "Error codes" table in README.md.
+// Codes are matched on message content at fail()/warn() time; validation logic is unchanged.
+const ERROR_CODE_TABLE = [
+  [/^Usage:/, 'E001'],
+  [/invalid JSON/, 'E002'],
+  [/region/i, 'E003'],
+  [/#diagram-ir must|missing a non-empty string id|Duplicate IR/, 'E004'],
+  [/no bounds|invalid bounds|viewBox/, 'E005'],
+  [/overlaps node/, 'E006'],
+  [/missing a source node|missing a target node|references unknown/, 'E007'],
+  [/data-node-id|data-edge-id/, 'E008'],
+  [/marker/i, 'E009'],
+  [/Placeholder text/, 'E010'],
+  [/Notes rail/, 'E011'],
+  [/self-contained/, 'E012'],
+  [/labelAnchor/, 'E013'],
+  [/starts away from|ends away from|passes through or hugs|runs along node/, 'E014'],
+];
+const WARN_CODE_TABLE = [
+  [/legacy mode/, 'W001'],
+  [/edit_scope is missing/, 'W002'],
+  [/may be intentionally omitted|export buttons may not work/, 'W003'],
+  [/unsupported SVG path syntax/, 'W004'],
+];
+function codeFor(msg, table, fallback) {
+  for (const [re, code] of table) if (re.test(msg)) return code;
+  return fallback;
+}
+function fail(msg) { errors.push(`[${codeFor(msg, ERROR_CODE_TABLE, 'E099')}] ${msg}`); }
+function warn(msg) { warnings.push(`[${codeFor(msg, WARN_CODE_TABLE, 'W099')}] ${msg}`); }
 
 // ---------------------------------------------------------------------------
 // 1. Extract embedded IR JSON
