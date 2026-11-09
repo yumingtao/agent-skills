@@ -4,6 +4,10 @@ Original, platform-neutral agent skills — prompt assets that work across Claud
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+[![SkillHub](https://img.shields.io/badge/SkillHub-4%20published-green)](https://skillhub.cn/user/user_95900c57)
+[![DSH Index](https://img.shields.io/badge/DSH-market--index-blue)](https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 No runtime dependencies, no network calls, no build step. Each skill is a self-contained folder of instructions; where a skill supports multiple platforms, the platform files are thin adapters that route every agent to the same shared behavior.
 
 ## Skills
@@ -35,6 +39,36 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 
 - **diagram-generator** ships per-platform adapters: `AGENTS.md` (Cursor / OpenCode / Windsurf), `GEMINI.md`, `COPILOT-INSTRUCTIONS.md`, `CODEBUDDY.md`, `HERMES.md` — see its [README](skills/diagram-generator/README.md#installation).
 - The other three skills are Claude-skill-format folders; on platforms without a skills mechanism, point the agent at the skill's `SKILL.md` as an instruction file.
+
+### SkillHub (Community Marketplace)
+
+Install any skill directly from [SkillHub](https://skillhub.cn/user/user_95900c57):
+
+```bash
+# Install the CLI once
+curl -fsSL https://skillhub.cn/install/install.sh | bash
+
+# Install a skill (namespace: user_95900c57)
+skillhub install yumingtao-diagram-generator --namespace user_95900c57
+skillhub install yumingtao-clarify-before-acting --namespace user_95900c57
+skillhub install yumingtao-insight-challenge --namespace user_95900c57
+skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
+```
+
+### DeepSeek Harness (DSH)
+
+Add the market index, then install any skill:
+
+```bash
+# Add the index source (one-time)
+dsh plugin index add https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json
+
+# Install
+dsh plugin install diagram-generator
+dsh plugin install clarify-before-acting
+dsh plugin install insight-challenge
+dsh plugin install workflow-skill-designer
+```
 
 ## Sync
 
