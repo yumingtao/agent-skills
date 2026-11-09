@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.1.2
+version: 1.1.3
 summary: Adversarial review of code quality findings with source-anchored counter-evidence and structured verdicts.
 license: MIT
 disable-model-invocation: true

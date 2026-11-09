@@ -157,7 +157,7 @@ This document defines the structured output format for insight challenge verdict
   ],
   "supporting_evidence": [],
   "adjusted_severity": "none",
-  "recommendation": "Dismiss this finding; the claimed type gap does not exist"
+  "recommendation": "Dismiss this finding; the claimed missing backoff logic does not exist"
 }
 ```
 
@@ -174,7 +174,7 @@ This document defines the structured output format for insight challenge verdict
     "No external API exposes this function directly"
   ],
   "supporting_evidence": [
-    "src/utils.ts line 45: Function X确实没有输入验证"
+    "src/utils.ts line 45: Function X indeed lacks input validation"
   ],
   "adjusted_severity": "low",
   "recommendation": "Add defensive validation as a best practice, but do not prioritize as high severity"
