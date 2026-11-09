@@ -177,7 +177,7 @@ The challenge produces a markdown report:
 
 **Verdict**: <overturned|weakened|confirmed>
 **Confidence**: <0-100>%
-**Adjusted Severity**: <none|high|medium|low>
+**Adjusted Severity**: <none|critical|high|medium|low>
 
 ### Original Finding
 <finding summary>
