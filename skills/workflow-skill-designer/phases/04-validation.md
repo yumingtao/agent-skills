@@ -35,6 +35,7 @@ function validateStructure(config) {
   // Check SKILL.md frontmatter
   if (skillMdExists) {
     const skillMd = Read(`${skillDir}/SKILL.md`);
+    // extractYAMLFrontmatter() is reference pseudocode — use the host's real frontmatter parser
     const fm = extractYAMLFrontmatter(skillMd);
 
     if (!fm.name) results.errors.push('Frontmatter missing: name');

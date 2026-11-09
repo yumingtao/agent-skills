@@ -31,6 +31,8 @@ const inputType = detectInputType(userInput);
 
 When source is an existing orchestrator command + sub-commands:
 
+> **Reference pseudocode**: helper functions below (`extractYAMLFrontmatter()`, `parseRequirements()`, `removeYAMLFrontmatter()`, `extractSkillCallName()`) sketch the parsing intent only. When generating a runnable skill, replace them with the host environment's real utilities (a YAML frontmatter library, regex extraction, or the agent's own file-reading flow) — do not copy them as runnable code.
+
 ```javascript
 // Step A.1: Read orchestrator command
 const orchestratorPath = userInput; // e.g., ".claude/commands/workflow/plan.md"

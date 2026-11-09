@@ -136,6 +136,8 @@ function selectGenerationStrategy(phase, config) {
 
 When source is an existing command file, transform its content into phase file format:
 
+> **Reference pseudocode**: `extractYAMLFrontmatter()` / `removeYAMLFrontmatter()` below sketch the parsing intent only — replace them with the host environment's real frontmatter utilities in generated output.
+
 ```javascript
 function extractPhaseFromCommand(phase, config) {
   const sourceContent = Read(phase.sourcePath);

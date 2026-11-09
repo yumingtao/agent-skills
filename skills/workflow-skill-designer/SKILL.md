@@ -2,7 +2,7 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.1.1
+version: 1.1.2
 summary: Meta-skill for designing orchestrator + phases structured workflow skills.
 license: MIT
 disable-model-invocation: true
@@ -59,7 +59,7 @@ The following variables are set by the SKILL.md orchestrator and consumed by pha
 | `executionContext` | SKILL.md | Phase handoff (Pattern 7) | Active session state (sessionId, currentPhase, accumulated notes). Set when a phase hands off to another phase directly. |
 | `workflowConfig` | Phase 1 output | Phases 2–4 | Structured workflow definition (phases, data flow, conditions). |
 
-**Rule**: Phase files must reference these variables by name and document their origin. Never introduce undefined helper functions or variables in generated output.
+**Rule**: Phase files must reference these variables by name and document their origin. Never introduce undefined helper functions or variables in generated output. Helper functions appearing in phase-document code samples (e.g., `extractYAMLFrontmatter`, `parseRequirements`, `removeYAMLFrontmatter`) are **reference pseudocode** that sketch parsing intent — generated skills must replace them with the host environment's real utilities, never depend on them as-is.
 
 ## Target Output Structure
 
