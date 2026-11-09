@@ -1,0 +1,157 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Yumingtao Agent Skills",
+    "zh": "Yumingtao Agent Skills"
+  },
+  "description": {
+    "en": "Standalone agent skills for diagram generation, clarification discipline, adversarial review, and workflow skill design.",
+    "zh": "面向 Agent 的独立技能集：架构图生成、需求澄清、对抗式审查、工作流技能设计。"
+  },
+  "metadata": {
+    "categories": {
+      "diagram": { "title": { "en": "Diagrams", "zh": "图与可视化" } },
+      "workflow": { "title": { "en": "Workflow", "zh": "工作流" } },
+      "review": { "title": { "en": "Review", "zh": "审查" } }
+    },
+    "labels": {
+      "architecture": { "title": { "en": "Architecture", "zh": "架构" } },
+      "svg": { "title": { "en": "SVG", "zh": "SVG" } },
+      "meta-skill": { "title": { "en": "Meta Skill", "zh": "元技能" } },
+      "code-review": { "title": { "en": "Code Review", "zh": "代码审查" } }
+    }
+  },
+  "plugins": [
+    {
+      "name": "diagram-generator",
+      "title": {
+        "en": "Diagram Generator",
+        "zh": "架构图生成器"
+      },
+      "description": {
+        "en": "Generate production-quality standalone HTML/SVG technical diagrams: architecture, infrastructure, topology, deployment, data flow, trust boundary, and process maps.",
+        "zh": "生成生产级独立 HTML/SVG 技术图：架构图、基础设施图、拓扑图、部署图、数据流图、信任边界图与流程图。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/diagram-generator",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/diagram-generator"
+      },
+      "metadata": {
+        "category": "diagram",
+        "labels": ["architecture", "svg"]
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1794189709,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "path": "skills/diagram-generator"
+          }
+        }
+      ]
+    },
+    {
+      "name": "clarify-before-acting",
+      "title": {
+        "en": "Clarify Before Acting",
+        "zh": "行动前澄清"
+      },
+      "description": {
+        "en": "Resolve direction-changing ambiguity before acting on complex, ambiguous, or high-cost requests. Skips trivial, mechanical, low-risk tasks.",
+        "zh": "在复杂、模糊或高成本请求上先澄清方向再行动，自动跳过琐碎低风险任务。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/clarify-before-acting",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/clarify-before-acting"
+      },
+      "metadata": {
+        "category": "workflow"
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1794189709,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "path": "skills/clarify-before-acting"
+          }
+        }
+      ]
+    },
+    {
+      "name": "insight-challenge",
+      "title": {
+        "en": "Insight Challenge",
+        "zh": "洞察对抗审查"
+      },
+      "description": {
+        "en": "Adversarial review of code quality findings. Challenges insights with counter-evidence, verifies claims against source code, and produces structured verdicts.",
+        "zh": "对代码质量发现进行对抗性验证：用反向证据质疑结论，对照源码核实，输出结构化裁定。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/insight-challenge",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/insight-challenge"
+      },
+      "metadata": {
+        "category": "review",
+        "labels": ["code-review"]
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1794189709,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "path": "skills/insight-challenge"
+          }
+        }
+      ]
+    },
+    {
+      "name": "workflow-skill-designer",
+      "title": {
+        "en": "Workflow Skill Designer",
+        "zh": "工作流技能设计器"
+      },
+      "description": {
+        "en": "Meta-skill for designing orchestrator + phases structured workflow skills with progressive phase loading, task tracking, and inter-phase data flow.",
+        "zh": "元技能：设计 orchestrator + phases 结构的工作流技能，含渐进式加载、任务跟踪与阶段间数据流。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/workflow-skill-designer",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/workflow-skill-designer"
+      },
+      "metadata": {
+        "category": "workflow",
+        "labels": ["meta-skill"]
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1794189709,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "path": "skills/workflow-skill-designer"
+          }
+        }
+      ]
+    }
+  ]
+}
