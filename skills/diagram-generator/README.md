@@ -8,33 +8,35 @@ The package is designed for agent environments such as Claude, Codex, Cursor, Op
 
 The generator picks one of seven lenses and renders a standalone HTML/SVG map. Below are examples of the lenses in action, each rendered from a short brief and validated with `scripts/check-diagram.mjs`.
 
+> Example images below are hosted on GitHub. The `docs/*.png` and `LICENSE` files are part of the source repository; some packaging targets (e.g. SkillHub) strip images and license files from the distributed bundle.
+
 ### System lens
 
-![System map: a commerce platform with clients, API gateway, services, PostgreSQL, Redis, Kafka, object storage, and an OIDC provider](docs/example-system-map.png)
+![System map: a commerce platform with clients, API gateway, services, PostgreSQL, Redis, Kafka, object storage, and an OIDC provider](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-system-map.png)
 
 Service relationships, user entry points, storage ownership, external integrations, and operational context.
 
 ### Infrastructure lens
 
-![Infrastructure map: a multi-region deployment with CDN, global load balancer, two Kubernetes regions, managed databases, object storage, and a message bus](docs/example-infrastructure-map.png)
+![Infrastructure map: a multi-region deployment with CDN, global load balancer, two Kubernetes regions, managed databases, object storage, and a message bus](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-infrastructure-map.png)
 
 Regions, clusters, networks, gateways, managed services, object stores, queues, containers, and deployment placement.
 
 ### Trust lens
 
-![Trust map: public clients crossing a trust boundary where auth, token validation, policy, and secrets are enforced before private services run](docs/example-trust-map.png)
+![Trust map: public clients crossing a trust boundary where auth, token validation, policy, and secrets are enforced before private services run](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-trust-map.png)
 
 Identity providers, public/private boundaries, privileged operations, secrets, policy checks, token validation, and administrative paths.
 
 ### Data movement lens
 
-![Data movement map: web and IoT producers feeding an event stream that fans out to a warehouse, search index, and object store](docs/example-data-movement-map.png)
+![Data movement map: web and IoT producers feeding an event stream that fans out to a warehouse, search index, and object store](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-data-movement-map.png)
 
 Ingestion, replication, event streams, durable records, transformations, search indexes, exports, and reporting.
 
 ### Process lens
 
-![Process map: an ordered CI/CD pipeline from commit through build, test, approval, staging, and production with a monitoring feedback loop](docs/example-process-map.png)
+![Process map: an ordered CI/CD pipeline from commit through build, test, approval, staging, and production with a monitoring feedback loop](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-process-map.png)
 
 Ordered interactions, approval chains, incident response, automation pipelines, and sequence-like flows.
 
@@ -245,3 +247,29 @@ Use the default html-first mode. Keep visible text in English.
 ## Publishing
 
 Before publishing, remove local smoke-test outputs (the checked-in fixture under `tests/fixtures/` stays) and run `RELEASE_CHECKLIST.md`.
+
+## FAQ & Common Pitfalls
+
+**Q: The checker reports an edge collinear with a node or region border. What do I do?**
+A: Reroute the connector so it exits a node edge perpendicularly and travels in the free space between nodes. Never run a connector along the outer edge of its own source or target node, and avoid segments that share more than ~12 px with any region border.
+
+**Q: A node overlaps a region it should sit inside.**
+A: The checker enforces a 10 px gutter between every node and the region border. Shrink the node or expand the region; do not place nodes flush against a border.
+
+**Q: draw.io XML fails to import in draw.io / Confluence.**
+A: `html + drawio xml` mode is experimental. Always import-test the XML before relying on it. If editability is not required, use the default `html-first` mode, which is production-ready.
+
+**Q: The generated HTML has leftover placeholder text.**
+A: Every `{{...}}` token in `resources/template.html` must be replaced with concrete content. The checker fails on any residual placeholder. Do not leave template defaults in a delivered artifact.
+
+**Q: Can I edit an existing diagram instead of regenerating it?**
+A: Yes — prefer local coordinate and connector changes over full regeneration. Inspect the current artifact first and preserve unrelated nodes, notes, and color semantics.
+
+**Q: The diagram looks cluttered.**
+A: Use the notes rail for longer explanations instead of crowding the canvas. Keep one abstraction level per artifact and put secondary flows behind the main path.
+
+**Q: Which lens should I pick?**
+A: System for components/flows, infrastructure for deployment topology, trust for security boundaries, data movement for ingestion/streams, process for ordered pipelines, deployment for workload placement, implementation for code-derived stages. When unsure, start with a system map.
+
+**Q: Why are images and LICENSE missing from my installed copy?**
+A: Some distributors (e.g. SkillHub) strip PNG images and standalone LICENSE files from the package for security/format reasons. The canonical images and license are always available in the source GitHub repository.

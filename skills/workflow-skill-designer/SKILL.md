@@ -2,11 +2,11 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.0.0
+version: 1.1.0
 summary: Meta-skill for designing orchestrator + phases structured workflow skills.
 license: MIT
 disable-model-invocation: true
-description: Meta-skill for designing orchestrator+phases structured workflow skills. Creates SKILL.md coordinator with progressive phase loading, TodoWrite patterns, and data flow. Triggers on "design workflow skill", "create workflow skill", "workflow skill designer".
+description: Meta-skill for designing orchestrator+phases structured workflow skills. Creates SKILL.md coordinator with progressive phase loading, TodoWrite patterns, and data flow. Triggers on "design workflow skill", "create workflow skill", "workflow skill designer", "设计工作流技能", "创建 workflow skill". Supports Chinese interaction and domestic platforms (通义, 豆包, Trae, CodeBuddy).
 allowed-tools: Agent, AskUserQuestion, TodoWrite, Read, Write, Edit, Bash, Glob, Grep
 session-mode: none
 ---

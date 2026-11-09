@@ -2,10 +2,10 @@
 name: clarify-before-acting
 slug: yumingtao-clarify-before-acting
 displayName: Clarify Before Acting
-version: 1.0.0
+version: 1.1.0
 summary: Resolve direction-changing ambiguity before acting on complex or high-cost requests.
 license: MIT
-description: Before acting on a complex, ambiguous, or high-cost request, resolve direction-changing ambiguity first: do your own homework, check memory for questions already answered, work a question queue one item at a time, and never guess where direction is at stake. Skips trivial, mechanical, low-risk tasks.
+description: Before acting on a complex, ambiguous, or high-cost request, resolve direction-changing ambiguity first: do your own homework, check memory for questions already answered, work a question queue one item at a time, and never guess where direction is at stake. Skips trivial, mechanical, low-risk tasks. Triggers on "clarify before acting", "ask before doing", "确认需求", "先澄清再做", "方向不确定". Supports Chinese interaction and domestic platforms (通义, 豆包, Trae, CodeBuddy).
 ---
 
 # Clarify Before Acting
