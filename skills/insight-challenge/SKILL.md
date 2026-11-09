@@ -1,5 +1,10 @@
 ---
 name: insight-challenge
+slug: yumingtao-insight-challenge
+displayName: Insight Challenge
+version: 1.0.0
+summary: Adversarial review of code quality findings with source-anchored counter-evidence and structured verdicts.
+license: MIT
 disable-model-invocation: true
 description: "Adversarial review of code quality findings. Challenges insights with counter-evidence, verifies claims against source code, and produces structured verdicts. Triggers on 'insight-challenge', 'challenge finding', '审查发现'."
 allowed-tools: Read(*), Glob(*), Grep(*), Bash(*), Write(*)

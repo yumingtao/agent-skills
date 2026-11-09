@@ -1,5 +1,10 @@
 ---
 name: diagram-generator
+slug: yumingtao-diagram-generator
+displayName: Diagram Generator
+version: 1.0.0
+summary: Generate production-quality standalone HTML/SVG technical diagrams with a built-in geometry checker.
+license: MIT
 description: >
   Generate professional standalone HTML/SVG technical diagrams. Use when the
   user asks to draw, create, or generate an architecture diagram, system map,
