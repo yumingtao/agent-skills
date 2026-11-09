@@ -2,7 +2,7 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.1.0
+version: 1.1.1
 summary: Generate production-quality standalone HTML/SVG technical diagrams with a built-in geometry checker.
 license: MIT
 description: >
@@ -40,3 +40,15 @@ Load and follow these files before generating a diagram:
 Keep this file intentionally thin. Do not duplicate the shared design system, SVG rules, output-mode policy, or audit checklist here; update `resources/generation-rules.md` instead.
 
 When asked to optimize a generated diagram, prefer the smallest edit that fixes the requested layout or routing defect. Do not rewrite the whole map unless the user asks for a redesign.
+
+## Out of Scope
+
+This skill generates **technical architecture and system diagrams** as standalone HTML/SVG. It is **not** for:
+
+- Free-form illustration, hand-drawn sketches, or pixel-art.
+- Statistical charts (bar, line, pie) — use a charting library or spreadsheet.
+- Pixel-perfect UI mockups or marketing visuals — use a design tool.
+- Complex non-orthogonal connector routing (curved splines, bezier) — the built-in checker validates orthogonal paths; complex curves require manual review.
+- draw.io-first production output — `html + drawio xml` is experimental; default to `html-first`.
+
+Language: output labels and notes in the user's preferred language (Chinese or English). 触发词包括 "帮我画个架构图"、"画一张拓扑图"、"生成系统图"。

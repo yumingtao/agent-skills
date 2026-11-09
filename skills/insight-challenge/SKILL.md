@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.1.0
+version: 1.1.1
 summary: Adversarial review of code quality findings with source-anchored counter-evidence and structured verdicts.
 license: MIT
 disable-model-invocation: true
@@ -125,7 +125,7 @@ Produce structured output:
     "Design doc specifies 20 edge types, not 28"
   ],
   "supporting_evidence": [],
-  "adjusted_severity": "none|high|medium|low",
+  "adjusted_severity": "none|critical|high|medium|low",
   "recommendation": "Dismiss this finding; the claimed gap does not exist"
 }
 ```
@@ -232,3 +232,35 @@ Evidence: grep shows no export keyword
 - **team-adversarial-swarm**: Multi-agent adversarial analysis
 - **team-quality-assurance**: QA pipeline with issue discovery
 - **codify-to-knowhow**: Capturing verified knowledge
+
+## Scope & Limitations
+
+This skill is for **adversarial review of code-quality findings against
+source code**. It is **not** suitable for:
+
+- Security-only audits or vulnerability scanning (use a dedicated security
+  review tool).
+- Generic code review of a full MR/PR without specific findings to challenge.
+- Findings that cannot be verified against accessible source code, design docs,
+  or runtime evidence — in that case output `weakened` with a note that
+  evidence is unavailable.
+- Style-only or preference-based findings with no factual claim to verify.
+
+## FAQ
+
+**Q: What if the source file doesn't exist?**
+A: Output `weakened` with confidence lowered. Note the missing file as the
+reason; do not guess the finding is wrong.
+
+**Q: What if multiple findings contradict each other?**
+A: Challenge each independently. If one finding's evidence overturns another,
+note the conflict in the `reasoning` field.
+
+**Q: Can I confirm a finding without reading the source?**
+A: No. Always verify against the source. If the source is inaccessible, lower
+confidence and say so.
+
+**Q: How is `confidence` decided?**
+A: 90–100 = source directly proves the verdict; 70–89 = strong evidence with
+minor gaps; below 70 = evidence is partial or ambiguous. Never fabricate
+confidence — justify it with the evidence collected.

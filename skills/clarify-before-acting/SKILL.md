@@ -2,7 +2,7 @@
 name: clarify-before-acting
 slug: yumingtao-clarify-before-acting
 displayName: Clarify Before Acting
-version: 1.1.0
+version: 1.1.1
 summary: Resolve direction-changing ambiguity before acting on complex or high-cost requests.
 license: MIT
 description: Before acting on a complex, ambiguous, or high-cost request, resolve direction-changing ambiguity first: do your own homework, check memory for questions already answered, work a question queue one item at a time, and never guess where direction is at stake. Skips trivial, mechanical, low-risk tasks. Triggers on "clarify before acting", "ask before doing", "确认需求", "先澄清再做", "方向不确定". Supports Chinese interaction and domestic platforms (通义, 豆包, Trae, CodeBuddy).
@@ -124,3 +124,42 @@ not a mandatory questionnaire.
 *Extended guidance — questioning lenses, patterns, scope mapping, and examples —
 lives in [`references/playbook.md`](references/playbook.md). Read it when a
 task is hard enough to need it; the rule above is enough for everyday use.*
+
+## Out of Scope
+
+This skill does **not** apply when:
+
+- The request is trivial, mechanical, or low-risk (formatting, renaming,
+  translation, single-file edits with clear intent).
+- The direction is already unambiguous and testable.
+- The user explicitly says "just do it" and the remaining unknowns are
+  detail-level, not direction-changing — in that case proceed with stated
+  assumptions.
+- The task requires domain expertise the agent cannot verify internally;
+  surface that as a known unknown rather than guessing.
+
+## FAQ
+
+**Q: How many questions is too many?**
+A: No hard cap, but each question must change a direction. If you can proceed
+with a stated assumption instead, do that. Stop asking the moment you can write
+the goal, constraints, and one testable success criterion.
+
+**Q: The user said "you ask too much" — do I stop?**
+A: Not necessarily. That is usually a pace complaint, not a stop. Keep the
+queue, just make questions shorter. Only stop when the user explicitly says
+"don't ask, just do it."
+
+**Q: What if the user won't answer a direction-changing question?**
+A: Convert it to a stated assumption with its risk, say so plainly, and
+proceed. Do not block forever.
+
+**Q: Do I ask before every edit?**
+A: No. Only before direction-changing or high-cost actions. Mechanical edits
+go straight through.
+
+## Language Support
+
+This skill supports Chinese interaction. You may ask questions and receive
+answers in Chinese; the task contract and assumptions may be written in the
+user's preferred language. 触发词包括 "确认需求"、"先澄清再做"、"方向不确定"。

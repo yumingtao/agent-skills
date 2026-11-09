@@ -2,12 +2,12 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.1.0
+version: 1.1.1
 summary: Meta-skill for designing orchestrator + phases structured workflow skills.
 license: MIT
 disable-model-invocation: true
 description: Meta-skill for designing orchestrator+phases structured workflow skills. Creates SKILL.md coordinator with progressive phase loading, TodoWrite patterns, and data flow. Triggers on "design workflow skill", "create workflow skill", "workflow skill designer", "设计工作流技能", "创建 workflow skill". Supports Chinese interaction and domestic platforms (通义, 豆包, Trae, CodeBuddy).
-allowed-tools: Agent, AskUserQuestion, TodoWrite, Read, Write, Edit, Bash, Glob, Grep
+allowed-tools: Task, AskUserQuestion, TodoWrite, Read, Write, Edit, Bash, Glob, Grep
 session-mode: none
 ---
 
@@ -48,6 +48,18 @@ This skill was authored against Claude Code conventions. Other agent environment
 | Inter-skill routing | `Skill(skill=..., args=...)` | host-specific invocation |
 
 When generating a skill for a non-Claude environment, translate the paths and tool names above. Treat `.claude/skills/` in the phase documents as `{skill-root}/`.
+
+### Context Variables (orchestrator-provided)
+
+The following variables are set by the SKILL.md orchestrator and consumed by phase files. They are NOT standalone helper functions — they are in-memory context populated before phase dispatch:
+
+| Variable | Set by | Used by | Description |
+|----------|--------|---------|-------------|
+| `workflowPreferences` | SKILL.md (via `AskUserQuestion`) | All phases | Collected preferences (autoYes, forceExplore, etc.). Phases read `workflowPreferences.{key}`, never re-prompt. |
+| `executionContext` | SKILL.md | Phase handoff (Pattern 7) | Active session state (sessionId, currentPhase, accumulated notes). Set when a phase hands off to another phase directly. |
+| `workflowConfig` | Phase 1 output | Phases 2–4 | Structured workflow definition (phases, data flow, conditions). |
+
+**Rule**: Phase files must reference these variables by name and document their origin. Never introduce undefined helper functions or variables in generated output.
 
 ## Target Output Structure
 
@@ -175,6 +187,7 @@ Phase files are internal execution documents. They MUST NOT contain:
 | Invocation syntax (`/skill-name "..."`) | Not user-facing docs | Removed or SKILL.md only |
 | Conversion provenance (`Source: Converted from...`) | Implementation detail | Removed |
 | Skill routing for inter-phase (`Skill(skill="...")`) | Use direct phase read | Direct `Read("phases/...")` |
+| TODO / `...` / placeholder markers (`{TODO}`, `TBD`, `fill in`) | Generated skills must be executable as-is | Replace with concrete implementation or omit the step |
 
 ### Pattern 9: Compact Recovery (Phase Persistence)
 
@@ -373,6 +386,8 @@ What goes into SKILL.md vs what goes into phase files:
 
 **Critical Rule**: Phase files must be **content-faithful** to their source. Do NOT summarize, abbreviate, or simplify. The phase file IS the execution instruction - every bash command, every agent prompt, every validation step must be preserved.
 
+**No-Placeholder Rule**: Generated phase files must be immediately executable. They MUST NOT contain `TODO`, `TBD`, `...`, `fill in`, `{placeholder}`, or any incomplete step. If a step cannot be concretely specified, omit it rather than leaving a stub. The Validation phase (Phase 4) must scan for these markers and reject any file containing them.
+
 ## SKILL.md Template
 
 ```markdown
@@ -513,10 +528,49 @@ When designing a new workflow skill, answer these questions:
 | How many phases? | Directory structure | 3-7 phases typical |
 | Which phases are conditional? | Orchestrator logic | "Phase 3 only if conflict_risk >= medium" |
 | What data flows between phases? | Data Flow section | sessionId, contextPath, configFlags |
-| Which phases use agents? | Phase file complexity | Agent prompts need verbatim preservation |
+| Which phases use subagents? | Phase file complexity | Subagent prompts need verbatim preservation |
 | What's the TodoWrite granularity? | TodoWrite Pattern | Some phases have sub-tasks, others are atomic |
 | Is there a planning notes pattern? | Post-Phase Updates | Accumulated state document across phases |
 | What's the error recovery? | Error Handling | Retry once then report, vs rollback |
 | Does it need preference collection? | Interactive Preference Collection | Collect via AskUserQuestion in SKILL.md, pass as workflowPreferences |
 | Does phase N hand off to phase M? | Direct Phase Handoff (Pattern 7) | Read phase doc directly, not Skill() routing |
 | Will later phases run after long context? | Compact Recovery (Pattern 9) | Add sentinel + checkpoints, mark 🔄 in Phase Reference table |
+
+## When NOT to Use
+
+This meta-skill is **not** the right fit when:
+
+- The workflow has only a single phase or is a flat sequence of steps with no
+  coordination needs — write a single SKILL.md or command instead.
+- The target environment has no interactive tool (cannot run `AskUserQuestion`
+  or equivalent) — preferences cannot be collected at runtime.
+- The workflow requires no persistent state across phases — a single-pass
+  instruction is simpler.
+- You need to design a non-workflow skill (e.g., a pure reference skill, a
+  formatting skill) — this pattern is for multi-phase orchestration.
+
+## FAQ
+
+**Q: How many phases is too many?**
+A: 3–7 is typical. Beyond 7, consider whether the workflow should be split into
+two skills. Below 3, you may not need the orchestrator+phases pattern.
+
+**Q: Can a phase call another skill?**
+A: Use direct phase handoff (Pattern 7) within the same skill. For calling
+*other* skills, use the host's skill invocation mechanism from SKILL.md, not
+from inside a phase file.
+
+**Q: What if the generated phase file has a TODO?**
+A: That is a defect. The No-Placeholder Rule requires every step to be
+concrete. Either implement the step or remove it. The Validation phase (Phase 4)
+must reject files containing TODO/TBD/`...` markers.
+
+**Q: Do all phases need the compact sentinel?**
+A: No — only phases that run after long context or that hand off from earlier
+phases (Pattern 9). Mark those with 🔄 in the Phase Reference table.
+
+## Language Support
+
+This meta-skill supports Chinese interaction. Requirements, preferences, and
+phase content may be authored in Chinese. The generated skill's SKILL.md and
+phase files should match the user's preferred language. 触发词包括 "设计工作流技能"、"创建 workflow skill"。
