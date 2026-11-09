@@ -49,7 +49,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
             "path": "skills/diagram-generator"
           }
         }
@@ -81,7 +81,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
             "path": "skills/clarify-before-acting"
           }
         }
@@ -114,7 +114,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
             "path": "skills/insight-challenge"
           }
         }
@@ -147,7 +147,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "73baed8ec7ee42a5e8b64a9e31a63ec1debf4a93",
+            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
             "path": "skills/workflow-skill-designer"
           }
         }
