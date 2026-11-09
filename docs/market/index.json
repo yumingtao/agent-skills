@@ -10,15 +10,50 @@
   },
   "metadata": {
     "categories": {
-      "diagram": { "title": { "en": "Diagrams", "zh": "图与可视化" } },
-      "workflow": { "title": { "en": "Workflow", "zh": "工作流" } },
-      "review": { "title": { "en": "Review", "zh": "审查" } }
+      "diagram": {
+        "title": {
+          "en": "Diagrams",
+          "zh": "图与可视化"
+        }
+      },
+      "workflow": {
+        "title": {
+          "en": "Workflow",
+          "zh": "工作流"
+        }
+      },
+      "review": {
+        "title": {
+          "en": "Review",
+          "zh": "审查"
+        }
+      }
     },
     "labels": {
-      "architecture": { "title": { "en": "Architecture", "zh": "架构" } },
-      "svg": { "title": { "en": "SVG", "zh": "SVG" } },
-      "meta-skill": { "title": { "en": "Meta Skill", "zh": "元技能" } },
-      "code-review": { "title": { "en": "Code Review", "zh": "代码审查" } }
+      "architecture": {
+        "title": {
+          "en": "Architecture",
+          "zh": "架构"
+        }
+      },
+      "svg": {
+        "title": {
+          "en": "SVG",
+          "zh": "SVG"
+        }
+      },
+      "meta-skill": {
+        "title": {
+          "en": "Meta Skill",
+          "zh": "元技能"
+        }
+      },
+      "code-review": {
+        "title": {
+          "en": "Code Review",
+          "zh": "代码审查"
+        }
+      }
     }
   },
   "plugins": [
@@ -40,16 +75,19 @@
       },
       "metadata": {
         "category": "diagram",
-        "labels": ["architecture", "svg"]
+        "labels": [
+          "architecture",
+          "svg"
+        ]
       },
       "versions": [
         {
-          "version": "1.0.0",
-          "publishTimestamp": 1794189709,
+          "version": "1.1.0",
+          "publishTimestamp": 1794280000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
+            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
             "path": "skills/diagram-generator"
           }
         }
@@ -76,12 +114,12 @@
       },
       "versions": [
         {
-          "version": "1.0.0",
-          "publishTimestamp": 1794189709,
+          "version": "1.1.0",
+          "publishTimestamp": 1794280000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
+            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
             "path": "skills/clarify-before-acting"
           }
         }
@@ -105,16 +143,18 @@
       },
       "metadata": {
         "category": "review",
-        "labels": ["code-review"]
+        "labels": [
+          "code-review"
+        ]
       },
       "versions": [
         {
-          "version": "1.0.0",
-          "publishTimestamp": 1794189709,
+          "version": "1.1.0",
+          "publishTimestamp": 1794280000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
+            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
             "path": "skills/insight-challenge"
           }
         }
@@ -138,16 +178,18 @@
       },
       "metadata": {
         "category": "workflow",
-        "labels": ["meta-skill"]
+        "labels": [
+          "meta-skill"
+        ]
       },
       "versions": [
         {
-          "version": "1.0.0",
-          "publishTimestamp": 1794189709,
+          "version": "1.1.0",
+          "publishTimestamp": 1794280000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "46e6f715e1222aaa0d7f7fd8df9301ba088ab161",
+            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
             "path": "skills/workflow-skill-designer"
           }
         }
