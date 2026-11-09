@@ -82,12 +82,12 @@
       },
       "versions": [
         {
-          "version": "1.1.0",
-          "publishTimestamp": 1794280000,
+          "version": "1.1.1",
+          "publishTimestamp": 1794300000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
+            "commit": "55853c2194b578388a6b65654ac8b1fda195d5ff",
             "path": "skills/diagram-generator"
           }
         }
@@ -114,12 +114,12 @@
       },
       "versions": [
         {
-          "version": "1.1.0",
-          "publishTimestamp": 1794280000,
+          "version": "1.1.1",
+          "publishTimestamp": 1794300000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
+            "commit": "55853c2194b578388a6b65654ac8b1fda195d5ff",
             "path": "skills/clarify-before-acting"
           }
         }
@@ -149,12 +149,12 @@
       },
       "versions": [
         {
-          "version": "1.1.0",
-          "publishTimestamp": 1794280000,
+          "version": "1.1.1",
+          "publishTimestamp": 1794300000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
+            "commit": "55853c2194b578388a6b65654ac8b1fda195d5ff",
             "path": "skills/insight-challenge"
           }
         }
@@ -184,12 +184,12 @@
       },
       "versions": [
         {
-          "version": "1.1.0",
-          "publishTimestamp": 1794280000,
+          "version": "1.1.1",
+          "publishTimestamp": 1794300000,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "09d3cea8adad90a8557a213885943dc0c0e3b3a1",
+            "commit": "55853c2194b578388a6b65654ac8b1fda195d5ff",
             "path": "skills/workflow-skill-designer"
           }
         }
