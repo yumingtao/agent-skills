@@ -8,35 +8,35 @@
 
 生成器从七种视角（lens）中选择一种，渲染独立 HTML/SVG 图。以下是各视角的实例，均由简短简报渲染并通过 `scripts/check-diagram.mjs` 校验。
 
-> 下方示例图片托管于 GitHub。`docs/*.png` 和 `LICENSE` 文件属于源仓库；某些打包目标（如 SkillHub）会从分发包中剥离图片和许可证文件。
+> 下方示例图片位于源仓库 `docs/` 目录（相对路径引用）。`docs/*.png` 和 `LICENSE` 文件属于源仓库；某些打包目标（如 SkillHub）会从分发包中剥离图片和许可证文件，此时可在源仓库中查看。
 
 ### 系统视角
 
-![系统图：含客户端、API 网关、服务、PostgreSQL、Redis、Kafka、对象存储和 OIDC 提供方的电商平台](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-system-map.png)
+![系统图：含客户端、API 网关、服务、PostgreSQL、Redis、Kafka、对象存储和 OIDC 提供方的电商平台](docs/example-system-map.png)
 
 服务关系、用户入口、存储归属、外部集成和运维上下文。
 
 ### 基础设施视角
 
-![基础设施图：多区域部署，含 CDN、全局负载均衡、两个 Kubernetes 区域、托管数据库、对象存储和消息总线](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-infrastructure-map.png)
+![基础设施图：多区域部署，含 CDN、全局负载均衡、两个 Kubernetes 区域、托管数据库、对象存储和消息总线](docs/example-infrastructure-map.png)
 
 区域、集群、网络、网关、托管服务、对象存储、队列、容器和部署位置。
 
 ### 信任边界视角
 
-![信任图：公共客户端跨越信任边界，在私有服务运行前执行认证、令牌校验、策略和密钥管理](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-trust-map.png)
+![信任图：公共客户端跨越信任边界，在私有服务运行前执行认证、令牌校验、策略和密钥管理](docs/example-trust-map.png)
 
 身份提供方、公有/私有边界、特权操作、密钥、策略检查、令牌校验和管理路径。
 
 ### 数据流动视角
 
-![数据流图：Web 和 IoT 生产者汇入事件流，分发到数据仓库、搜索索引和对象存储](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-data-movement-map.png)
+![数据流图：Web 和 IoT 生产者汇入事件流，分发到数据仓库、搜索索引和对象存储](docs/example-data-movement-map.png)
 
 摄取、复制、事件流、持久记录、转换、搜索索引、导出和报表。
 
 ### 流程视角
 
-![流程图：从提交到构建、测试、审批、预发和生产的 CI/CD 流水线，含监控反馈回路](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-process-map.png)
+![流程图：从提交到构建、测试、审批、预发和生产的 CI/CD 流水线，含监控反馈回路](docs/example-process-map.png)
 
 有序交互、审批链、事件响应、自动化流水线和类序列流。
 
@@ -62,13 +62,15 @@ Draw.io XML 是可选的，仅当 draw.io 或 Confluence draw.io 中的可编辑
 ```text
 diagram-generator/
 ├── README.md
+├── README.en.md
 ├── SKILL.md
+├── SKILL.en.md
 ├── AGENTS.md
 ├── GEMINI.md
 ├── COPILOT-INSTRUCTIONS.md
 ├── CODEBUDDY.md
 ├── HERMES.md
-├── LICENSE
+├── LICENSE                (repo only — stripped from some distributions)
 ├── agents/
 │   └── openai.yaml
 ├── resources/
@@ -83,7 +85,7 @@ diagram-generator/
 │   ├── codex-smoke-test-prompt.md
 │   ├── drawio-mode-prompt.md
 │   └── portable-agent-smoke-test-prompt.md
-├── docs/
+├── docs/                  (repo only — PNG files are stripped from some distributions)
 │   ├── example-system-map.png
 │   ├── example-infrastructure-map.png
 │   ├── example-trust-map.png
@@ -93,24 +95,32 @@ diagram-generator/
 │   ├── platform-smoke-tests/
 │   └── fixtures/
 │       ├── example-commerce-system-map.html
+│       ├── infrastructure-map.html
+│       ├── trust-map.html
+│       ├── data-movement-map.html
+│       ├── process-map.html
+│       ├── deployment-map.html
+│       ├── implementation-map.html
 │       └── bad-injected-defects.html
 └── RELEASE_CHECKLIST.md
 ```
 
-## Installation
+CI 配置位于仓库根 `.github/workflows/ci.yml`（不属于本技能分发包）。
+
+## 安装
 
 下方按平台给出安装方式：核心是把本目录放到平台的技能/指令目录，并保证 `resources/` 可访问。中文环境同样适用，触发词见 SKILL.md。
 
 ### Claude
 
-Place or link this directory under a Claude skills folder:
+将本目录放置或链接到 Claude 技能目录下：
 
 ```bash
 mkdir -p ~/.claude/skills
 ln -s /absolute/path/to/diagram-generator ~/.claude/skills/diagram-generator
 ```
 
-Then ask:
+然后这样提问：
 
 ```text
 Use the diagram-generator skill to create a system map from this brief:
@@ -118,9 +128,9 @@ Use the diagram-generator skill to create a system map from this brief:
 [paste brief]
 ```
 
-### Codex, Cursor, OpenCode, Windsurf
+### Codex、Cursor、OpenCode、Windsurf
 
-Use `AGENTS.md` as the project instruction source and keep `resources/` available. The adapter points these platforms to the shared files, lens/output-mode selection, placeholder replacement, and the final audit. For Codex skill-style use:
+以 `AGENTS.md` 作为项目指令源，并保持 `resources/` 可访问。该适配器将这些平台路由到共享文件、视角/输出模式选择、占位符替换和最终审计。Codex 技能式用法：
 
 ```bash
 mkdir -p ~/.codex/skills
@@ -129,19 +139,23 @@ ln -s /absolute/path/to/diagram-generator ~/.codex/skills/diagram-generator
 
 ### Gemini
 
-Use `GEMINI.md` as the Gem or project instruction. Add `resources/generation-rules.md`, `resources/diagram-ir.md`, and `resources/template.html` as project knowledge when direct file access is unavailable.
+以 `GEMINI.md` 作为 Gem 或项目指令。当无法直接访问文件时，将 `resources/generation-rules.md`、`resources/diagram-ir.md` 和 `resources/template.html` 添加为项目知识。
 
 ### GitHub Copilot
 
-Use `COPILOT-INSTRUCTIONS.md` as the custom instruction source, or copy its content into a repository instruction file.
+以 `COPILOT-INSTRUCTIONS.md` 作为自定义指令源，或将其内容复制到仓库指令文件中。
 
 ### CodeBuddy
 
-Use `CODEBUDDY.md` as the workspace rule file.
+以 `CODEBUDDY.md` 作为工作区规则文件。
 
 ### Hermes
 
-Use `HERMES.md` as the task specification and keep `resources/` available in the workspace.
+以 `HERMES.md` 作为任务规范，并保持 `resources/` 在工作区中可访问。
+
+### 国内平台（Trae、通义、豆包等）
+
+`AGENTS.md` 是跨智能体通用约定，国内平台可直接复用：将 `AGENTS.md` 作为项目级指令文件，或将其内容并入平台的系统提示/规则配置，并保持 `resources/` 目录可访问。触发词支持中文（如"帮我画个架构图"），输出语言跟随用户偏好。
 
 ## 使用模式
 
@@ -203,7 +217,7 @@ Every checker message carries a stable, machine-greppable code prefix (`[Exxx]` 
 
 退出码：无错误时为 `0`（允许警告），有任何错误时为 `1`。
 
-已知良好的参考产物位于 `tests/fixtures/example-commerce-system-map.html`——它渲染下方的示例提示词简报，并以零错误零警告通过检查器。CI 在每次推送时重新运行检查器，因此在修改检查器规则或模板时保持它为绿色。
+已知良好的参考产物位于 `tests/fixtures/example-commerce-system-map.html`——它渲染下方的示例提示词简报，并以零错误零警告通过检查器。CI（位于仓库根 `.github/workflows/ci.yml`）在每次推送时重新运行检查器，因此在修改检查器规则或模板时保持它为绿色。
 
 已知不良的测试夹具位于 `tests/fixtures/bad-injected-defects.html`——已知良好产物注入了四个缺陷（模板占位符残留、节点边界超出 viewBox、区域 `contains` 条目引用不存在的节点、节点紧贴区域边框）。CI 断言检查器拒绝它（非零退出）并报告全部四类缺陷；这证明检查器是失败关闭的，而不仅仅是能通过良好样本。
 
@@ -282,30 +296,30 @@ Use the default html-first mode. Keep visible text in English.
 
 发布前，删除本地冒烟测试输出（`tests/fixtures/` 下的已检入夹具保留）并运行 `RELEASE_CHECKLIST.md`。
 
-## FAQ & Common Pitfalls
+## 常见问题与常见陷阱
 
 以下是使用中最常见的问题及其处理方式。中文环境下可直接用对应触发词生成图表，标签和注释语言跟随用户偏好。
 
-**Q: The checker reports an edge collinear with a node or region border. What do I do?**
-A: Reroute the connector so it exits a node edge perpendicularly and travels in the free space between nodes. Never run a connector along the outer edge of its own source or target node, and avoid segments that share more than ~12 px with any region border.
+**Q: 检查器报告连线与节点或区域边框共线，怎么办？**
+A: 重新路由连线，使其垂直离开节点边缘并在节点之间的自由空间中穿行。绝不要让连线沿源节点或目标节点自身的外边缘延伸，并避免与任何区域边框共享超过约 12px 的线段。
 
-**Q: A node overlaps a region it should sit inside.**
-A: The checker enforces a 10 px gutter between every node and the region border. Shrink the node or expand the region; do not place nodes flush against a border.
+**Q: 节点与应该包含它的区域重叠了。**
+A: 检查器强制每个节点与区域边框之间有 10px 间距。缩小节点或扩大区域；不要将节点紧贴边框放置。
 
-**Q: draw.io XML fails to import in draw.io / Confluence.**
-A: `html + drawio xml` mode is experimental. Always import-test the XML before relying on it. If editability is not required, use the default `html-first` mode, which is production-ready.
+**Q: draw.io XML 在 draw.io / Confluence 中导入失败。**
+A: `html + drawio xml` 模式是实验性的。在依赖它之前务必先做导入测试。如果不需要可编辑性，使用默认的 `html-first` 模式，它是生产就绪的。
 
-**Q: The generated HTML has leftover placeholder text.**
-A: Every `{{...}}` token in `resources/template.html` must be replaced with concrete content. The checker fails on any residual placeholder. Do not leave template defaults in a delivered artifact.
+**Q: 生成的 HTML 中有残留的占位符文本。**
+A: `resources/template.html` 使用纯文本占位符（如 `System Map Title`、`One sentence that states...` 等），必须全部替换为具体内容。检查器会检测这些占位符文案（E010）并在残留时报错。不要在交付物中留下模板默认值。
 
-**Q: Can I edit an existing diagram instead of regenerating it?**
-A: Yes — prefer local coordinate and connector changes over full regeneration. Inspect the current artifact first and preserve unrelated nodes, notes, and color semantics.
+**Q: 可以编辑现有图表而不是重新生成吗？**
+A: 可以——优先进行局部坐标和连线修改，而非完整重新生成。先检查当前产物，保留不相关的节点、注释和颜色语义。
 
-**Q: The diagram looks cluttered.**
-A: Use the notes rail for longer explanations instead of crowding the canvas. Keep one abstraction level per artifact and put secondary flows behind the main path.
+**Q: 图看起来太拥挤了。**
+A: 把较长的解释放进 notes 栏，而不是在画布上堆砌。每个产物保持一个抽象层级，次要路径让位于主路径。
 
-**Q: Which lens should I pick?**
-A: System for components/flows, infrastructure for deployment topology, trust for security boundaries, data movement for ingestion/streams, process for ordered pipelines, deployment for workload placement, implementation for code-derived stages. When unsure, start with a system map.
+**Q: 应该选哪个视角（lens）？**
+A: 系统图看组件/流程，基础设施图看部署拓扑，信任图看安全边界，数据流动图看摄取/流，流程图看有序流水线，部署图看工作负载落位，实现图看代码推导的阶段。拿不准时从系统图开始。
 
-**Q: Why are images and LICENSE missing from my installed copy?**
-A: Some distributors (e.g. SkillHub) strip PNG images and standalone LICENSE files from the package for security/format reasons. The canonical images and license are always available in the source GitHub repository.
+**Q: 为什么我安装的副本里缺少图片和 LICENSE？**
+A: 某些分发渠道（如 SkillHub）出于安全/格式原因会从包中剥离 PNG 图片和独立的 LICENSE 文件。权威图片和许可证始终位于源 GitHub 仓库中。

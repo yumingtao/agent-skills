@@ -8,35 +8,35 @@ The package is designed for agent environments such as Claude, Codex, Cursor, Op
 
 The generator picks one of seven lenses and renders a standalone HTML/SVG map. Below are examples of the lenses in action, each rendered from a short brief and validated with `scripts/check-diagram.mjs`.
 
-> Example images below are hosted on GitHub. The `docs/*.png` and `LICENSE` files are part of the source repository; some packaging targets (e.g. SkillHub) strip images and license files from the distributed bundle.
+> Example images below live in the source repository under `docs/` (referenced by relative path). The `docs/*.png` and `LICENSE` files are part of the source repository; some packaging targets (e.g. SkillHub) strip images and license files from the distributed bundle — view them in the source repository in that case.
 
 ### System lens
 
-![System map: an e-commerce platform with clients, API gateway, services, PostgreSQL, Redis, Kafka, object storage, and an OIDC provider](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-system-map.png)
+![System map: an e-commerce platform with clients, API gateway, services, PostgreSQL, Redis, Kafka, object storage, and an OIDC provider](docs/example-system-map.png)
 
 Service relationships, user entry points, storage ownership, external integrations, and operational context.
 
 ### Infrastructure lens
 
-![Infrastructure map: multi-region deployment with CDN, global load balancer, two Kubernetes regions, managed database, object storage, and message bus](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-infrastructure-map.png)
+![Infrastructure map: multi-region deployment with CDN, global load balancer, two Kubernetes regions, managed database, object storage, and message bus](docs/example-infrastructure-map.png)
 
 Regions, clusters, networks, gateways, managed services, object stores, queues, containers, and deployment placement.
 
 ### Trust lens
 
-![Trust map: public clients cross a trust boundary where authentication, token validation, policy, and key management run before private services](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-trust-map.png)
+![Trust map: public clients cross a trust boundary where authentication, token validation, policy, and key management run before private services](docs/example-trust-map.png)
 
 Identity providers, public/private boundaries, privileged operations, secrets, policy checks, token validation, and administrative paths.
 
 ### Data movement lens
 
-![Data movement map: Web and IoT producers feed an event stream that fans out to a data warehouse, search index, and object storage](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-data-movement-map.png)
+![Data movement map: Web and IoT producers feed an event stream that fans out to a data warehouse, search index, and object storage](docs/example-data-movement-map.png)
 
 Ingestion, replication, event streams, durable records, transformations, search indexes, exports, and reporting.
 
 ### Process lens
 
-![Process map: a CI/CD pipeline from commit through build, test, approval, staging, and production, with a monitoring feedback loop](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-process-map.png)
+![Process map: a CI/CD pipeline from commit through build, test, approval, staging, and production, with a monitoring feedback loop](docs/example-process-map.png)
 
 Ordered interactions, approval chains, incident response, automation pipelines, and sequence-like flows.
 
@@ -62,13 +62,15 @@ Draw.io XML is optional and should only be requested when editability in draw.io
 ```text
 diagram-generator/
 ├── README.md
+├── README.en.md
 ├── SKILL.md
+├── SKILL.en.md
 ├── AGENTS.md
 ├── GEMINI.md
 ├── COPILOT-INSTRUCTIONS.md
 ├── CODEBUDDY.md
 ├── HERMES.md
-├── LICENSE
+├── LICENSE                (repo only — stripped from some distributions)
 ├── agents/
 │   └── openai.yaml
 ├── resources/
@@ -83,7 +85,7 @@ diagram-generator/
 │   ├── codex-smoke-test-prompt.md
 │   ├── drawio-mode-prompt.md
 │   └── portable-agent-smoke-test-prompt.md
-├── docs/
+├── docs/                  (repo only — PNG files are stripped from some distributions)
 │   ├── example-system-map.png
 │   ├── example-infrastructure-map.png
 │   ├── example-trust-map.png
@@ -93,9 +95,17 @@ diagram-generator/
 │   ├── platform-smoke-tests/
 │   └── fixtures/
 │       ├── example-commerce-system-map.html
+│       ├── infrastructure-map.html
+│       ├── trust-map.html
+│       ├── data-movement-map.html
+│       ├── process-map.html
+│       ├── deployment-map.html
+│       ├── implementation-map.html
 │       └── bad-injected-defects.html
 └── RELEASE_CHECKLIST.md
 ```
+
+The CI configuration lives at the repository root (`.github/workflows/ci.yml`) and is not part of this skill's distributed package.
 
 ## Installation
 
@@ -142,6 +152,10 @@ Use `CODEBUDDY.md` as the workspace rule file.
 ### Hermes
 
 Use `HERMES.md` as the task specification and keep `resources/` available in the workspace.
+
+### Domestic Chinese platforms (Trae, Tongyi, Doubao, etc.)
+
+`AGENTS.md` is a cross-agent convention that domestic platforms can reuse directly: use it as the project-level instruction file, or merge its content into the platform's system-prompt/rules configuration, and keep the `resources/` directory accessible. Chinese trigger phrases (e.g. "帮我画个架构图") are supported, and output language follows user preference.
 
 ## Usage Pattern
 
@@ -203,7 +217,7 @@ Every checker message carries a stable, machine-greppable code prefix (`[Exxx]` 
 
 Exit codes: `0` when there are no errors (warnings allowed), `1` when any error exists.
 
-A known-good reference artifact lives at `tests/fixtures/example-commerce-system-map.html` — it renders the Example Prompt brief below and passes the checker with zero errors and zero warnings. CI re-runs the checker against it on every push, so keep it green when changing checker rules or the template.
+A known-good reference artifact lives at `tests/fixtures/example-commerce-system-map.html` — it renders the Example Prompt brief below and passes the checker with zero errors and zero warnings. CI (repo-root `.github/workflows/ci.yml`) re-runs the checker against it on every push, so keep it green when changing checker rules or the template.
 
 A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the known-good artifact with four injected defects (a template placeholder residue, a node whose bounds leave the viewBox, a region `contains` entry referencing a nonexistent node, and a node sitting flush against its region border). CI asserts the checker rejects it (non-zero exit) and reports all four defect classes; this proves the checker fails closed, not just that it passes a good sample.
 
@@ -296,7 +310,7 @@ A: The checker enforces a 10 px gutter between every node and the region border.
 A: `html + drawio xml` mode is experimental. Always import-test the XML before relying on it. If editability is not required, use the default `html-first` mode, which is production-ready.
 
 **Q: The generated HTML has leftover placeholder text.**
-A: Every `{{...}}` token in `resources/template.html` must be replaced with concrete content. The checker fails on any residual placeholder. Do not leave template defaults in a delivered artifact.
+A: `resources/template.html` uses plain-text placeholders (e.g. `System Map Title`, `One sentence that states...`); all of them must be replaced with concrete content. The checker detects these placeholder strings (E010) and fails on any residue. Do not leave template defaults in a delivered artifact.
 
 **Q: Can I edit an existing diagram instead of regenerating it?**
 A: Yes — prefer local coordinate and connector changes over full regeneration. Inspect the current artifact first and preserve unrelated nodes, notes, and color semantics.

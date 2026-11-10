@@ -2,7 +2,7 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.2.0
+version: 1.3.0
 summary: Generate production-quality standalone HTML/SVG technical diagrams with a built-in geometry checker.
 license: MIT
 description: >
@@ -42,8 +42,9 @@ This skill generates **technical architecture and system diagrams** as standalon
 - Free-form illustration, hand-drawn sketches, or pixel-art.
 - Statistical charts (bar, line, pie) — use a charting library or spreadsheet.
 - Pixel-perfect UI mockups or marketing visuals — use a design tool.
-- Complex non-orthogonal connector routing (curved splines, bezier) — the built-in checker validates orthogonal paths; complex curves require manual review.
+- Complex non-orthogonal connector routing (curved splines, bezier) — the built-in checker validates orthogonal paths; complex curves degrade to a W004 warning prompting manual review.
 - draw.io-first production output — `html + drawio xml` is experimental; default to `html-first`.
+- Oversized inputs — with more than ~40 nodes or ~60 edges, prefer splitting into multiple single-lens diagrams or moving secondary paths into the notes rail instead of crowding one diagram.
 
 Language: output labels and notes in the user's preferred language (Chinese or English).
 
@@ -56,7 +57,7 @@ A: Reroute the connector so it exits a node edge perpendicularly and travels in 
 A: The checker enforces a 10 px gutter between every node and the region border. Shrink the node or expand the region; do not place nodes flush against a border.
 
 **Q: The generated HTML has leftover placeholder text.**
-A: Every `{{...}}` token in `resources/template.html` must be replaced with concrete content. The checker fails on any residual placeholder. Do not leave template defaults in a delivered artifact.
+A: `resources/template.html` uses plain-text placeholders (e.g. `System Map Title`, `One sentence that states...`); all of them must be replaced with concrete content. The checker detects these placeholder strings (E010) and fails on any residue. Do not leave template defaults in a delivered artifact.
 
 **Q: Can I edit an existing diagram instead of regenerating it?**
 A: Yes — prefer local coordinate and connector changes over full regeneration. Inspect the current artifact first and preserve unrelated nodes, notes, and color semantics.
