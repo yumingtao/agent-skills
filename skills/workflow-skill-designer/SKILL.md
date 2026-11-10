@@ -84,7 +84,7 @@ session-mode: none
 | 子代理委派 | `Task()` | 宿主子代理调用 | 宿主子代理机制（见工具名词约定） |
 | 跨技能调用 | `Skill(skill=..., args=...)` | 宿主技能调用 | 宿主提供的技能路由机制 |
 
-**生成非 Claude 环境技能时**：按上表映射路径和工具名。通用映射规则——把 "Skill Root" 替换为主播技能目录，"AskUserQuestion" 替换为主播交互原语，"TodoWrite" 替换为主播任务跟踪，"Task" 替换为主播子代理调用。
+**生成非 Claude 环境技能时**：按上表映射路径和工具名。通用映射规则——把 "Skill Root" 替换为宿主技能目录，"AskUserQuestion" 替换为宿主交互原语，"TodoWrite" 替换为宿主任务跟踪，"Task" 替换为宿主子代理调用。
 
 ### 上下文变量（编排器提供）
 
