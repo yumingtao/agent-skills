@@ -1,0 +1,1 @@
+../../skills/diagram-generator/COPILOT-INSTRUCTIONS.md

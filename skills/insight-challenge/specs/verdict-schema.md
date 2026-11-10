@@ -1,12 +1,10 @@
-# 结论 Schema 规范 / Verdict Schema Specification
+# 结论 Schema 规范
 
-## 概述 / Overview
+## 概述
 
 本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。
 
-This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems.
-
-## 结论 JSON Schema / Verdict JSON Schema
+## 结论 JSON Schema
 
 ```json
 {
@@ -65,86 +63,86 @@ This document defines the structured output format for insight challenge verdict
 }
 ```
 
-## 字段定义 / Field Definitions
+## 字段定义
 
 ### finding_id
-- **类型 Type**: string
-- **必填 Required**: 是 / yes
-- **描述 Description**: 原始发现标识符（如 "HIGH-01"、"CRIT-03"）/ The original finding identifier (e.g., "HIGH-01", "CRIT-03")
-- **示例 Example**: "HIGH-01"
+- **类型**: string
+- **必填**: 是
+- **描述**: 原始发现标识符（如 "HIGH-01"、"CRIT-03"）
+- **示例**: "HIGH-01"
 
 ### challenge_result
-- **类型 Type**: string (enum)
-- **必填 Required**: 是 / yes
-- **取值 Values**:
-  - `overturned`: 发现事实错误；源代码直接反驳主张 / Finding is factually incorrect; source code directly contradicts claims
-  - `weakened`: 发现部分正确但被夸大、范围错误或缺少上下文 / Finding is partially correct but overstated, misscoped, or missing context
-  - `confirmed`: 发现准确；源代码支持所有主张 / Finding is accurate; source code supports all claims
+- **类型**: string (enum)
+- **必填**: 是
+- **取值**:
+  - `overturned`: 发现事实错误；源代码直接反驳主张
+  - `weakened`: 发现部分正确但被夸大、范围错误或缺少上下文
+  - `confirmed`: 发现准确；源代码支持所有主张
 
 ### confidence
-- **类型 Type**: integer (0-100)
-- **必填 Required**: 是 / yes
-- **描述 Description**: 挑战者对结论的置信度 / How confident the challenger is in the verdict
-- **分级 Scale**:
-  - 90-100: 清晰、无歧义的证据 / Clear, unambiguous evidence
-  - 70-89: 证据充分，有轻微不确定性 / Strong evidence with minor uncertainty
-  - 50-69: 证据混合；需要判断 / Mixed evidence; judgment call
-  - 低于 50 Below 50: 证据不足 / Insufficient evidence
+- **类型**: integer (0-100)
+- **必填**: 是
+- **描述**: 挑战者对结论的置信度
+- **分级**:
+  - 90-100: 清晰、无歧义的证据
+  - 70-89: 证据充分，有轻微不确定性
+  - 50-69: 证据混合；需要判断
+  - 低于 50: 证据不足
 
 ### reasoning
-- **类型 Type**: string
-- **必填 Required**: 是 / yes
-- **描述 Description**: 为何得出该结论的详细说明 / Detailed explanation of why the verdict was reached
-- **应包含 Should include**:
-  - 原始主张摘要 / Summary of the original claim
-  - 发现了什么证据 / What evidence was found
-  - 证据为何支持该结论 / Why the evidence supports the verdict
-  - 任何注意事项或限制 / Any caveats or limitations
+- **类型**: string
+- **必填**: 是
+- **描述**: 为何得出该结论的详细说明
+- **应包含**:
+  - 原始主张摘要
+  - 发现了什么证据
+  - 证据为何支持该结论
+  - 任何注意事项或限制
 
 ### counter_evidence
-- **类型 Type**: array of strings
-- **必填 Required**: 否（但 overturned/weakened 期望有）/ no (but expected for overturned/weakened)
-- **描述 Description**: 反驳发现的具体证据 / Specific evidence that contradicts the finding
-- **格式 Format**: 每项应引用具体文件和行 / Each item should reference a specific file and line
-- **示例 Example**: ["src/types.ts line 64: 'resolves' IS declared in KnowledgeEdgeKind"]
+- **类型**: array of strings
+- **必填**: 否（但 overturned/weakened 期望有）
+- **描述**: 反驳发现的具体证据
+- **格式**: 每项应引用具体文件和行
+- **示例**: ["src/types.ts line 64: 'resolves' IS declared in KnowledgeEdgeKind"]
 
 ### supporting_evidence
-- **类型 Type**: array of strings
-- **必填 Required**: 否（但 confirmed 期望有）/ no (but expected for confirmed)
-- **描述 Description**: 支持发现的具体证据 / Specific evidence that supports the finding
-- **格式 Format**: 与 counter_evidence 相同 / Same as counter_evidence
+- **类型**: array of strings
+- **必填**: 否（但 confirmed 期望有）
+- **描述**: 支持发现的具体证据
+- **格式**: 与 counter_evidence 相同
 
 ### adjusted_severity
-- **类型 Type**: string (enum)
-- **必填 Required**: 否 / no
-- **取值 Values**:
-  - `none`: 发现应完全驳回 / Finding should be dismissed entirely
-  - `critical`, `high`, `medium`, `low`: 调整后的严重度级别 / Adjusted severity level
-- **描述 Description**: 考虑挑战证据后建议的严重度 / Recommended severity after considering challenge evidence
-- **默认 Default**: 未指定时为原始严重度 / Original severity if not specified
+- **类型**: string (enum)
+- **必填**: 否
+- **取值**:
+  - `none`: 发现应完全驳回
+  - `critical`, `high`, `medium`, `low`: 调整后的严重度级别
+- **描述**: 考虑挑战证据后建议的严重度
+- **默认**: 未指定时为原始严重度
 
 ### recommendation
-- **类型 Type**: string
-- **必填 Required**: 否 / no
-- **描述 Description**: 建议的下一步行动 / Recommended next action
-- **示例 Examples**:
-  - "驳回此发现；声称的缺失不存在" / "Dismiss this finding; the claimed gap does not exist"
-  - "降级为中严重度；问题存在但不如声称严重" / "Downgrade to medium severity; the issue exists but is less critical than claimed"
-  - "确认并优先处理；发现准确且重要" / "Confirm and prioritize; the finding is accurate and important"
+- **类型**: string
+- **必填**: 否
+- **描述**: 建议的下一步行动
+- **示例**:
+  - "驳回此发现；声称的缺失不存在"
+  - "降级为中严重度；问题存在但不如声称严重"
+  - "确认并优先处理；发现准确且重要"
 
 ### metadata
-- **类型 Type**: object
-- **必填 Required**: 否 / no
-- **描述 Description**: 挑战过程的额外上下文 / Additional context about the challenge process
-- **字段 Fields**:
-  - `challenge_duration_ms`: 挑战耗时 / Time spent on the challenge
-  - `files_reviewed`: 检查的文件列表 / List of files examined
-  - `design_docs_checked`: 查阅的设计文档 / Design documents consulted
-  - `challenge_strategies_applied`: 使用了哪些挑战策略 / Which challenge strategies were used
+- **类型**: object
+- **必填**: 否
+- **描述**: 挑战过程的额外上下文
+- **字段**:
+  - `challenge_duration_ms`: 挑战耗时
+  - `files_reviewed`: 检查的文件列表
+  - `design_docs_checked`: 查阅的设计文档
+  - `challenge_strategies_applied`: 使用了哪些挑战策略
 
-## 示例结论 / Example Verdicts
+## 示例结论
 
-### 被推翻的发现 / Overturned Finding
+### 被推翻的发现
 
 ```json
 {
@@ -163,7 +161,7 @@ This document defines the structured output format for insight challenge verdict
 }
 ```
 
-### 被削弱的发现 / Weakened Finding
+### 被削弱的发现
 
 ```json
 {
@@ -183,7 +181,7 @@ This document defines the structured output format for insight challenge verdict
 }
 ```
 
-### 已确认的发现 / Confirmed Finding
+### 已确认的发现
 
 ```json
 {
@@ -201,11 +199,9 @@ This document defines the structured output format for insight challenge verdict
 }
 ```
 
-## 批量处理 / Batch Processing
+## 批量处理
 
 处理多个发现时：
-
-When processing multiple findings:
 
 ```json
 {
@@ -225,19 +221,19 @@ When processing multiple findings:
 }
 ```
 
-## 与下游系统的集成 / Integration with Downstream Systems
+## 与下游系统的集成
 
-### 质量仪表盘 / Quality Dashboard
-- 结论更新质量跟踪中的发现状态 / Verdicts update finding status in quality tracking
-- 置信度评分影响发现优先级 / Confidence scores affect finding priority
-- 调整后的严重度触发相应工作流 / Adjusted severities trigger appropriate workflows
+### 质量仪表盘
+- 结论更新质量跟踪中的发现状态
+- 置信度评分影响发现优先级
+- 调整后的严重度触发相应工作流
 
-### 知识系统 / Knowledge System
-- 已确认的发现成为 knowhow 候选 / Confirmed findings become knowhow candidates
-- 挑战模式成为评审规范 / Challenge patterns become review specs
-- 被推翻的发现改进未来检测 / Overturned findings improve future detection
+### 知识系统
+- 已确认的发现成为 knowhow 候选
+- 挑战模式成为评审规范
+- 被推翻的发现改进未来检测
 
-### 团队技能 / Team Skills
-- 结论馈入团队评分算法 / Verdicts feed into team scoring algorithms
-- 挑战结果为收敛标准提供信息 / Challenge results inform convergence criteria
-- 对抗模式提升团队评审质量 / Adversarial patterns enhance team review quality
+### 团队技能
+- 结论馈入团队评分算法
+- 挑战结果为收敛标准提供信息
+- 对抗模式提升团队评审质量

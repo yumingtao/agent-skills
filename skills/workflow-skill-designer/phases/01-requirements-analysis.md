@@ -1,19 +1,14 @@
-# 阶段 1：需求分析 / Phase 1: Requirements Analysis
+# 阶段 1：需求分析
 
-## 目标 / Objective
+## 目标
 
 - 识别工作流中的所有阶段/步骤
-  Identify all phases/steps in the workflow
 - 映射阶段间的数据流
-  Map data flow between phases
 - 识别智能体、工具和条件逻辑
-  Identify agents, tools, and conditional logic
 - 检测输入源类型并相应提取内容
-  Detect source type and extract content accordingly
 - 为后续阶段产出 `workflowConfig` 对象
-  Produce `workflowConfig` object for subsequent phases
 
-## 步骤 1.1：识别输入源 / Step 1.1: Identify Input Source
+## 步骤 1.1：识别输入源
 
 ```javascript
 // Determine what the user provided
@@ -21,24 +16,20 @@ const inputType = detectInputType(userInput);
 // Returns: 'command_set' | 'text_description' | 'requirements_doc' | 'existing_skill'
 ```
 
-### 源类型检测 / Source Type Detection
+### 源类型检测
 
-| 指示 Indicator | 类型 Type | 操作 Action |
+| 指示 | 类型 | 操作 |
 |-----------|------|--------|
 | 指向 `.claude/commands/**/*.md` 的路径 | `command_set` | 读取编排器 + 发现子命令 |
 | 描述工作流的自由文本 | `text_description` | 交互式需求收集 |
 | 指向 `.md` 或 `.json` 需求的路径 | `requirements_doc` | 解析结构化需求 |
 | 指向 `.claude/skills/**/*.md` 的路径 | `existing_skill` | 分析并重构 |
 
-## 步骤 1.2：源特定分析 / Step 1.2: Source-Specific Analysis
+## 步骤 1.2：源特定分析
 
-### 模式 A：命令集分析 / Mode A: Command Set Analysis
+### 模式 A：命令集分析
 
 当输入源是现有的编排器命令 + 子命令时：
-
-When source is an existing orchestrator command + sub-commands:
-
-> **Reference pseudocode**: helper functions below (`extractYAMLFrontmatter()`, `parseRequirements()`, `removeYAMLFrontmatter()`, `extractSkillCallName()`) sketch the parsing intent only. When generating a runnable skill, replace them with the host environment's real utilities (a YAML frontmatter library, regex extraction, or the agent's own file-reading flow) — do not copy them as runnable code.
 
 ```javascript
 // Step A.1: Read orchestrator command
@@ -83,9 +74,9 @@ for (const path of subCommandPaths) {
 const phaseOrder = extractPhaseOrder(orchestratorContent, skillCalls);
 ```
 
-**编排器中的关键提取点 / Key Extraction Points from Orchestrator**:
+**编排器中的关键提取点**:
 
-| 章节 Section | 提取内容 What to Extract | 映射至 Maps to |
+| 章节 | 提取内容 | 映射至 |
 |---------|-----------------|---------|
 | Coordinator Role / Overview | 工作流描述、执行模型 | SKILL.md description + Architecture |
 | Core Rules | 编排约束 | SKILL.md Core Rules |
@@ -98,9 +89,9 @@ const phaseOrder = extractPhaseOrder(orchestratorContent, skillCalls);
 | Related Commands | 前置/后续 | SKILL.md Related Commands |
 | Phase N sections | 阶段特定编排器指令 | SKILL.md inline (brief), Phase files (detail) |
 
-**子命令中的关键提取点 / Key Extraction Points from Sub-Commands**:
+**子命令中的关键提取点**:
 
-| 章节 Section | 提取内容 What to Extract | 映射至 Maps to |
+| 章节 | 提取内容 | 映射至 |
 |---------|-----------------|---------|
 | Full body content | 完整执行细节 | Phase file (preserved verbatim) |
 | Agent prompts (Task calls) | 智能体委派逻辑 | Phase file agent sections |
@@ -108,11 +99,9 @@ const phaseOrder = extractPhaseOrder(orchestratorContent, skillCalls);
 | Validation/Output sections | 阶段输出 | Phase file Output section |
 | Frontmatter | 工具、描述 | Phase file header context |
 
-### 模式 B：文本描述分析 / Mode B: Text Description Analysis
+### 模式 B：文本描述分析
 
 当输入源是自然语言工作流描述时：
-
-When source is a natural language workflow description:
 
 ```javascript
 // Interactive requirements gathering
@@ -185,11 +174,9 @@ const conditions = AskUserQuestion({
 });
 ```
 
-### 模式 C：需求文档 / Mode C: Requirements Document
+### 模式 C：需求文档
 
 当输入源是结构化需求文档时：
-
-When source is a structured requirements document:
 
 ```javascript
 // Read and parse requirements
@@ -201,11 +188,9 @@ const reqContent = Read(requirementsPath);
 const requirements = parseRequirements(reqContent);
 ```
 
-### 模式 D：现有技能重构 / Mode D: Existing Skill Restructure
+### 模式 D：现有技能重构
 
 当输入源是待重构的现有技能时：
-
-When source is an existing skill to refactor:
 
 ```javascript
 // Read existing SKILL.md
@@ -218,11 +203,9 @@ const existingPhases = Glob(`${skillDir}/phases/*.md`);
 const analysis = analyzeExistingStructure(existingSkill, existingPhases);
 ```
 
-## 步骤 1.3：构建工作流配置 / Step 1.3: Build Workflow Configuration
+## 步骤 1.3：构建工作流配置
 
 无论输入源类型，产出统一的 `workflowConfig`：
-
-Regardless of source type, produce a unified `workflowConfig`:
 
 ```javascript
 const workflowConfig = {
@@ -330,11 +313,9 @@ const workflowConfig = {
 };
 ```
 
-## 步骤 1.4：用户确认 / Step 1.4: User Confirmation
+## 步骤 1.4：用户确认
 
 将分析后的结构呈现给用户确认：
-
-Present the analyzed structure to the user for confirmation:
 
 ```javascript
 // Display summary
@@ -363,13 +344,11 @@ const confirm = AskUserQuestion({
 });
 ```
 
-## 输出 / Output
+## 输出
 
-- **变量 Variable**: `workflowConfig`（结构化配置对象）/ `workflowConfig` (structured configuration object)
-- **TodoWrite**: 标记阶段 1 已完成，阶段 2 进行中 / Mark Phase 1 completed, Phase 2 in_progress
+- **变量**: `workflowConfig`（结构化配置对象）
+- **TodoWrite**: 标记阶段 1 已完成，阶段 2 进行中
 
-## 下一阶段 / Next Phase
+## 下一阶段
 
 返回编排器，然后自动继续 [阶段 2：编排器设计](02-orchestrator-design.md)。
-
-Return to orchestrator, then auto-continue to [Phase 2: Orchestrator Design](02-orchestrator-design.md).

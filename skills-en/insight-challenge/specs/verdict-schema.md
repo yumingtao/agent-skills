@@ -1,0 +1,1 @@
+../../../skills/insight-challenge/specs/verdict-schema.en.md

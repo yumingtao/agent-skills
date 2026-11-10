@@ -1,0 +1,1 @@
+../../skills/insight-challenge/SKILL.en.md

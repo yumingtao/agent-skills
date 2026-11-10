@@ -1,58 +1,44 @@
-# 阶段 3：阶段文件设计 / Phase 3: Phase Files Design
+# 阶段 3：阶段文件设计
 
 在 `phases/` 目录中生成阶段文件，保留源内容中的完整执行细节。每个阶段文件都是一份完整的执行指令。
 
-Generate phase files in `phases/` directory, preserving full execution detail from source content. Each phase file is a complete execution instruction.
-
-## 目标 / Objective
+## 目标
 
 - 为 workflowConfig 中的每个阶段创建 `phases/0N-{slug}.md`
-  Create `phases/0N-{slug}.md` for each phase in workflowConfig
 - 保留完整源内容（智能体提示词、bash 命令、代码、校验）
-  Preserve full source content (agent prompts, bash commands, code, validation)
 - 添加标准阶段结构（标题、目标、输出、下一阶段）
-  Add standard phase structure (header, objective, output, next phase)
 - 处理不同源类型（命令提取 vs 全新生成）
-  Handle different source types (command extraction vs new generation)
 
-## 关键规则 / Critical Rule
+## 关键规则
 
-**内容保真度 / Content Fidelity**: 阶段文件必须对其源**内容保真**。不得总结、缩写或简化执行细节。阶段文件就是执行指令本身。
+**内容保真度**: 阶段文件必须对其源**内容保真**。不得总结、缩写或简化执行细节。阶段文件就是执行指令本身。
 
-Phase files must be **content-faithful** to their source. Do NOT summarize, abbreviate, or simplify execution detail. The phase file IS the execution instruction.
-
-| 内容类型 Content Type | 规则 Rule |
+| 内容类型 | 规则 |
 |-------------|------|
-| Agent prompts (Task calls) | 逐字保留，包含所有提示词文本、变量、约束 / Preserve **verbatim** including all prompt text, variables, constraints |
-| Bash command blocks | 逐字保留，包含所有标志、路径、错误处理 / Preserve **verbatim** including all flags, paths, error handling |
-| Code implementations | 逐字保留，包含所有函数、校验逻辑 / Preserve **verbatim** including all functions, validation logic |
-| Validation checklists | 逐字保留，包含所有检查项 / Preserve **verbatim** including all check items |
-| Error handling details | 逐字保留，包含恢复策略 / Preserve **verbatim** including recovery strategies |
-| Tables and specifications | 逐字保留，包含所有行和列 / Preserve **verbatim** including all rows and columns |
-| Comments and notes | 逐字保留，包含内联文档 / Preserve **verbatim** including inline documentation |
+| Agent prompts (Task calls) | 逐字保留，包含所有提示词文本、变量、约束 |
+| Bash command blocks | 逐字保留，包含所有标志、路径、错误处理 |
+| Code implementations | 逐字保留，包含所有函数、校验逻辑 |
+| Validation checklists | 逐字保留，包含所有检查项 |
+| Error handling details | 逐字保留，包含恢复策略 |
+| Tables and specifications | 逐字保留，包含所有行和列 |
+| Comments and notes | 逐字保留，包含内联文档 |
 
-**反模式 / Anti-Pattern**: 创建一个写着"见原命令了解细节"或"用适当参数执行智能体"的阶段文件——这破坏了技能结构的目的。阶段文件必须自包含。
+**反模式**: 创建一个写着"见原命令了解细节"或"用适当参数执行智能体"的阶段文件——这破坏了技能结构的目的。阶段文件必须自包含。
 
-Creating a phase file that says "See original command for details" or "Execute the agent with appropriate parameters" - this defeats the purpose of the skill structure. The phase file must be self-contained.
-
-## 阶段文件内容限制 / Phase File Content Restrictions
+## 阶段文件内容限制
 
 阶段文件是内部执行文档。**不得**包含以下禁止内容：
 
-Phase files are internal execution documents. They MUST NOT contain the following prohibited content:
-
-| 禁止模式 Prohibited Pattern | 检测 Detection | 正确位置 Correct Location |
+| 禁止模式 | 检测 | 正确位置 |
 |-------------------|-----------|-----------------|
-| 标志解析 Flag parsing (`$ARGUMENTS.includes(...)`) | Grep: `\$ARGUMENTS\.includes` | SKILL.md via AskUserQuestion → `workflowPreferences` |
-| 调用语法 Invocation syntax (`/skill-name "..."`) | Grep: `\/\w+[\-:]\w+\s+"` | 完全移除（阶段文件非面向用户）/ Removed entirely |
-| 转换来源 Conversion provenance (`Source: Converted from...`) | Grep: `Source:.*Converted from` | 完全移除（实现细节）/ Removed entirely |
-| 阶段间技能路由 Skill routing for inter-phase (`Skill(skill="...")`) | Grep: `Skill\(skill=` | 直接 `Read("phases/0N-xxx.md")` |
+| 标志解析 (`$ARGUMENTS.includes(...)`) | Grep: `\$ARGUMENTS\.includes` | SKILL.md via AskUserQuestion → `workflowPreferences` |
+| 调用语法 (`/skill-name "..."`) | Grep: `\/\w+[\-:]\w+\s+"` | 完全移除（阶段文件非面向用户） |
+| 转换来源 (`Source: Converted from...`) | Grep: `Source:.*Converted from` | 完全移除（实现细节） |
+| 阶段间技能路由 (`Skill(skill="...")`) | Grep: `Skill\(skill=` | 直接 `Read("phases/0N-xxx.md")` |
 
-### 偏好引用模式 / Preference Reference Pattern
+### 偏好引用模式
 
 阶段文件可以**引用**工作流偏好，但**不得**从参数中**解析**它们：
-
-Phase files may **reference** workflow preferences but must NOT **parse** them from arguments:
 
 ```javascript
 // CORRECT: Reference workflowPreferences (set by SKILL.md)
@@ -64,11 +50,9 @@ const autoYes = $ARGUMENTS.includes('--yes') || $ARGUMENTS.includes('-y')
 const forceExplore = $ARGUMENTS.includes('--explore') || $ARGUMENTS.includes('-e')
 ```
 
-### 阶段间交接模式 / Inter-Phase Handoff Pattern
+### 阶段间交接模式
 
 当阶段 N 需要调用阶段 M 时，使用直接阶段读取：
-
-When phase N needs to invoke phase M, use direct phase reading:
 
 ```javascript
 // CORRECT: Direct handoff (executionContext already set)
@@ -79,11 +63,9 @@ Read("phases/02-lite-execute.md")
 Skill(skill="workflow-lite-plan", args="--in-memory")
 ```
 
-### 内容限制强制 / Content Restriction Enforcement
+### 内容限制强制
 
 从命令提取时（步骤 3.2），在逐字提取后应用内容清理：
-
-When extracting from commands (Step 3.2), apply content sanitization after verbatim extraction:
 
 ```javascript
 function sanitizePhaseContent(content) {
@@ -135,7 +117,7 @@ function sanitizePhaseContent(content) {
 }
 ```
 
-## 步骤 3.1：阶段文件生成策略 / Step 3.1: Phase File Generation Strategy
+## 步骤 3.1：阶段文件生成策略
 
 ```javascript
 function selectGenerationStrategy(phase, config) {
@@ -150,7 +132,7 @@ function selectGenerationStrategy(phase, config) {
 }
 ```
 
-## 步骤 3.2：模式 A — 从命令提取 / Step 3.2: Mode A - Extract from Command
+## 步骤 3.2：模式 A — 从命令提取
 
 When source is an existing command file, transform its content into phase file format:
 
@@ -225,7 +207,7 @@ function extractPhaseFromCommand(phase, config) {
 }
 ```
 
-### 内容保留检查清单 / Content Preservation Checklist
+### 内容保留检查清单
 
 When extracting from commands, verify these content types are preserved:
 
@@ -278,7 +260,7 @@ function verifyContentPreservation(sourceContent, phaseContent) {
 }
 ```
 
-### 处理源命令中的编排器级内容 / Handling Orchestrator-Level Content in Source Commands
+### 处理源命令中的编排器级内容
 
 Some commands mix orchestrator-level instructions (coordination, TodoWrite) with execution detail. Separation rules:
 
@@ -292,7 +274,7 @@ Some commands mix orchestrator-level instructions (coordination, TodoWrite) with
 
 When in doubt, **keep content in the phase file**. It's better to have slight overlap than to lose execution detail.
 
-## 步骤 3.3：模式 B — 从需求生成 / Step 3.3: Mode B - Generate from Requirements
+## 步骤 3.3：模式 B — 从需求生成
 
 When source is a text description, generate phase files interactively:
 
@@ -378,7 +360,7 @@ function mapAgentType(agentType) {
 }
 ```
 
-## 步骤 3.4：写入阶段文件 / Step 3.4: Write Phase Files
+## 步骤 3.4：写入阶段文件
 
 ```javascript
 function writePhaseFiles(config) {
@@ -420,7 +402,7 @@ function writePhaseFiles(config) {
 }
 ```
 
-## 步骤 3.5：跨阶段一致性检查 / Step 3.5: Cross-Phase Consistency Check
+## 步骤 3.5：跨阶段一致性检查
 
 After generating all phase files, verify cross-phase consistency:
 
@@ -455,7 +437,7 @@ function checkCrossPhaseConsistency(config) {
 }
 ```
 
-## 大小对照参考 / Size Comparison Reference
+## 大小对照参考
 
 Expected phase file sizes relative to their source commands:
 
@@ -468,13 +450,11 @@ Expected phase file sizes relative to their source commands:
 
 **Red Flag**: If a phase file is significantly smaller than its source (< 70%), content was likely lost during extraction. Re-check with `verifyContentPreservation()`.
 
-## 输出 / Output
+## 输出
 
-- **文件 Files**: 每个阶段一个 `.claude/skills/{skillName}/phases/0N-{slug}.md`
-- **TodoWrite**: 标记阶段 3 已完成，阶段 4 进行中 / Mark Phase 3 completed, Phase 4 in_progress
+- **文件**: 每个阶段一个 `.claude/skills/{skillName}/phases/0N-{slug}.md`
+- **TodoWrite**: 标记阶段 3 已完成，阶段 4 进行中
 
-## 下一阶段 / Next Phase
+## 下一阶段
 
 返回编排器，然后自动继续 [阶段 4：校验与集成](04-validation.md)。
-
-Return to orchestrator, then auto-continue to [Phase 4: Validation & Integration](04-validation.md).

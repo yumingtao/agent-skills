@@ -1,0 +1,1 @@
+../../skills/diagram-generator/RELEASE_CHECKLIST.md
