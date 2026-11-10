@@ -83,11 +83,11 @@
       "versions": [
         {
           "version": "1.2.0",
-          "publishTimestamp": 1794320000,
+          "publishTimestamp": 1794288392,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "f73353dad1ca9e34dd06bfaa1b82c468b8c1c235",
+            "commit": "14d34fc5a5d3ad5e3f430cc851fef96532e941e1",
             "path": "skills/diagram-generator"
           }
         }
@@ -115,11 +115,11 @@
       "versions": [
         {
           "version": "1.2.0",
-          "publishTimestamp": 1794320000,
+          "publishTimestamp": 1794288392,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "f73353dad1ca9e34dd06bfaa1b82c468b8c1c235",
+            "commit": "14d34fc5a5d3ad5e3f430cc851fef96532e941e1",
             "path": "skills/clarify-before-acting"
           }
         }
@@ -150,11 +150,11 @@
       "versions": [
         {
           "version": "1.2.0",
-          "publishTimestamp": 1794320000,
+          "publishTimestamp": 1794288392,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "f73353dad1ca9e34dd06bfaa1b82c468b8c1c235",
+            "commit": "14d34fc5a5d3ad5e3f430cc851fef96532e941e1",
             "path": "skills/insight-challenge"
           }
         }
@@ -185,11 +185,11 @@
       "versions": [
         {
           "version": "1.2.0",
-          "publishTimestamp": 1794320000,
+          "publishTimestamp": 1794288392,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "f73353dad1ca9e34dd06bfaa1b82c468b8c1c235",
+            "commit": "14d34fc5a5d3ad5e3f430cc851fef96532e941e1",
             "path": "skills/workflow-skill-designer"
           }
         }
