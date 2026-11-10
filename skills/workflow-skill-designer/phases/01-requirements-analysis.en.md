@@ -353,4 +353,4 @@ const confirm = AskUserQuestion({
 
 ## Next Phase
 
-Return to orchestrator, then auto-continue to [Phase 2: Orchestrator Design](02-orchestrator-design.md).
+Return to orchestrator, then auto-continue to [Phase 2: Orchestrator Design](02-orchestrator-design.en.md).

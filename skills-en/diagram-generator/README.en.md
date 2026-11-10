@@ -1,0 +1,1 @@
+../../skills/diagram-generator/README.en.md

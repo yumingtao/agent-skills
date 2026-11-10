@@ -441,4 +441,4 @@ function assembleSkillMd(config, sourceContent) {
 
 ## Next Phase
 
-Return to orchestrator, then auto-continue to [Phase 3: Phase Files Design](03-phase-design.md).
+Return to orchestrator, then auto-continue to [Phase 3: Phase Files Design](03-phase-design.en.md).

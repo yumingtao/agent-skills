@@ -1,0 +1,1 @@
+../../skills/diagram-generator/SKILL.en.md

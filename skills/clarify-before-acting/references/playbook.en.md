@@ -1,6 +1,6 @@
 # Clarify Before Acting — Playbook
 
-Extended guidance for the core rule in [`../SKILL.md`](../SKILL.md). Read this when a task is hard enough to warrant it. The core rule is enough for everyday use; this playbook is for the genuinely hard, ambiguous, or high-stakes ones.
+Extended guidance for the core rule in [`../SKILL.en.md`](../SKILL.en.md). Read this when a task is hard enough to warrant it. The core rule is enough for everyday use; this playbook is for the genuinely hard, ambiguous, or high-stakes ones.
 
 The techniques here are distilled from practice and from how mature requirements-interview workflows behave, but deliberately re-expressed as *judgment heuristics* rather than machinery. There is no scoring model, no state file, no pipeline — just things a capable agent can do with its own reasoning on any platform.
 

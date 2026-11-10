@@ -84,7 +84,7 @@ Skip the contract for clear, mechanical work that already names its file, symbol
 
 ---
 
-*Extended guidance — questioning lenses, patterns, scope mapping, and examples — lives in [`references/playbook.md`](references/playbook.md). Read it when a task is hard enough to need it; the rule above is enough for everyday use.*
+*Extended guidance — questioning lenses, patterns, scope mapping, and examples — lives in [`references/playbook.en.md`](references/playbook.en.md). Read it when a task is hard enough to need it; the rule above is enough for everyday use.*
 
 ## Out of Scope
 

@@ -298,22 +298,22 @@ Read("phases/0N-xxx.md")
 
 ```
 Phase 1: Requirements Analysis
-   └─ Ref: phases/01-requirements-analysis.md
+   └─ Ref: phases/01-requirements-analysis.en.md
       ├─ Input source: commands, descriptions, user interaction
       └─ Output: workflowConfig (phases, data flow, agents, conditions)
 
 Phase 2: Orchestrator Design (SKILL.md)
-   └─ Ref: phases/02-orchestrator-design.md
+   └─ Ref: phases/02-orchestrator-design.en.md
       ├─ Input: workflowConfig
       └─ Output: .claude/skills/{name}/SKILL.md
 
 Phase 3: Phase Files Design
-   └─ Ref: phases/03-phase-design.md
+   └─ Ref: phases/03-phase-design.en.md
       ├─ Input: workflowConfig + source content
       └─ Output: .claude/skills/{name}/phases/0N-*.md
 
 Phase 4: Validation & Integration
-   └─ Ref: phases/04-validation.md
+   └─ Ref: phases/04-validation.en.md
       └─ Output: Validated skill package
 ```
 
@@ -321,10 +321,10 @@ Phase 4: Validation & Integration
 
 | Phase | Document | Purpose |
 |-------|----------|---------|
-| 1 | [phases/01-requirements-analysis.md](phases/01-requirements-analysis.md) | Analyze workflow requirements from various sources |
-| 2 | [phases/02-orchestrator-design.md](phases/02-orchestrator-design.md) | Generate SKILL.md with orchestration patterns |
-| 3 | [phases/03-phase-design.md](phases/03-phase-design.md) | Generate phase files preserving full execution detail |
-| 4 | [phases/04-validation.md](phases/04-validation.md) | Validate structure, references, and integration |
+| 1 | [phases/01-requirements-analysis.en.md](phases/01-requirements-analysis.en.md) | Analyze workflow requirements from various sources |
+| 2 | [phases/02-orchestrator-design.en.md](phases/02-orchestrator-design.en.md) | Generate SKILL.md with orchestration patterns |
+| 3 | [phases/03-phase-design.en.md](phases/03-phase-design.en.md) | Generate phase files preserving full execution detail |
+| 4 | [phases/04-validation.en.md](phases/04-validation.en.md) | Validate structure, references, and integration |
 
 ## Input Sources
 
@@ -390,7 +390,7 @@ What goes into SKILL.md vs what goes into phase files:
 
 **No-Placeholder Rule**: Generated phase files must be immediately executable. They MUST NOT contain `TODO`, `TBD`, `...`, `fill in`, `{placeholder}`, or any incomplete step. If a step cannot be concretely specified, omit it rather than leaving a stub. The Validation phase (Phase 4) must scan for these markers and reject any file containing them.
 
-> **Reference Pseudocode Exception**: Phase design documents of this meta-skill itself (e.g. `phases/01-requirements-analysis.md`) may contain reference pseudocode functions (e.g. `extractYAMLFrontmatter()`, `parseRequirements()`) to sketch parsing intent. These exist **only in this skill's design documents** for instructional purposes. Generated skill phase files **must NOT** retain such undefined functions — replace them with the host environment's real utilities. Phase 4 validation must detect and reject undefined function references in generated files.
+> **Reference Pseudocode Exception**: Phase design documents of this meta-skill itself (e.g. `phases/01-requirements-analysis.en.md`) may contain reference pseudocode functions (e.g. `extractYAMLFrontmatter()`, `parseRequirements()`) to sketch parsing intent. These exist **only in this skill's design documents** for instructional purposes. Generated skill phase files **must NOT** retain such undefined functions — replace them with the host environment's real utilities. Phase 4 validation must detect and reject undefined function references in generated files.
 
 ## SKILL.md Template
 

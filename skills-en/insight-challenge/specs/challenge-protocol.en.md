@@ -1,0 +1,1 @@
+../../../skills/insight-challenge/specs/challenge-protocol.en.md

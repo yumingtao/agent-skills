@@ -457,4 +457,4 @@ Expected phase file sizes relative to their source commands:
 
 ## Next Phase
 
-Return to orchestrator, then auto-continue to [Phase 4: Validation & Integration](04-validation.md).
+Return to orchestrator, then auto-continue to [Phase 4: Validation & Integration](04-validation.en.md).
