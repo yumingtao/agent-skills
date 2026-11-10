@@ -2,13 +2,13 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.2.0
+version: 1.3.0
 summary: 对代码质量发现进行对抗性审查，用源代码锚定的反向证据产出结构化结论。
 license: MIT
 disable-model-invocation: true
 description: >
   对代码质量发现进行对抗性审查：用反向证据挑战发现、对照源代码验证主张、产出结构化结论。适用于代码审查、质量分析、架构评估中的发现验证。触发词："审查发现"、"挑战发现"、"insight-challenge"、"challenge finding"。
-allowed-tools: Read(*), Glob(*), Grep(*), Bash(*), Write(*)
+allowed-tools: Read(*), Glob(*), Grep(*), Bash(*)
 session-mode: none
 ---
 
@@ -46,7 +46,18 @@ session-mode: none
 
 ## 发现输入格式
 
-发现可以 JSON 或结构化文本形式提供：
+发现可以 JSON 或结构化文本形式提供。字段要求：
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `id` | JSON 输入必填；内联输入由技能生成 | 发现标识符 |
+| `title` 或 `claim` | 是（任一） | 发现标题或可验证主张 |
+| `file` 或内联证据 | 是（任一） | 源文件引用，或直接给出的证据文本 |
+| `severity` | 否 | 原始严重度 |
+| `line` | 否 | 行号 |
+| `description` / `evidence` / `suggestion` / `design_ref` | 否 | 补充说明与设计引用 |
+
+缺少必填字段时按 IC-E05 列出缺失项请求补充，不基于猜测执行。
 
 ```json
 {
@@ -131,6 +142,14 @@ Evidence: types.ts KnowledgeEdgeKind 列表中缺少 'resolves'
 }
 ```
 
+产出结论后，运行校验器自检（支持单条与批量）：
+
+```bash
+node scripts/validate-verdict.mjs <verdict.json>
+```
+
+未通过时按报错修复结论后重新校验（见 IC-E06）。
+
 ## 结论定义
 
 | 结论 | 含义 | 适用场景 |
@@ -171,7 +190,7 @@ Counter: "The 28 refers to language types, not edge types; edge types are 21"
 
 ## 输出格式
 
-挑战产出 markdown 报告：
+默认输出为 markdown 报告，**内嵌完整 JSON 结论块**——人可直接阅读，机器可解析结论；仅当调用方显式要求纯 JSON 时才省略 markdown 包装：
 
 ```markdown
 ## Challenge Report: <finding_id>
@@ -199,13 +218,22 @@ Counter: "The 28 refers to language types, not edge types; edge types are 21"
 
 ## 错误处理
 
-| 场景 | 处理 |
-|------|------|
-| 引用文件不存在 | 报告文件缺失；结论 = weakened（可能已过时） |
-| 行号超出范围 | 搜索主张内容；调整行引用 |
-| 设计文档未找到 | 跳过设计验证；在报告中注明 |
-| 证据模糊 | 呈现双方观点；降低置信度 |
-| 批量多个发现 | 逐个独立处理；产出每个发现的结论 |
+| 错误码 | 场景 | 处理与恢复 |
+|--------|------|-----------|
+| IC-E01 | 引用文件不存在 | 报告文件缺失；结论 = weakened（可能已过时） |
+| IC-E02 | 行号超出范围 | 改用 Grep 按主张内容搜索重定位；调整行引用 |
+| IC-E03 | 设计文档未找到 | 跳过设计验证；在报告中注明 |
+| IC-E04 | 证据模糊 | 呈现双方观点；置信度降至 70 以下并说明 |
+| IC-E05 | 输入缺必填字段 | 列出缺失项请求补充；不基于猜测执行 |
+| IC-E06 | 结论未通过校验器 | 按校验报错修复结论后重新校验 |
+| — | 批量多个发现 | 逐个独立处理；产出每个发现的结论 |
+
+## 稳定性保证
+
+- **幂等**：结论只由源代码证据决定——同一发现对照同一代码库，两次挑战产出相同结论。
+- **读取重试**：Read 读取失败时改用 Grep 内容搜索一次；仍失败按 IC-E01 降级，不反复重试。
+- **上下文上限**：追查调用链最多扩展 2 层；继续收集证据而置信度不再上升时停止扩展。
+- **批量隔离**：批量挑战中单条发现失败不阻断其余发现，各自独立产出结论。
 
 ## 使用示例
 

@@ -2,7 +2,7 @@
 
 ## 概述
 
-本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。
+本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。机器校验由 `scripts/validate-verdict.mjs` 实现（零依赖，fail-closed），测试夹具见 `tests/fixtures/`。
 
 ## 结论 JSON Schema
 

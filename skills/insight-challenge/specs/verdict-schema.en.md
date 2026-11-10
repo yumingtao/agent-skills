@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems.
+This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems. Machine validation is implemented by `scripts/validate-verdict.mjs` (zero-dependency, fail-closed); test fixtures live in `tests/fixtures/`.
 
 ## Verdict JSON Schema
 

@@ -38,6 +38,29 @@ jobs:
       - name: Diagram checker syntax
         run: node --check skills/diagram-generator/scripts/check-diagram.mjs
 
+      - name: Verdict validator syntax
+        run: node --check skills/insight-challenge/scripts/validate-verdict.mjs
+
+      - name: Verdict validator behavior gate (known-good fixture)
+        run: node skills/insight-challenge/scripts/validate-verdict.mjs skills/insight-challenge/tests/fixtures/verdict-good.json
+
+      - name: Verdict validator rejection gate (bad fixture)
+        run: |
+          set +e
+          out=$(node skills/insight-challenge/scripts/validate-verdict.mjs skills/insight-challenge/tests/fixtures/verdict-bad.json 2>&1)
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "::error::validator accepted a known-bad fixture"
+            echo "$out"
+            exit 1
+          fi
+          echo "$out" | grep -q "IC-V01" \
+            && echo "$out" | grep -q "IC-V02" \
+            && echo "$out" | grep -q "IC-V05" \
+            || { echo "::error::validator failed without reporting the injected defects"; echo "$out"; exit 1; }
+          echo "validator correctly rejected the bad fixture:"
+
       - name: Diagram checker behavior gate (known-good fixture)
         run: node skills/diagram-generator/scripts/check-diagram.mjs skills/diagram-generator/tests/fixtures/example-commerce-system-map.html
 
