@@ -1,48 +1,64 @@
-# Diagram Generator
+# 图表生成器 / Diagram Generator
+
+图表生成器是一套平台中立的指令包，用于创建独立的专业技术系统图。它将架构简报、代码库笔记、部署描述、信任边界叙述和流程说明，转换为单个可在浏览器中打开的 HTML 文件（内联 SVG）。
 
 Diagram Generator is a platform-neutral instruction pack for creating standalone technical system maps. It turns architecture briefs, codebase notes, deployment descriptions, trust-boundary narratives, and process explanations into a single browser-openable HTML file with inline SVG.
 
+该包面向 Claude、Codex、Cursor、OpenCode、Windsurf、Gemini、GitHub Copilot、CodeBuddy 和 Hermes 等智能体环境。共享行为位于 `resources/` 中；平台文件是有意精简的适配器，将各平台路由到相同的生成与审计工作流。
+
 The package is designed for agent environments such as Claude, Codex, Cursor, OpenCode, Windsurf, Gemini, GitHub Copilot, CodeBuddy, and Hermes. Shared behavior lives in `resources/`; platform files are intentionally thin adapters that route each platform to the same generation and audit workflow.
 
-## What It Produces
+## 产出物 / What It Produces
+
+生成器从七种视角（lens）中选择一种，渲染独立 HTML/SVG 图。以下是各视角的实例，均由简短简报渲染并通过 `scripts/check-diagram.mjs` 校验。
 
 The generator picks one of seven lenses and renders a standalone HTML/SVG map. Below are examples of the lenses in action, each rendered from a short brief and validated with `scripts/check-diagram.mjs`.
 
+> 下方示例图片托管于 GitHub。`docs/*.png` 和 `LICENSE` 文件属于源仓库；某些打包目标（如 SkillHub）会从分发包中剥离图片和许可证文件。
+>
 > Example images below are hosted on GitHub. The `docs/*.png` and `LICENSE` files are part of the source repository; some packaging targets (e.g. SkillHub) strip images and license files from the distributed bundle.
 
-### System lens
+### 系统视角 / System lens
 
-![System map: a commerce platform with clients, API gateway, services, PostgreSQL, Redis, Kafka, object storage, and an OIDC provider](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-system-map.png)
+![系统图：含客户端、API 网关、服务、PostgreSQL、Redis、Kafka、对象存储和 OIDC 提供方的电商平台](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-system-map.png)
+
+服务关系、用户入口、存储归属、外部集成和运维上下文。
 
 Service relationships, user entry points, storage ownership, external integrations, and operational context.
 
-### Infrastructure lens
+### 基础设施视角 / Infrastructure lens
 
-![Infrastructure map: a multi-region deployment with CDN, global load balancer, two Kubernetes regions, managed databases, object storage, and a message bus](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-infrastructure-map.png)
+![基础设施图：多区域部署，含 CDN、全局负载均衡、两个 Kubernetes 区域、托管数据库、对象存储和消息总线](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-infrastructure-map.png)
+
+区域、集群、网络、网关、托管服务、对象存储、队列、容器和部署位置。
 
 Regions, clusters, networks, gateways, managed services, object stores, queues, containers, and deployment placement.
 
-### Trust lens
+### 信任边界视角 / Trust lens
 
-![Trust map: public clients crossing a trust boundary where auth, token validation, policy, and secrets are enforced before private services run](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-trust-map.png)
+![信任图：公共客户端跨越信任边界，在私有服务运行前执行认证、令牌校验、策略和密钥管理](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-trust-map.png)
+
+身份提供方、公有/私有边界、特权操作、密钥、策略检查、令牌校验和管理路径。
 
 Identity providers, public/private boundaries, privileged operations, secrets, policy checks, token validation, and administrative paths.
 
-### Data movement lens
+### 数据流动视角 / Data movement lens
 
-![Data movement map: web and IoT producers feeding an event stream that fans out to a warehouse, search index, and object store](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-data-movement-map.png)
+![数据流图：Web 和 IoT 生产者汇入事件流，分发到数据仓库、搜索索引和对象存储](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-data-movement-map.png)
+
+摄取、复制、事件流、持久记录、转换、搜索索引、导出和报表。
 
 Ingestion, replication, event streams, durable records, transformations, search indexes, exports, and reporting.
 
-### Process lens
+### 流程视角 / Process lens
 
-![Process map: an ordered CI/CD pipeline from commit through build, test, approval, staging, and production with a monitoring feedback loop](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-process-map.png)
+![流程图：从提交到构建、测试、审批、预发和生产的 CI/CD 流水线，含监控反馈回路](https://raw.githubusercontent.com/yumingtao/agent-skills/main/skills/diagram-generator/docs/example-process-map.png)
 
 Ordered interactions, approval chains, incident response, automation pipelines, and sequence-like flows.
 
 Also supported: **implementation maps** (repository-derived stages, script execution chains, generated artifacts) and **deployment placement maps** (workload-to-infra allocation).
 
-## Output Contract
+## 输出契约 / Output Contract
 
 Default output is `html-first`: one standalone `.html` file with:
 
@@ -57,7 +73,7 @@ Default output is `html-first`: one standalone `.html` file with:
 
 Draw.io XML is optional and should only be requested when editability in draw.io or Confluence draw.io is part of the workflow.
 
-## Directory Layout
+## 目录结构 / Directory Layout
 
 ```text
 diagram-generator/
@@ -98,6 +114,10 @@ diagram-generator/
 ```
 
 ## Installation
+
+下方按平台给出安装方式：核心是把本目录放到平台的技能/指令目录，并保证 `resources/` 可访问。中文环境同样适用，触发词见 SKILL.md。
+
+Install per platform below. The key is to place this directory in the platform's skills/instruction folder and keep `resources/` accessible.
 
 ### Claude
 
@@ -141,14 +161,14 @@ Use `CODEBUDDY.md` as the workspace rule file.
 
 Use `HERMES.md` as the task specification and keep `resources/` available in the workspace.
 
-## Usage Pattern
+## 使用模式 / Usage Pattern
 
 1. Provide a brief or ask the agent to inspect a codebase.
 2. Ask for the lens you want: system, implementation, infrastructure, trust, data movement, deployment, or process.
 3. Generate an `html-first` artifact unless draw.io editability is explicitly needed.
 4. Ask for a visual audit pass before publishing.
 
-## Smoke Tests
+## 冒烟测试 / Smoke Tests
 
 Platform-specific smoke prompts live in `tests/platform-smoke-tests/`.
 
@@ -163,7 +183,9 @@ Use them before publishing or after changing `resources/`:
 
 Each smoke test checks that the agent uses `html-first`, follows the atlas-style template, keeps draw.io hidden by default, emits a notes rail without placeholder text, and can preserve unrelated content when revising an existing diagram.
 
-## Output Checker
+## 输出检查器 / Output Checker
+
+每个生成的产物在返回前必须通过零依赖校验器：
 
 Every generated artifact must pass the zero-dependency validator before it is returned:
 
@@ -171,9 +193,11 @@ Every generated artifact must pass the zero-dependency validator before it is re
 node scripts/check-diagram.mjs <output-file.html>
 ```
 
+它校验占位符清除、notes 栏存在、自包含性、标记完整性、IR 几何（节点边界、重叠、连线端点、区域边界、区域包含且每边至少 10px 间距）、`data-node-id`/`data-edge-id` 与 IR 的交叉核对，以及可选的 `labelAnchor` 重叠检查。警告不阻断；错误以退出码 1 结束。
+
 It verifies placeholder removal, notes-rail presence, self-containment, marker integrity, IR geometry (node bounds, overlaps, edge endpoints, region bounds, region containment with a minimum 10px gutter on every side), `data-node-id`/`data-edge-id` cross-checks against the IR, and optional `labelAnchor` overlap checks. Warnings do not block; errors exit 1.
 
-### Error codes
+### 错误码 / Error codes
 
 Every checker message carries a stable, machine-greppable code prefix (`[Exxx]` errors, `[Wxxx]` warnings) so callers can classify failures without parsing prose:
 
@@ -205,7 +229,11 @@ A known-good reference artifact lives at `tests/fixtures/example-commerce-system
 
 A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the known-good artifact with four injected defects (a template placeholder residue, a node whose bounds leave the viewBox, a region `contains` entry referencing a nonexistent node, and a node sitting flush against its region border). CI asserts the checker rejects it (non-zero exit) and reports all four defect classes; this proves the checker fails closed, not just that it passes a good sample.
 
-## Quality Guidance
+## 质量指引 / Quality Guidance
+
+以下规则保证生成结果可维护、可审计：
+
+These rules keep generated output maintainable and auditable:
 
 - Keep reusable behavior in `resources/generation-rules.md`.
 - Keep the planning model in `resources/diagram-ir.md`.
@@ -216,7 +244,7 @@ A known-bad fixture lives at `tests/fixtures/bad-injected-defects.html` — the 
 - For existing-diagram edits, prefer local coordinate and connector changes over full regeneration.
 - Treat draw.io XML as an export adapter, not the default rendering target.
 
-## Output Modes
+## 输出模式 / Output Modes
 
 ### `html-first`
 
@@ -246,7 +274,7 @@ Create a system map in html + drawio xml mode:
 
 Planned. This mode is not production-ready until dedicated mxGraphModel rules, a template, and import validation are included.
 
-## Example Prompt
+## 示例提示词 / Example Prompt
 
 ```text
 Create a standalone HTML system map for:
@@ -263,7 +291,11 @@ Create a standalone HTML system map for:
 Use the default html-first mode. Keep visible text in English.
 ```
 
-## Design Principles
+## 设计原则 / Design Principles
+
+图表应解释行为，而不只是罗列组件。以下是核心原则：
+
+A diagram should explain behavior, not merely inventory components. Core principles:
 
 - A diagram should explain behavior, not merely inventory components.
 - Use one abstraction level per artifact.
@@ -272,11 +304,15 @@ Use the default html-first mode. Keep visible text in English.
 - Prefer concise labels and put longer explanations in the notes rail.
 - Do not rely on external images, fonts, scripts, or build tools.
 
-## Publishing
+## 发布 / Publishing
 
 Before publishing, remove local smoke-test outputs (the checked-in fixture under `tests/fixtures/` stays) and run `RELEASE_CHECKLIST.md`.
 
 ## FAQ & Common Pitfalls
+
+以下是使用中最常见的问题及其处理方式。中文环境下可直接用对应触发词生成图表，标签和注释语言跟随用户偏好。
+
+The most common issues and how to resolve them. In Chinese contexts, use the corresponding trigger phrases; labels and notes follow the user's preferred language.
 
 **Q: The checker reports an edge collinear with a node or region border. What do I do?**
 A: Reroute the connector so it exits a node edge perpendicularly and travels in the free space between nodes. Never run a connector along the outer edge of its own source or target node, and avoid segments that share more than ~12 px with any region border.

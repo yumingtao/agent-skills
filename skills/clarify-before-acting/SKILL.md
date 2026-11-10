@@ -2,29 +2,46 @@
 name: clarify-before-acting
 slug: yumingtao-clarify-before-acting
 displayName: Clarify Before Acting
-version: 1.1.1
-summary: Resolve direction-changing ambiguity before acting on complex or high-cost requests.
+version: 1.2.0
+summary: 在处理复杂或高成本请求前，先解决方向性歧义 / Resolve direction-changing ambiguity before acting on complex or high-cost requests.
 license: MIT
-description: Before acting on a complex, ambiguous, or high-cost request, resolve direction-changing ambiguity first: do your own homework, check memory for questions already answered, work a question queue one item at a time, and never guess where direction is at stake. Skips trivial, mechanical, low-risk tasks. Triggers on "clarify before acting", "ask before doing", "确认需求", "先澄清再做", "方向不确定". Supports Chinese interaction and domestic platforms (通义, 豆包, Trae, CodeBuddy).
+description: >
+  在处理复杂、模糊或高成本请求前，先解决方向性歧义：自己做功课、检查记忆中已回答的问题、逐个处理问题队列、绝不猜测方向。跳过琐碎、机械、低风险的任务。触发词："确认需求"、"先澄清再做"、"方向不确定"、"clarify before acting"、"ask before doing"。
+  Before acting on a complex, ambiguous, or high-cost request, resolve direction-changing ambiguity first: do your own homework, check memory for questions already answered, work a question queue one item at a time, and never guess where direction is at stake. Skips trivial, mechanical, low-risk tasks. Triggers on "clarify before acting", "ask before doing", "确认需求", "先澄清再做", "方向不确定".
 ---
 
-# Clarify Before Acting
+# 先澄清再行动 / Clarify Before Acting
 
-Before acting on a non-trivial request, make sure you understand the *direction*
-of what's wanted — then act. The goal is a clear direction, not exhaustive detail.
+在处理非平凡请求前，确保理解所需的**方向**——然后行动。目标是明确方向，而非穷尽细节。
 
-## When this applies
+Before acting on a non-trivial request, make sure you understand the *direction* of what's wanted — then act. The goal is a clear direction, not exhaustive detail.
+
+## 快速决策：问还是做？ / Quick Decision: Ask or Proceed?
+
+| 判断 | 行动 / Action |
+|------|---------|
+| ✅ 直接做 / Proceed directly | 琐碎编辑、低风险文件操作、可逆动作、用户已给出明确方向 / Trivial edits, low-risk file ops, reversible actions, user gave clear direction |
+| ❓ 先问 / Ask first | 影响多个模块、不可逆（删除、force push）、需求模糊、重做成本 >5 分钟 / Affects >1 module, irreversible (deletes, force pushes), ambiguous requirements, redo cost >5 min |
+| 🛑 必须问 / Must ask | 方向性未知（见"最薄弱环节"四类）/ Direction-changing unknowns (see "Find the weakest spot") |
+
+## 适用场景 / When this applies
+
+当请求复杂、模糊或出错代价高昂时介入：架构、需求、schema 或数据变更、不可逆操作，或任何"这不是我要的"会浪费实际工作的场景。
 
 Engage when the request is complex, ambiguous, or costly to get wrong:
 architecture, requirements, schema or data changes, irreversible actions, or
 anything where "that's not what I meant" would waste real work.
+
+跳过清晰、机械、低风险的任务——格式化、重命名、单次翻译，或任何已指定文件、符号或验收测试的请求。不确定时，做一次快速检查，而非审问。这条规则是手术刀，不是收费站。
 
 Skip it for clear, mechanical, low-risk tasks — formatting, renaming, a single
 translation, or any request that already names the file, symbol, or acceptance
 test. When unsure, do one quick check, not an interrogation. This rule is a
 scalpel, not a tollgate.
 
-## Do your homework first
+## 先做功课 / Do your homework first
+
+从已有信息——代码库、文档、请求本身——中回答一切能回答的，再去问人。绝不要问代码或上下文已经告诉你的事。提问时，引用促使你提问的证据（文件、符号、观察到的模式），这样对方无需重新发现。
 
 Answer everything you can from what is already available — the codebase, the
 docs, the request itself — before asking the human. Never ask what the code or
@@ -32,91 +49,87 @@ context already tells you. When you do ask, cite the evidence that prompted the
 question (a file, a symbol, an observed pattern) so the person does not have to
 rediscover it.
 
+**提问前先查记忆。** 如果平台提供记忆或历史会话回顾，在提问前先查看。用户已经回答过的问题——在这里或更早的会话中——绝不再问：复用记录的答案，说明你正在这么做，然后继续。记忆减少队列；它不会压制真正新的方向性未知。
+
 **Check memory before re-asking.** If your platform offers memory or past-session
 recall, look there before posing a question. A question this user already
 answered — here or in an earlier session — must not be asked again: reuse the
 recorded answer, say you are doing so, and move on. Memory reduces the queue;
 it never silences a genuinely new direction-changing unknown.
 
-## Find the weakest spot
+## 找到最薄弱环节 / Find the weakest spot
+
+将以下四项作为检查清单，将每个问题瞄准最不清晰的那项：
 
 Hold these four as a checklist and aim each question at whichever is least clear:
 
-- **Goal** — what exactly should happen, in one sentence without "and / or".
-- **Constraints** — boundaries, non-goals, what is explicitly out of scope.
-- **Success** — how you would both know it worked; what a test would assert.
-- **Context** — for changes to an existing system, how this fits what is there.
+- **目标 Goal** — 到底应该发生什么，用一句话说清，不带"和/或"。
+- **约束 Constraints** — 边界、非目标、明确排除的范围。
+- **成功 Success** — 你们如何知道它成功了；测试会断言什么。
+- **上下文 Context** — 对现有系统的变更，这如何适配已有内容。
 
-## Work a question queue
+## 处理问题队列 / Work a question queue
+
+做完功课和记忆检查后，仍存在的方向性未知进入显式队列——而不是变成猜测：
 
 After homework and memory, whatever direction-changing unknowns remain go into
 an explicit queue — not into a guess:
 
-1. **List** every open direction-changing unknown as one short question
-   (typically 1–4). Three or more: show the numbered list so the person sees
-   the shape of the conversation ahead.
-2. **Order** by impact on direction — the question whose wrong answer would
-   waste the most work goes first.
-3. **Ask one at a time.** Ask the top question, listen, and reflect the answer
-   back in one line. Only when that unknown is resolved does the next question
-   go out. Never batch the queue into one message.
-4. **Update the queue as answers land.** An answer may open a new unknown (add
-   it) or void a queued question (drop it). Re-order and continue.
-5. **The queue, not patience, decides when you act.** Work through it until no
-   item remains; then act or write the task contract.
+1. **列出**每个未解决的方向性未知，写成一个简短问题（通常 1–4 个）。三个以上时展示编号列表，让对方看到后续对话的全貌。
+   **List** every open direction-changing unknown as one short question (typically 1–4). Three or more: show the numbered list so the person sees the shape of the conversation ahead.
+2. **排序**按对方向的影响——答错会浪费最多工作的问题排第一。
+   **Order** by impact on direction — the question whose wrong answer would waste the most work goes first.
+3. **逐个提问。** 先问最上面的问题，倾听，用一行复述答案。只有该未知解决后才问下一个。绝不把队列合并成一条消息。
+   **Ask one at a time.** Ask the top question, listen, and reflect the answer back in one line. Only when that unknown is resolved does the next question go out. Never batch the queue into one message.
+4. **随答案更新队列。** 答案可能开启新未知（加入）或作废排队中的问题（删除）。重新排序并继续。
+   **Update the queue as answers land.** An answer may open a new unknown (add it) or void a queued question (drop it). Re-order and continue.
+5. **由队列而非耐心决定何时行动。** 一直处理到无剩余项，然后行动或写任务契约。
+   **The queue, not patience, decides when you act.** Work through it until no item remains; then act or write the task contract.
 
-## Ask well
+## 善于提问 / Ask well
 
-- One question at a time, drawn from the top of the queue. Let each answer
-  shape the next.
-- Probe assumptions, not feature lists. Ask "what are you assuming?" more often
-  than "what do you want?".
-- Sketch the scope's pieces before drilling into one, so depth on the loudest
-  part does not hide a forgotten sibling.
+- 一次一个问题，取自队列顶部。让每个答案塑造下一个问题。
+  One question at a time, drawn from the top of the queue. Let each answer shape the next.
+- 探究假设，而非功能清单。多问"你在假设什么？"，少问"你想要什么？"。
+  Probe assumptions, not feature lists. Ask "what are you assuming?" more often than "what do you want?".
+- 先勾勒范围的整体组成部分，再深入某一项，避免在最显眼部分深入时遗漏其他部分。
+  Sketch the scope's pieces before drilling into one, so depth on the loudest part does not hide a forgotten sibling.
 
-## Know when to stop
+## 知道何时停止 / Know when to stop
 
-Stop and act when the queue is empty — no remaining unknown would change the
-*direction* of the work (a different goal, owner, shape, or approach). Detail
-the person can correct later is not a reason to keep asking. Do not invent a
-numeric "confidence" score; the test is directional, not arithmetic.
+队列清空时停止并行动——没有剩余未知会改变工作的*方向*（不同的目标、负责人、形态或方法）。对方之后能纠正的细节不是继续提问的理由。不要编造数字化的"置信度"分数；判断是方向性的，不是算术的。
 
-Respect an explicit stop: only an unambiguous "stop asking — just do it"
-ends the questioning. Stop immediately, but state plainly what is still
-unclear and the risk of proceeding.
+Stop and act when the queue is empty — no remaining unknown would change the *direction* of the work (a different goal, owner, shape, or approach). Detail the person can correct later is not a reason to keep asking. Do not invent a numeric "confidence" score; the test is directional, not arithmetic.
 
-A pace complaint is not a stop. "You ask too much" or "hurry up" is feedback
-on *form*, not permission to skip: keep asking every direction-changing
-unknown, one at a time, each fully resolved before the next — just make each
-question shorter and better aimed. The queue shrinks by answers, never by
-impatience.
+尊重明确叫停：只有无歧义的"别问了——直接做"才结束提问。立即停止，但清晰说明仍不清楚的内容和继续推进的风险。
 
-## When you proceed on assumptions
+Respect an explicit stop: only an unambiguous "stop asking — just do it" ends the questioning. Stop immediately, but state plainly what is still unclear and the risk of proceeding.
 
-A direction-changing unknown is a reason to ask, not a license to guess. Fill
-it with an assumption only when the person explicitly stopped the questioning
-(an unambiguous "stop asking, just do it" — a pace complaint is not this), or
-the unknown is reversible detail that cannot change direction. For each
-assumption you then carry: what you assumed, why, and what breaks if you are
-wrong.
+节奏抱怨不是叫停。"你问太多了"或"快点"是关于*形式*的反馈，不是跳过提问的许可：继续逐个提问每个方向性未知，每个完全解决后再问下一个——只是让每个问题更短、更精准。队列靠答案缩减，绝不靠不耐烦。
 
-## Close with a task contract when execution needs it
+A pace complaint is not a stop. "You ask too much" or "hurry up" is feedback on *form*, not permission to skip: keep asking every direction-changing unknown, one at a time, each fully resolved before the next — just make each question shorter and better aimed. The queue shrinks by answers, never by impatience.
 
-When the clarified request will be handed to an executor, or when execution
-depends on an unresolved assumption, close with a concise task contract. This
-is not a rewrite of the user's prompt or an implementation plan; it is the
-shared definition of the result and its boundaries:
+## 基于假设推进时 / When you proceed on assumptions
 
-- **Result** — what must be true when the task is complete.
-- **Scope** — what is included and explicitly out of scope.
-- **Checkpoints** — the ordered evidence that will show the result is met.
-- **Stop conditions** — what would require pausing and asking again.
-- **Assumptions** — the assumptions being carried forward and the risk if they
-  are wrong.
+方向性未知是提问的理由，不是猜测的许可。只有对方明确停止提问（无歧义的"别问了，直接做"——节奏抱怨不算），或未知是可逆且无法改变方向的细节时，才用假设填充。对每个携带的假设说明：假设了什么、为什么、若错了会破坏什么。
 
-Skip the contract for clear, mechanical work that already names its file,
-symbol, or acceptance test. Keep it proportional; it is an execution handoff,
-not a mandatory questionnaire.
+A direction-changing unknown is a reason to ask, not a license to guess. Fill it with an assumption only when the person explicitly stopped the questioning (an unambiguous "stop asking, just do it" — a pace complaint is not this), or the unknown is reversible detail that cannot change direction. For each assumption you then carry: what you assumed, why, and what breaks if you are wrong.
+
+## 需要时以任务契约收尾 / Close with a task contract when execution needs it
+
+当澄清后的请求将交给执行者，或执行依赖未解决的假设时，用简洁的任务契约收尾。这不是重写用户提示或实现计划，而是对结果及其边界的共同定义：
+
+When the clarified request will be handed to an executor, or when execution depends on an unresolved assumption, close with a concise task contract. This is not a rewrite of the user's prompt or an implementation plan; it is the shared definition of the result and its boundaries:
+
+- **结果 Result** —— 任务完成时必须为真的事。
+- **范围 Scope** —— 包含什么、明确排除什么。
+- **检查点 Checkpoints** —— 证明结果达成的有序证据。
+- **停止条件 Stop conditions** —— 什么情况需要暂停并重新提问。
+- **假设 Assumptions** —— 携带的假设及若错误的风险。
+
+对于已明确文件、符号或验收测试的清晰机械工作，跳过契约。保持相称——它是执行交接，不是强制问卷。
+
+Skip the contract for clear, mechanical work that already names its file, symbol, or acceptance test. Keep it proportional; it is an execution handoff, not a mandatory questionnaire.
 
 
 ---
@@ -125,41 +138,41 @@ not a mandatory questionnaire.
 lives in [`references/playbook.md`](references/playbook.md). Read it when a
 task is hard enough to need it; the rule above is enough for everyday use.*
 
-## Out of Scope
+## 不适用范围 / Out of Scope
+
+以下情况本技能**不**适用：
 
 This skill does **not** apply when:
 
-- The request is trivial, mechanical, or low-risk (formatting, renaming,
-  translation, single-file edits with clear intent).
-- The direction is already unambiguous and testable.
-- The user explicitly says "just do it" and the remaining unknowns are
-  detail-level, not direction-changing — in that case proceed with stated
-  assumptions.
-- The task requires domain expertise the agent cannot verify internally;
-  surface that as a known unknown rather than guessing.
+- 请求琐碎、机械或低风险（格式化、重命名、翻译、意图明确的单文件编辑）。
+  The request is trivial, mechanical, or low-risk (formatting, renaming, translation, single-file edits with clear intent).
+- 方向已经无歧义且可测试。
+  The direction is already unambiguous and testable.
+- 用户明确说"直接做"，且剩余未知是细节级、非方向性的——此时带陈述的假设继续。
+  The user explicitly says "just do it" and the remaining unknowns are detail-level, not direction-changing — in that case proceed with stated assumptions.
+- 任务需要智能体无法内部验证的领域专业知识——将其作为已知未知呈现，而非猜测。
+  The task requires domain expertise the agent cannot verify internally; surface that as a known unknown rather than guessing.
 
-## FAQ
+## 常见问题 / FAQ
 
-**Q: How many questions is too many?**
-A: No hard cap, but each question must change a direction. If you can proceed
-with a stated assumption instead, do that. Stop asking the moment you can write
-the goal, constraints, and one testable success criterion.
+**Q: 问多少算太多？ / How many questions is too many?**  
+A: 没有硬上限，但每个问题必须改变方向。如果可以用陈述性假设推进，就这么做。当你能写出目标、约束和一条可测试的成功标准时，就停止提问。  
+A: No hard cap, but each question must change a direction. If you can proceed with a stated assumption instead, do that. Stop asking the moment you can write the goal, constraints, and one testable success criterion.
 
-**Q: The user said "you ask too much" — do I stop?**
-A: Not necessarily. That is usually a pace complaint, not a stop. Keep the
-queue, just make questions shorter. Only stop when the user explicitly says
-"don't ask, just do it."
+**Q: 用户说"你问太多了"——我该停吗？ / The user said "you ask too much" — do I stop?**  
+A: 不一定。这通常是节奏抱怨，不是停止。保留队列，只是让问题更短。只有当用户明确说"别问了，直接做"时才停止。  
+A: Not necessarily. That is usually a pace complaint, not a stop. Keep the queue, just make questions shorter. Only stop when the user explicitly says "don't ask, just do it."
 
-**Q: What if the user won't answer a direction-changing question?**
-A: Convert it to a stated assumption with its risk, say so plainly, and
-proceed. Do not block forever.
+**Q: 用户不回答方向性问题怎么办？ / What if the user won't answer a direction-changing question?**  
+A: 区分两种情况：(1) 用户明确说"别问了，直接做"——带着陈述的假设和风险继续；(2) 用户只是沉默不答——不要默默假设，用更简洁的方式再问一次，或清晰陈述风险并请求一个字的确认。方向性未知绝不能被默默填充。  
+A: Distinguish two cases: (1) if the user explicitly says "stop asking / just do it", proceed with stated assumptions and risks; (2) if the user simply doesn't answer (silence), do not silently assume — rephrase the question once more concisely, or state the risk clearly and ask for a one-word confirmation. A direction-changing unknown must never be silently filled.
 
-**Q: Do I ask before every edit?**
-A: No. Only before direction-changing or high-cost actions. Mechanical edits
-go straight through.
+**Q: 每次编辑前都要问吗？ / Do I ask before every edit?**  
+A: 不。只在方向性或高成本行动前问。机械编辑直接执行。  
+A: No. Only before direction-changing or high-cost actions. Mechanical edits go straight through.
 
-## Language Support
+## 语言支持 / Language Support
 
-This skill supports Chinese interaction. You may ask questions and receive
-answers in Chinese; the task contract and assumptions may be written in the
-user's preferred language. 触发词包括 "确认需求"、"先澄清再做"、"方向不确定"。
+本技能支持中文交互。你可以用中文提问和接收回答；任务契约和假设可以用用户的首选语言编写。触发词包括 "确认需求"、"先澄清再做"、"方向不确定"。
+
+This skill supports Chinese interaction. You may ask questions and receive answers in Chinese; the task contract and assumptions may be written in the user's preferred language.

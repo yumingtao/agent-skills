@@ -1,16 +1,23 @@
-# Phase 4: Validation & Integration
+# 阶段 4：校验与集成 / Phase 4: Validation & Integration
+
+校验生成的技能包的结构完整性、引用完整性和内容质量。产出校验报告和集成摘要。
 
 Validate the generated skill package for structural completeness, reference integrity, and content quality. Produce a validation report and integration summary.
 
-## Objective
+## 目标 / Objective
 
-- Verify all required files exist
-- Validate SKILL.md references match actual phase files
-- Check content preservation (for command extraction source)
-- Verify cross-phase data flow consistency
-- Report validation results to user
+- 验证所有必需文件存在
+  Verify all required files exist
+- 校验 SKILL.md 引用与实际阶段文件匹配
+  Validate SKILL.md references match actual phase files
+- 检查内容保留（针对命令提取源）
+  Check content preservation (for command extraction source)
+- 验证跨阶段数据流一致性
+  Verify cross-phase data flow consistency
+- 向用户报告校验结果
+  Report validation results to user
 
-## Step 4.1: Structural Validation
+## 步骤 4.1：结构校验 / Step 4.1: Structural Validation
 
 ```javascript
 function validateStructure(config) {
@@ -52,7 +59,7 @@ function validateStructure(config) {
 }
 ```
 
-## Step 4.2: Reference Integrity
+## 步骤 4.2：引用完整性 / Step 4.2: Reference Integrity
 
 ```javascript
 function validateReferences(config) {
@@ -106,7 +113,7 @@ function validateReferences(config) {
 }
 ```
 
-## Step 4.3: Content Quality (Command Extraction Only)
+## 步骤 4.3：内容质量（仅命令提取） / Step 4.3: Content Quality (Command Extraction Only)
 
 ```javascript
 function validateContentQuality(config) {
@@ -168,7 +175,7 @@ function validateContentQuality(config) {
 }
 ```
 
-## Step 4.4: Data Flow Consistency
+## 步骤 4.4：数据流一致性 / Step 4.4: Data Flow Consistency
 
 ```javascript
 function validateDataFlow(config) {
@@ -204,7 +211,7 @@ function validateDataFlow(config) {
 }
 ```
 
-## Step 4.5: SKILL.md Section Completeness
+## 步骤 4.5：SKILL.md 章节完整性 / Step 4.5: SKILL.md Section Completeness
 
 ```javascript
 function validateSkillMdSections(config) {
@@ -259,7 +266,7 @@ function validateSkillMdSections(config) {
 }
 ```
 
-## Step 4.6: Phase File Hygiene
+## 步骤 4.6：阶段文件卫生 / Step 4.6: Phase File Hygiene
 
 Scan generated phase files for prohibited content patterns. Phase files are internal execution documents and must not contain user-facing syntax, flag parsing, or inter-phase routing.
 
@@ -329,7 +336,7 @@ function validatePhaseFileHygiene(config) {
 }
 ```
 
-## Step 4.7: Aggregate Results and Report
+## 步骤 4.7：汇总结果并报告 / Step 4.7: Aggregate Results and Report
 
 ```javascript
 function generateValidationReport(config) {
@@ -401,7 +408,7 @@ ${allInfo.length > 0 ? `Info:\n${allInfo.map(i => `  ℹ ${i}`).join('\n')}` : '
 }
 ```
 
-## Step 4.8: Error Recovery
+## 步骤 4.8：错误恢复 / Step 4.8: Error Recovery
 
 If validation fails, offer recovery options:
 
@@ -432,7 +439,7 @@ if (report.gate === 'FAIL') {
 }
 ```
 
-## Step 4.9: Integration Summary
+## 步骤 4.9：集成摘要 / Step 4.9: Integration Summary
 
 ```javascript
 function displayIntegrationSummary(config) {
@@ -462,11 +469,13 @@ Next Steps:
 }
 ```
 
-## Output
+## 输出 / Output
 
-- **Report**: Validation results with quality gate (PASS/REVIEW/FAIL)
-- **TodoWrite**: Mark Phase 4 completed (all tasks done)
+- **报告 Report**: 含质量关卡（PASS/REVIEW/FAIL）的校验结果 / Validation results with quality gate (PASS/REVIEW/FAIL)
+- **TodoWrite**: 标记阶段 4 已完成（所有任务完成）/ Mark Phase 4 completed (all tasks done)
 
-## Completion
+## 完成 / Completion
+
+工作流技能设计器已完成。生成的技能包位于 `.claude/skills/{skillName}/`。
 
 Workflow Skill Designer has completed. The generated skill package is ready at `.claude/skills/{skillName}/`.

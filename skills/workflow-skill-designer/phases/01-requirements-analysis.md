@@ -1,14 +1,19 @@
-# Phase 1: Requirements Analysis
+# 阶段 1：需求分析 / Phase 1: Requirements Analysis
 
-## Objective
+## 目标 / Objective
 
-- Identify all phases/steps in the workflow
-- Map data flow between phases
-- Identify agents, tools, and conditional logic
-- Detect source type and extract content accordingly
-- Produce `workflowConfig` object for subsequent phases
+- 识别工作流中的所有阶段/步骤
+  Identify all phases/steps in the workflow
+- 映射阶段间的数据流
+  Map data flow between phases
+- 识别智能体、工具和条件逻辑
+  Identify agents, tools, and conditional logic
+- 检测输入源类型并相应提取内容
+  Detect source type and extract content accordingly
+- 为后续阶段产出 `workflowConfig` 对象
+  Produce `workflowConfig` object for subsequent phases
 
-## Step 1.1: Identify Input Source
+## 步骤 1.1：识别输入源 / Step 1.1: Identify Input Source
 
 ```javascript
 // Determine what the user provided
@@ -16,18 +21,20 @@ const inputType = detectInputType(userInput);
 // Returns: 'command_set' | 'text_description' | 'requirements_doc' | 'existing_skill'
 ```
 
-### Source Type Detection
+### 源类型检测 / Source Type Detection
 
-| Indicator | Type | Action |
+| 指示 Indicator | 类型 Type | 操作 Action |
 |-----------|------|--------|
-| Path to `.claude/commands/**/*.md` | `command_set` | Read orchestrator + discover sub-commands |
-| Free text describing workflow | `text_description` | Interactive requirements gathering |
-| Path to `.md` or `.json` requirements | `requirements_doc` | Parse structured requirements |
-| Path to `.claude/skills/**/*.md` | `existing_skill` | Analyze and restructure |
+| 指向 `.claude/commands/**/*.md` 的路径 | `command_set` | 读取编排器 + 发现子命令 |
+| 描述工作流的自由文本 | `text_description` | 交互式需求收集 |
+| 指向 `.md` 或 `.json` 需求的路径 | `requirements_doc` | 解析结构化需求 |
+| 指向 `.claude/skills/**/*.md` 的路径 | `existing_skill` | 分析并重构 |
 
-## Step 1.2: Source-Specific Analysis
+## 步骤 1.2：源特定分析 / Step 1.2: Source-Specific Analysis
 
-### Mode A: Command Set Analysis
+### 模式 A：命令集分析 / Mode A: Command Set Analysis
+
+当输入源是现有的编排器命令 + 子命令时：
 
 When source is an existing orchestrator command + sub-commands:
 
@@ -76,32 +83,34 @@ for (const path of subCommandPaths) {
 const phaseOrder = extractPhaseOrder(orchestratorContent, skillCalls);
 ```
 
-**Key Extraction Points from Orchestrator**:
+**编排器中的关键提取点 / Key Extraction Points from Orchestrator**:
 
-| Section | What to Extract | Maps to |
+| 章节 Section | 提取内容 What to Extract | 映射至 Maps to |
 |---------|-----------------|---------|
-| Coordinator Role / Overview | Workflow description, execution model | SKILL.md description + Architecture |
-| Core Rules | Orchestration constraints | SKILL.md Core Rules |
-| Execution Process | Phase sequence + conditions | SKILL.md Execution Flow |
-| Data Flow | Inter-phase variables | SKILL.md Data Flow |
-| TodoWrite Pattern | Attachment/collapse examples | SKILL.md TodoWrite Pattern |
-| Input Processing | Structured format rules | SKILL.md Input Processing |
-| Error Handling | Recovery strategies | SKILL.md Error Handling |
-| Coordinator Checklist | Pre/post actions | SKILL.md Coordinator Checklist |
-| Related Commands | Prerequisites/follow-ups | SKILL.md Related Commands |
-| Phase N sections | Phase-specific orchestrator instructions | SKILL.md inline (brief), Phase files (detail) |
+| Coordinator Role / Overview | 工作流描述、执行模型 | SKILL.md description + Architecture |
+| Core Rules | 编排约束 | SKILL.md Core Rules |
+| Execution Process | 阶段顺序 + 条件 | SKILL.md Execution Flow |
+| Data Flow | 阶段间变量 | SKILL.md Data Flow |
+| TodoWrite Pattern | 附加/折叠示例 | SKILL.md TodoWrite Pattern |
+| Input Processing | 结构化格式规则 | SKILL.md Input Processing |
+| Error Handling | 恢复策略 | SKILL.md Error Handling |
+| Coordinator Checklist | 前/后动作 | SKILL.md Coordinator Checklist |
+| Related Commands | 前置/后续 | SKILL.md Related Commands |
+| Phase N sections | 阶段特定编排器指令 | SKILL.md inline (brief), Phase files (detail) |
 
-**Key Extraction Points from Sub-Commands**:
+**子命令中的关键提取点 / Key Extraction Points from Sub-Commands**:
 
-| Section | What to Extract | Maps to |
+| 章节 Section | 提取内容 What to Extract | 映射至 Maps to |
 |---------|-----------------|---------|
-| Full body content | Complete execution detail | Phase file (preserved verbatim) |
-| Agent prompts (Task calls) | Agent delegation logic | Phase file agent sections |
-| Bash command blocks | Shell execution steps | Phase file step sections |
-| Validation/Output sections | Phase outputs | Phase file Output section |
-| Frontmatter | Tools, description | Phase file header context |
+| Full body content | 完整执行细节 | Phase file (preserved verbatim) |
+| Agent prompts (Task calls) | 智能体委派逻辑 | Phase file agent sections |
+| Bash command blocks | Shell 执行步骤 | Phase file step sections |
+| Validation/Output sections | 阶段输出 | Phase file Output section |
+| Frontmatter | 工具、描述 | Phase file header context |
 
-### Mode B: Text Description Analysis
+### 模式 B：文本描述分析 / Mode B: Text Description Analysis
+
+当输入源是自然语言工作流描述时：
 
 When source is a natural language workflow description:
 
@@ -176,7 +185,9 @@ const conditions = AskUserQuestion({
 });
 ```
 
-### Mode C: Requirements Document
+### 模式 C：需求文档 / Mode C: Requirements Document
+
+当输入源是结构化需求文档时：
 
 When source is a structured requirements document:
 
@@ -190,7 +201,9 @@ const reqContent = Read(requirementsPath);
 const requirements = parseRequirements(reqContent);
 ```
 
-### Mode D: Existing Skill Restructure
+### 模式 D：现有技能重构 / Mode D: Existing Skill Restructure
+
+当输入源是待重构的现有技能时：
 
 When source is an existing skill to refactor:
 
@@ -205,7 +218,9 @@ const existingPhases = Glob(`${skillDir}/phases/*.md`);
 const analysis = analyzeExistingStructure(existingSkill, existingPhases);
 ```
 
-## Step 1.3: Build Workflow Configuration
+## 步骤 1.3：构建工作流配置 / Step 1.3: Build Workflow Configuration
+
+无论输入源类型，产出统一的 `workflowConfig`：
 
 Regardless of source type, produce a unified `workflowConfig`:
 
@@ -315,7 +330,9 @@ const workflowConfig = {
 };
 ```
 
-## Step 1.4: User Confirmation
+## 步骤 1.4：用户确认 / Step 1.4: User Confirmation
+
+将分析后的结构呈现给用户确认：
 
 Present the analyzed structure to the user for confirmation:
 
@@ -346,11 +363,13 @@ const confirm = AskUserQuestion({
 });
 ```
 
-## Output
+## 输出 / Output
 
-- **Variable**: `workflowConfig` (structured configuration object)
-- **TodoWrite**: Mark Phase 1 completed, Phase 2 in_progress
+- **变量 Variable**: `workflowConfig`（结构化配置对象）/ `workflowConfig` (structured configuration object)
+- **TodoWrite**: 标记阶段 1 已完成，阶段 2 进行中 / Mark Phase 1 completed, Phase 2 in_progress
 
-## Next Phase
+## 下一阶段 / Next Phase
+
+返回编排器，然后自动继续 [阶段 2：编排器设计](02-orchestrator-design.md)。
 
 Return to orchestrator, then auto-continue to [Phase 2: Orchestrator Design](02-orchestrator-design.md).

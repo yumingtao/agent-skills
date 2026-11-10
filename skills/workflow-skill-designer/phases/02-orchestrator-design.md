@@ -1,18 +1,27 @@
-# Phase 2: Orchestrator Design
+# 阶段 2：编排器设计 / Phase 2: Orchestrator Design
+
+从 workflowConfig 生成 SKILL.md 编排器文件，应用所有协调模式（渐进式加载、TodoWrite、数据流、条件执行）。
 
 Generate the SKILL.md orchestrator file from workflowConfig, applying all coordination patterns (progressive loading, TodoWrite, data flow, conditional execution).
 
-## Objective
+## 目标 / Objective
 
-- Create `.claude/skills/{skillName}/SKILL.md` as pure coordinator
-- Apply frontmatter conversion rules
-- Generate architecture diagram from phase structure
-- Build execution flow with `Ref:` markers and phase reference table
-- Generate data flow diagram
-- Build TodoWrite attachment/collapse patterns from phase definitions
-- Include all orchestrator-level sections
+- 创建 `.claude/skills/{skillName}/SKILL.md` 作为纯协调器
+  Create `.claude/skills/{skillName}/SKILL.md` as pure coordinator
+- 应用 frontmatter 转换规则
+  Apply frontmatter conversion rules
+- 从阶段结构生成架构图
+  Generate architecture diagram from phase structure
+- 用 `Ref:` 标记和阶段参考表构建执行流程
+  Build execution flow with `Ref:` markers and phase reference table
+- 生成数据流图
+  Generate data flow diagram
+- 从阶段定义构建 TodoWrite 附加/折叠模式
+  Build TodoWrite attachment/collapse patterns from phase definitions
+- 包含所有编排器级别的章节
+  Include all orchestrator-level sections
 
-## Step 2.1: Create Directory Structure
+## 步骤 2.1：创建目录结构 / Step 2.1: Create Directory Structure
 
 ```bash
 skillDir=".claude/skills/${workflowConfig.skillName}"
@@ -23,7 +32,7 @@ mkdir -p "${skillDir}/phases"
 # mkdir -p "${skillDir}/templates"  # if has reusable templates
 ```
 
-## Step 2.2: Generate Frontmatter
+## 步骤 2.2：生成 Frontmatter / Step 2.2: Generate Frontmatter
 
 ```javascript
 function generateFrontmatter(config) {
@@ -72,7 +81,7 @@ function expandToolWildcards(toolsStr) {
 }
 ```
 
-## Step 2.3: Generate Architecture Diagram
+## 步骤 2.3：生成架构图 / Step 2.3: Generate Architecture Diagram
 
 ```javascript
 function generateArchitectureDiagram(config) {
@@ -109,7 +118,9 @@ function generateArchitectureDiagram(config) {
 }
 ```
 
-## Step 2.4: Generate Execution Flow
+## 步骤 2.4：生成执行流程 / Step 2.4: Generate Execution Flow
+
+执行流程使用 `Ref:` 标记指向阶段文档，并内联阶段参考文档表。
 
 The execution flow uses `Ref:` markers to point to phase documents, with a Phase Reference Documents table inline.
 
@@ -156,7 +167,7 @@ function generateExecutionFlow(config) {
 }
 ```
 
-## Step 2.5: Generate Data Flow Section
+## 步骤 2.5：生成数据流章节 / Step 2.5: Generate Data Flow Section
 
 ```javascript
 function generateDataFlow(config) {
@@ -191,7 +202,7 @@ function generateDataFlow(config) {
 }
 ```
 
-## Step 2.6: Generate TodoWrite Pattern
+## 步骤 2.6：生成 TodoWrite 模式 / Step 2.6: Generate TodoWrite Pattern
 
 ```javascript
 function generateTodoWritePattern(config) {
@@ -259,7 +270,7 @@ function generateTodoWritePattern(config) {
 }
 ```
 
-## Step 2.7: Generate Remaining Sections
+## 步骤 2.7：生成其余章节 / Step 2.7: Generate Remaining Sections
 
 Extract from source orchestrator or generate from config:
 
@@ -335,7 +346,7 @@ function generateDefaultErrorHandling() {
 }
 ```
 
-## Step 2.8: Generate Interactive Preference Collection
+## 步骤 2.8：生成交互式偏好收集 / Step 2.8: Generate Interactive Preference Collection
 
 When the skill has configurable behaviors (auto mode, force options, etc.), generate the AskUserQuestion-based preference collection section for SKILL.md:
 
@@ -397,7 +408,7 @@ function generateInteractivePreferenceCollection(config) {
 }
 ```
 
-## Step 2.9: Assemble SKILL.md
+## 步骤 2.9：组装 SKILL.md / Step 2.9: Assemble SKILL.md
 
 ```javascript
 function assembleSkillMd(config, sourceContent) {
@@ -434,11 +445,13 @@ function assembleSkillMd(config, sourceContent) {
 4. Every phase mentioned in Execution Flow must have a corresponding phase file
 5. Data flow variables must be consistent across sections
 
-## Output
+## 输出 / Output
 
-- **File**: `.claude/skills/{skillName}/SKILL.md`
-- **TodoWrite**: Mark Phase 2 completed, Phase 3 in_progress
+- **文件 File**: `.claude/skills/{skillName}/SKILL.md`
+- **TodoWrite**: 标记阶段 2 已完成，阶段 3 进行中 / Mark Phase 2 completed, Phase 3 in_progress
 
-## Next Phase
+## 下一阶段 / Next Phase
+
+返回编排器，然后自动继续 [阶段 3：阶段文件设计](03-phase-design.md)。
 
 Return to orchestrator, then auto-continue to [Phase 3: Phase Files Design](03-phase-design.md).
