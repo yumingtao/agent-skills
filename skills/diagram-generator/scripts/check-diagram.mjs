@@ -34,7 +34,14 @@ if (!inputPath) {
   process.exit(1);
 }
 
-const html = readFileSync(resolve(inputPath), 'utf8');
+let html;
+try {
+  html = readFileSync(resolve(inputPath), 'utf8');
+} catch (err) {
+  console.error(`Cannot read input file: ${inputPath} (${err.code || err.message})`);
+  console.error('Usage: node scripts/check-diagram.mjs <path-to-diagram.html>');
+  process.exit(1);
+}
 const errors = [];
 const warnings = [];
 

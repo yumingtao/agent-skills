@@ -2,7 +2,7 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.3.0
+version: 1.4.0
 summary: 生成专业独立 HTML/SVG 技术图表，内置几何检查器。
 license: MIT
 description: >
@@ -34,6 +34,14 @@ description: >
 保持本文件有意精简。不要在此重复共享设计系统、SVG 规则、输出模式策略或审计清单；应更新 `resources/generation-rules.md`。
 
 当被要求优化已生成的图表时，优先采用能修复所请求布局或路由缺陷的最小编辑。除非用户要求重新设计，否则不要重写整张图。
+
+## 输入格式
+
+本技能接受三种输入格式，按用户提供的内容自动选择：
+
+1. **自然语言简报**——用文字描述系统与目标（默认格式，示例见 `examples/architecture-brief.md`）。
+2. **结构化组件清单**——YAML/JSON 形式的组件与关系表（示例见 `examples/structured-input.yaml`），适合从云资源清单或既有配置直接转换；组件映射为节点、关系映射为连线。
+3. **已有 diagram-ir JSON**——直接传入符合 `resources/diagram-ir.md` 契约的规划模型，跳过解析阶段直接生成或修订图表；revise 工作流同样优先读取产物内嵌 IR。
 
 ## 不适用范围
 

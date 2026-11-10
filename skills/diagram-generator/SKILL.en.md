@@ -2,7 +2,7 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.3.0
+version: 1.4.0
 summary: Generate production-quality standalone HTML/SVG technical diagrams with a built-in geometry checker.
 license: MIT
 description: >
@@ -34,6 +34,14 @@ Load and follow these files before generating a diagram:
 Keep this file intentionally thin. Do not duplicate the shared design system, SVG rules, output-mode policy, or audit checklist here; update `resources/generation-rules.md` instead.
 
 When asked to optimize a generated diagram, prefer the smallest edit that fixes the requested layout or routing defect. Do not rewrite the whole map unless the user asks for a redesign.
+
+## Input Formats
+
+This skill accepts three input formats and picks automatically based on what the user provides:
+
+1. **Natural-language brief** — a textual description of the system and goal (the default; see `examples/architecture-brief.md`).
+2. **Structured component list** — a YAML/JSON table of components and relations (see `examples/structured-input.yaml`), well suited to converting cloud resource inventories or existing configuration; components map to nodes and relations map to edges.
+3. **Existing diagram-ir JSON** — pass a planning model that conforms to `resources/diagram-ir.md` directly, skipping the parsing stage to generate or revise a diagram; the revise workflow likewise reads the artifact's embedded IR first.
 
 ## Out of Scope
 

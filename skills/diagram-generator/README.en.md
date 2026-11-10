@@ -81,6 +81,7 @@ diagram-generator/
 │   └── check-diagram.mjs
 ├── examples/
 │   ├── architecture-brief.md
+│   ├── structured-input.yaml
 │   ├── codex-cli-example.txt
 │   ├── codex-smoke-test-prompt.md
 │   ├── drawio-mode-prompt.md
