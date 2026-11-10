@@ -25,6 +25,18 @@ const inputType = detectInputType(userInput);
 | Path to `.md` or `.json` requirements | `requirements_doc` | Parse structured requirements |
 | Path to `.claude/skills/**/*.md` | `existing_skill` | Analyze and refactor |
 
+### Exception Input Handling
+
+| Exception | Trigger Condition | Action |
+|-----------|-------------------|--------|
+| **Empty input** | `userInput` is empty or whitespace-only | Prompt: "Please provide a workflow description, command file path, requirements doc path, or existing skill path" |
+| **Source file missing** | Path points to non-existent file/directory | List candidate paths (scan common locations from project root), or let user correct the path |
+| **Frontmatter parse failure** | File has YAML frontmatter but malformed | Show the raw frontmatter, hint at common YAML errors (indentation, missing space after colon) |
+| **Requirements doc has no phase structure** | `requirements_doc` mode but no phase definitions found | Prompt user to add phase sections, or fall back to `text_description` mode with interactive gathering |
+| **No sub-commands discovered** | `command_set` mode but orchestrator has no `Skill()` calls | Prompt: "No sub-command calls found in orchestrator — this may be a single-command workflow. Switch to single SKILL.md mode?" |
+
+If `detectInputType` cannot determine the type, default to `text_description` mode and state the reason.
+
 ## Step 1.2: Source-Specific Analysis
 
 ### Mode A: Command Set Analysis
@@ -216,7 +228,7 @@ const workflowConfig = {
   title: "Workflow Plan",               // Human-readable
   description: "5-phase planning...",   // One-line description
   triggers: ["workflow-plan"],          // Trigger phrases
-  allowedTools: ["Agent", "AskUserQuestion", "TodoWrite", "Read", "Write", "Edit", "Bash", "Glob", "Grep", "Skill"],
+  allowedTools: ["Task", "AskUserQuestion", "TodoWrite", "Read", "Write", "Edit", "Bash", "Glob", "Grep", "Skill"],
 
   // Source information
   source: {

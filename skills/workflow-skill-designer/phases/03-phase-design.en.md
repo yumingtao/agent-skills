@@ -305,7 +305,7 @@ function generatePhaseFromRequirements(phase, config) {
     for (const agentType of phase.agentTypes) {
       phaseContent += `### Step: ${agentType} Delegation\n\n`;
       phaseContent += '```javascript\n';
-      phaseContent += `const result = Agent({\n`;
+      phaseContent += `const result = Task({\n`;
       phaseContent += `  subagent_type: "${mapAgentType(agentType)}",\n`;
       phaseContent += `  prompt: \`\n`;
       phaseContent += `    [ROLE] ${agentType}\n`;
@@ -318,9 +318,19 @@ function generatePhaseFromRequirements(phase, config) {
       phaseContent += '```\n\n';
     }
   } else {
-    // Generate direct execution skeleton
+    // Generate direct execution from phase.steps (required field — Phase 1 must populate)
     phaseContent += `### Step ${phase.number}.1: Execute\n\n`;
-    phaseContent += `TODO: Add execution detail for ${phase.name}\n\n`;
+    if (phase.steps && phase.steps.length > 0) {
+      phase.steps.forEach((step, idx) => {
+        phaseContent += `**Step ${phase.number}.${idx + 1}**: ${step}\n\n`;
+      });
+    } else {
+      // No steps defined — emit a concrete skeleton using phase description, never TODO
+      phaseContent += `Execute: ${phase.description}\n\n`;
+      phaseContent += `- Read input: ${phase.inputVariables?.join(', ') || 'workflow context'}\n`;
+      phaseContent += `- Process according to phase definition\n`;
+      phaseContent += `- Produce output: ${phase.outputVariables?.join(', ') || phase.outputFiles?.join(', ') || 'none'}\n\n`;
+    }
   }
 
   // Output

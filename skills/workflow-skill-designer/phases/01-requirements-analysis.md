@@ -25,6 +25,18 @@ const inputType = detectInputType(userInput);
 | 指向 `.md` 或 `.json` 需求的路径 | `requirements_doc` | 解析结构化需求 |
 | 指向 `.claude/skills/**/*.md` 的路径 | `existing_skill` | 分析并重构 |
 
+### 异常输入处理
+
+| 异常 | 触发条件 | 处理 |
+|------|----------|------|
+| **空输入** | `userInput` 为空或仅含空白 | 引导补充："请提供工作流描述、命令文件路径、需求文档路径或现有技能路径" |
+| **源文件不存在** | 路径指向的文件/目录不存在 | 列出候选路径让用户选择（从项目根开始扫描常见位置），或让用户修正路径 |
+| **frontmatter 解析失败** | 文件有 YAML frontmatter 但格式不合法 | 展示 frontmatter 原文，提示用户修正 YAML 格式（常见错误：缩进、冒号后缺空格） |
+| **需求文档无 phase 结构** | `requirements_doc` 模式下未找到 phase 定义 | 引导用户补充 phase 章节，或退回到 `text_description` 模式用交互式收集 |
+| **子命令发现为空** | `command_set` 模式下编排器无 Skill() 调用 | 提示"编排器中未发现子命令调用，这可能是单命令工作流——是否改为单 SKILL.md 模式？" |
+
+若 `detectInputType` 无法确定类型，默认进入 `text_description` 模式并说明原因。
+
 ## 步骤 1.2：源特定分析
 
 ### 模式 A：命令集分析
@@ -214,7 +226,7 @@ const workflowConfig = {
   title: "Workflow Plan",               // Human-readable
   description: "5-phase planning...",   // One-line description
   triggers: ["workflow-plan"],          // Trigger phrases
-  allowedTools: ["Agent", "AskUserQuestion", "TodoWrite", "Read", "Write", "Edit", "Bash", "Glob", "Grep", "Skill"],
+  allowedTools: ["Task", "AskUserQuestion", "TodoWrite", "Read", "Write", "Edit", "Bash", "Glob", "Grep", "Skill"],
 
   // Source information
   source: {

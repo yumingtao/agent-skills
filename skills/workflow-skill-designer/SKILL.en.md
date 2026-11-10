@@ -2,7 +2,7 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.2.0
+version: 1.3.0
 summary: Meta-skill for designing orchestrator + phases structured workflow skills.
 license: MIT
 disable-model-invocation: true
@@ -15,6 +15,44 @@ session-mode: none
 # Workflow Skill Designer
 
 Meta-skill for creating structured workflow skills following the orchestrator + phases pattern. Generates complete skill packages with SKILL.md as coordinator and phases/ folder for execution details.
+
+## Table of Contents
+
+- [Architecture Overview](#architecture-overview)
+- [Tool Terminology Convention](#tool-terminology-convention)
+- [How to Invoke This Skill](#how-to-invoke-this-skill)
+- [Environment Compatibility](#environment-compatibility)
+- [Target Output Structure](#target-output-structure)
+- [Core Design Patterns](#core-design-patterns)
+- [Execution Flow](#execution-flow)
+- [Input Sources](#input-sources)
+- [Orchestrator Content Mapping](#orchestrator-content-mapping)
+- [SKILL.md Template](#skillmd-template)
+- [Phase File Template](#phase-file-template)
+- [Design Decision Framework](#design-decision-framework)
+- [When NOT to Use](#when-not-to-use)
+- [FAQ](#faq)
+
+## Tool Terminology Convention
+
+This skill and generated skills use the following terms consistently to avoid confusion:
+
+| Term | Meaning | Correct Form | Incorrect Forms |
+|------|---------|-------------|-----------------|
+| **Task** | Subagent delegation (declared in `allowed-tools`) | `Task({ subagent_type: "...", prompt: "..." })` | ~~Agent({...})~~, ~~Subagent({...})~~ |
+| **Skill** | Cross-skill invocation (routed via host) | `Skill(skill="other-skill", args="...")` | ~~Task({ skill: "..." })~~ |
+| **Read** | Intra-skill phase handoff | `Read("phases/02-xxx.md")` then execute directly | ~~Skill(skill="self", args="...")~~ (round-trip through SKILL.md is meaningless) |
+
+## How to Invoke This Skill
+
+This skill has `disable-model-invocation: true` (to prevent accidental firing) and must be invoked explicitly. Common host invocation patterns:
+
+| Host | Explicit Invocation Example |
+|------|-----------------------------|
+| Claude Code | Say "design workflow skill" in conversation, or use `/skill-name` (if configured) |
+| Trae | Say "use workflow-skill-designer to design a workflow skill" |
+| DSH | Place skill in `~/.agents/skills/`, say "create workflow skill" |
+| Other hosts | Natural-language trigger: "design a workflow skill", "create workflow skill" |
 
 ## Architecture Overview
 
@@ -38,17 +76,18 @@ Meta-skill for creating structured workflow skills following the orchestrator + 
 
 ## Environment Compatibility
 
-This skill was authored against Claude Code conventions. Other agent environments support the same patterns but differ in paths and tool names:
+This skill was authored against Claude Code conventions. Other agent environments support the same patterns but differ in paths and tool names. The table below gives concrete mappings, with generic rules following:
 
-| Concept | Claude Code | DeepSeek Harness |
-|---------|-------------|------------------|
-| Project skill root | `.claude/skills/` | `.dsh/skills/` or `.agents/skills/` |
-| User skill root | `~/.claude/skills/` | `$DSH_HOME/skills` or `~/.agents/skills/` |
-| Preference collection | `AskUserQuestion` | host interactive prompt (no fixed tool name) |
-| Task tracking | `TodoWrite` | host task/todo tool |
-| Inter-skill routing | `Skill(skill=..., args=...)` | host-specific invocation |
+| Concept | Claude Code | DeepSeek Harness | Generic Mapping Rule |
+|---------|-------------|------------------|---------------------|
+| Project skill root | `.claude/skills/` | `.dsh/skills/` / `.agents/skills/` | Host skill root; replace `.claude/skills/` in phase docs with `{skill-root}/` |
+| User skill root | `~/.claude/skills/` | `$DSH_HOME/skills` / `~/.agents/skills/` | Same as above |
+| Preference collection | `AskUserQuestion` | host interactive prompt | Host interactive questioning mechanism; use descriptive form when no fixed tool name exists |
+| Task tracking | `TodoWrite` | host task/todo tool | Host task tracking capability |
+| Subagent delegation | `Task()` | host subagent call | Host subagent mechanism (see Tool Terminology Convention) |
+| Inter-skill routing | `Skill(skill=..., args=...)` | host skill invocation | Host skill routing mechanism |
 
-When generating a skill for a non-Claude environment, translate the paths and tool names above. Treat `.claude/skills/` in the phase documents as `{skill-root}/`.
+**When generating a skill for a non-Claude environment**: Map paths and tool names per the table above. Generic rules — replace "Skill Root" with the host's skill directory, "AskUserQuestion" with the host's interactive primitive, "TodoWrite" with the host's task tracker, and "Task" with the host's subagent invoker.
 
 ### Context Variables (orchestrator-provided)
 

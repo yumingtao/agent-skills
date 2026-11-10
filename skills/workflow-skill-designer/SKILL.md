@@ -2,7 +2,7 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.2.0
+version: 1.3.0
 summary: 元技能：设计编排器+阶段（orchestrator+phases）结构化工作流技能。
 license: MIT
 disable-model-invocation: true
@@ -15,6 +15,41 @@ session-mode: none
 # 工作流技能设计器
 
 元技能：按编排器+阶段（orchestrator + phases）模式创建结构化工作流技能。生成以 SKILL.md 为协调器、phases/ 文件夹存放执行细节的完整技能包。
+
+## 目录
+
+- [环境兼容性](#环境兼容性)
+- [目标输出结构](#目标输出结构)
+- [核心设计模式](#核心设计模式)
+- [执行流程](#执行流程)
+- [输入来源](#输入来源)
+- [编排器内容映射](#编排器内容映射)
+- [SKILL.md 模板](#skillmd-模板)
+- [阶段文件模板](#阶段文件模板)
+- [设计决策框架](#设计决策框架)
+- [何时不使用](#何时不使用)
+- [常见问题](#常见问题)
+
+## 工具名词约定
+
+本技能及生成技能统一使用以下术语，避免混淆：
+
+| 术语 | 含义 | 正确写法 | 错误写法 |
+|------|------|----------|----------|
+| **Task** | 子代理委派（allowed-tools 声明） | `Task({ subagent_type: "...", prompt: "..." })` | ~~Agent({...})~~, ~~Subagent({...})~~ |
+| **Skill** | 跨技能调用（经由宿主路由） | `Skill(skill="other-skill", args="...")` | ~~Task({ skill: "..." })~~ |
+| **Read** | 同技能内阶段交接 | `Read("phases/02-xxx.md")` 然后直接执行 | ~~Skill(skill="self", args="...")~~（绕行 SKILL.md 无意义） |
+
+## 如何调用本技能
+
+本技能 `disable-model-invocation: true`（防误触发），需显式调用。常见宿主的调用方式：
+
+| 宿主 | 显式调用示例 |
+|------|-------------|
+| Claude Code | 在对话中说"设计工作流技能"或使用 `/skill-name`（若已配置） |
+| Trae | 说"使用 workflow-skill-designer 设计工作流技能" |
+| DSH | 将技能放入 `~/.agents/skills/`，说"创建 workflow skill" |
+| 通义/豆包 | 自然语言触发词："帮我设计一个工作流技能" |
 
 ## 架构概览
 
@@ -38,17 +73,18 @@ session-mode: none
 
 ## 环境兼容性
 
-本技能基于 Claude Code 约定编写。其他智能体环境支持相同模式，但路径和工具名称不同：
+本技能基于 Claude Code 约定编写。其他智能体环境支持相同模式，但路径和工具名称不同。下表给出具体映射，通用规则在表后：
 
-| Concept | Claude Code | DeepSeek Harness |
-|---------|-------------|------------------|
-| Project skill root | `.claude/skills/` | `.dsh/skills/` or `.agents/skills/` |
-| User skill root | `~/.claude/skills/` | `$DSH_HOME/skills` or `~/.agents/skills/` |
-| Preference collection | `AskUserQuestion` | host interactive prompt (no fixed tool name) |
-| Task tracking | `TodoWrite` | host task/todo tool |
-| Inter-skill routing | `Skill(skill=..., args=...)` | host-specific invocation |
+| Concept | Claude Code | DeepSeek Harness | 通用映射规则 |
+|---------|-------------|------------------|-------------|
+| 项目技能根 | `.claude/skills/` | `.dsh/skills/` / `.agents/skills/` | 宿主技能目录，阶段文件中 `.claude/skills/` 替换为 `{skill-root}/` |
+| 用户技能根 | `~/.claude/skills/` | `$DSH_HOME/skills` / `~/.agents/skills/` | 同上 |
+| 偏好收集 | `AskUserQuestion` | 宿主交互原语 | 宿主提供的交互式提问机制，无固定工具名时用描述性写法 |
+| 任务跟踪 | `TodoWrite` | 宿主 task/todo 工具 | 宿主任务跟踪能力 |
+| 子代理委派 | `Task()` | 宿主子代理调用 | 宿主子代理机制（见工具名词约定） |
+| 跨技能调用 | `Skill(skill=..., args=...)` | 宿主技能调用 | 宿主提供的技能路由机制 |
 
-When generating a skill for a non-Claude environment, translate the paths and tool names above. Treat `.claude/skills/` in the phase documents as `{skill-root}/`.
+**生成非 Claude 环境技能时**：按上表映射路径和工具名。通用映射规则——把 "Skill Root" 替换为主播技能目录，"AskUserQuestion" 替换为主播交互原语，"TodoWrite" 替换为主播任务跟踪，"Task" 替换为主播子代理调用。
 
 ### 上下文变量（编排器提供）
 

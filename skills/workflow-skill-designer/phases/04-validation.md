@@ -2,6 +2,14 @@
 
 校验生成的技能包的结构完整性、引用完整性和内容质量。产出校验报告和集成摘要。
 
+> **📌 参考伪代码契约**：本文件中的函数调用以下均为参考伪代码，生成技能时必须替换为宿主真实工具：
+> - `fileExists(path)` → `Bash({ command: "test -f <path>", ... })` 或宿主等效 API
+> - `extractYAMLFrontmatter(text)` → 宿主 frontmatter 解析库或正则 `text.match(/^---\n([\s\S]*?)\n---/)`
+> - `removeYAMLFrontmatter(text)` → `text.replace(/^---\n[\s\S]*?\n---\n/, '')`
+> - `autoFixCommonIssues(config, errors)` → 按 errors 清单逐项执行修复（补 Next Phase 链接、补 Output 节、补 Phase Reference 表）
+
+> **📌 错误码约定**：所有校验错误使用 `WSD-Enn` 编号，每个错误码附一句修复指引。见步骤 4.7 末尾的错误码映射表。
+
 ## 目标
 
 - 验证所有必需文件存在
@@ -268,10 +276,16 @@ function validatePhaseFileHygiene(config) {
 
   const prohibitedPatterns = [
     {
+      name: 'Placeholders (TODO/TBD/.../fill in)',
+      regex: /\b(TODO|TBD|fill\s*in)\b|\.\.\.|\{TODO\}|\{placeholder\}|TBD/g,
+      severity: 'error',
+      fix: 'Replace with concrete execution step or omit; see No-Placeholder Rule in SKILL.md (WSD-E04)'
+    },
+    {
       name: 'Flag parsing ($ARGUMENTS)',
       regex: /\$ARGUMENTS\.includes/g,
       severity: 'error',
-      fix: 'Replace with workflowPreferences.{key} reference'
+      fix: 'Replace with workflowPreferences.{key} reference (WSD-E04)'
     },
     {
       name: 'Invocation syntax (/skill-name)',
@@ -289,13 +303,19 @@ function validatePhaseFileHygiene(config) {
       name: 'Skill routing for inter-phase (Skill(skill=...)',
       regex: /Skill\(skill=/g,
       severity: 'error',
-      fix: 'Replace with direct Read("phases/0N-xxx.md")'
+      fix: 'Replace with direct Read("phases/0N-xxx.md") (WSD-E04)'
     },
     {
       name: 'CLI flag definitions (--flag)',
       regex: /^\s*-\w,\s+--\w+\s+/gm,
       severity: 'warning',
       fix: 'Move flag definitions to SKILL.md Interactive Preference Collection'
+    },
+    {
+      name: 'Undefined helper function calls',
+      regex: /\b(extractYAMLFrontmatter|parseRequirements|removeYAMLFrontmatter|fileExists|autoFixCommonIssues)\s*\(/g,
+      severity: 'error',
+      fix: 'Replace with host real tools (Bash, frontmatter regex, etc.); see pseudocode contract at top of this file (WSD-E04)'
     }
   ];
 
@@ -462,6 +482,22 @@ Next Steps:
 
 - **报告**: 含质量关卡（PASS/REVIEW/FAIL）的校验结果
 - **TodoWrite**: 标记阶段 4 已完成（所有任务完成）
+
+## 错误码映射
+
+| 错误码 | 触发条件 | 修复指引 |
+|--------|----------|----------|
+| WSD-E01 | SKILL.md 或阶段文件缺失 | 在对应路径创建文件 |
+| WSD-E02 | frontmatter 缺少 name / description / allowed-tools | 按 SKILL.md 模板补全 frontmatter |
+| WSD-E03 | SKILL.md 引用的阶段文件不存在，或阶段文件未在 SKILL.md 中引用 | 统一文件名与引用；补 Phase Reference Documents 表 |
+| WSD-E04 | 阶段文件含 TODO / TBD / `...` / `{placeholder}` / 未定义伪函数 | 替换为具体执行步骤或宿主真实工具；见 SKILL.md No-Placeholder Rule |
+| WSD-E05 | 命令提取的阶段文件内容丢失 >30%（行数比 <0.7） | 回到 Phase 3，启用 verbatim preservation |
+| WSD-E06 | SKILL.md 声明的数据流变量未在正文中出现 | 在 SKILL.md Data Flow 节补全变量说明 |
+| WSD-E07 | SKILL.md 缺少必需章节（Architecture / Execution Flow / Core Rules / Data Flow / Error Handling） | 按 SKILL.md 模板补全章节 |
+| WSD-W01 | description 缺少 "Triggers on" 触发短语 | 在 description 末尾追加 `Triggers on "..."` |
+| WSD-W02 | 阶段文件未在 SKILL.md 中引用 | 在 Phase Reference Documents 表补条目 |
+| WSD-W03 | 命令提取阶段行数比 0.7–0.9 | 检查是否有合理简化，否则 Phase 3 重新生成 |
+| WSD-W04 | 缺少推荐章节（Key Design Principles / Input Processing 等） | 可选补全，提升可读性 |
 
 ## 完成
 

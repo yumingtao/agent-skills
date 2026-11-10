@@ -2,6 +2,14 @@
 
 Validate the generated skill package for structural completeness, reference integrity, and content quality. Produce a validation report and integration summary.
 
+> **📌 Reference Pseudocode Contract**: The following function calls in this file are all reference pseudocode — replace them with the host's real tools when generating a skill:
+> - `fileExists(path)` → `Bash({ command: "test -f <path>", ... })` or host equivalent API
+> - `extractYAMLFrontmatter(text)` → host frontmatter parser library or regex `text.match(/^---\n([\s\S]*?)\n---/)`
+> - `removeYAMLFrontmatter(text)` → `text.replace(/^---\n[\s\S]*?\n---\n/, '')`
+> - `autoFixCommonIssues(config, errors)` → iterate errors and fix each (add missing Next Phase links, add missing Output sections, add missing Phase Reference table)
+
+> **📌 Error Code Convention**: All validation errors use `WSD-Enn` numbering with a one-sentence fix hint. See the error code mapping table at the end of Step 4.7.
+
 ## Objective
 
 - Verify all required files exist
@@ -270,10 +278,16 @@ function validatePhaseFileHygiene(config) {
 
   const prohibitedPatterns = [
     {
+      name: 'Placeholders (TODO/TBD/.../fill in)',
+      regex: /\b(TODO|TBD|fill\s*in)\b|\.\.\.|\{TODO\}|\{placeholder\}|TBD/g,
+      severity: 'error',
+      fix: 'Replace with concrete execution step or omit; see No-Placeholder Rule in SKILL.md (WSD-E04)'
+    },
+    {
       name: 'Flag parsing ($ARGUMENTS)',
       regex: /\$ARGUMENTS\.includes/g,
       severity: 'error',
-      fix: 'Replace with workflowPreferences.{key} reference'
+      fix: 'Replace with workflowPreferences.{key} reference (WSD-E04)'
     },
     {
       name: 'Invocation syntax (/skill-name)',
@@ -291,13 +305,19 @@ function validatePhaseFileHygiene(config) {
       name: 'Skill routing for inter-phase (Skill(skill=...)',
       regex: /Skill\(skill=/g,
       severity: 'error',
-      fix: 'Replace with direct Read("phases/0N-xxx.md")'
+      fix: 'Replace with direct Read("phases/0N-xxx.md") (WSD-E04)'
     },
     {
       name: 'CLI flag definitions (--flag)',
       regex: /^\s*-\w,\s+--\w+\s+/gm,
       severity: 'warning',
       fix: 'Move flag definitions to SKILL.md Interactive Preference Collection'
+    },
+    {
+      name: 'Undefined helper function calls',
+      regex: /\b(extractYAMLFrontmatter|parseRequirements|removeYAMLFrontmatter|fileExists|autoFixCommonIssues)\s*\(/g,
+      severity: 'error',
+      fix: 'Replace with host real tools (Bash, frontmatter regex, etc.); see pseudocode contract at top of this file (WSD-E04)'
     }
   ];
 
@@ -466,6 +486,22 @@ Next Steps:
 
 - **Report**: Validation results with quality gate (PASS/REVIEW/FAIL)
 - **TodoWrite**: Mark Phase 4 completed (all tasks done)
+
+## Error Code Mapping
+
+| Code | Condition | Fix Hint |
+|------|-----------|----------|
+| WSD-E01 | SKILL.md or phase file missing | Create file at the expected path |
+| WSD-E02 | Frontmatter missing name / description / allowed-tools | Complete frontmatter per SKILL.md template |
+| WSD-E03 | Referenced phase file missing, or phase not referenced in SKILL.md | Align filenames and references; add Phase Reference Documents table entry |
+| WSD-E04 | Phase file contains TODO / TBD / `...` / `{placeholder}` / undefined pseudofunctions | Replace with concrete execution steps or host real tools; see SKILL.md No-Placeholder Rule |
+| WSD-E05 | Command-extracted phase content loss >30% (line ratio <0.7) | Go back to Phase 3, enable verbatim preservation |
+| WSD-E06 | Data flow variable declared in SKILL.md but not in body | Add variable description in SKILL.md Data Flow section |
+| WSD-E07 | SKILL.md missing required sections (Architecture / Execution Flow / Core Rules / Data Flow / Error Handling) | Complete sections per SKILL.md template |
+| WSD-W01 | Description missing "Triggers on" phrase | Append `Triggers on "..."` at end of description |
+| WSD-W02 | Phase file not referenced in SKILL.md | Add entry to Phase Reference Documents table |
+| WSD-W03 | Command-extracted phase line ratio 0.7–0.9 | Check for intentional simplification; otherwise regenerate via Phase 3 |
+| WSD-W04 | Recommended sections missing (Key Design Principles / Input Processing / etc.) | Optional — improves readability |
 
 ## Completion
 
