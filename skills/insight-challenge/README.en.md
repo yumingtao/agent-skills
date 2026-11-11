@@ -12,7 +12,7 @@ insight-challenge/
 ├── README.md                      # Chinese navigation & usage
 ├── README.en.md                   # This file
 ├── specs/
-│   ├── challenge-protocol.md      # Challenge protocol: four modes & decision tree
+│   ├── challenge-protocol.md      # Challenge protocol: five strategies & decision tree
 │   ├── challenge-protocol.en.md
 │   ├── verdict-schema.md          # Verdict schema: fields & value constraints
 │   └── verdict-schema.en.md
@@ -44,22 +44,22 @@ cat verdict.json | node scripts/validate-verdict.mjs -
 node scripts/validate-verdict.mjs report.md
 ```
 
-Failures report error codes (IC-V00..V10) pinpointing each problem; unmet evidence expectations emit IC-W01..W03 warnings (they do not change the exit code); exit 0 means pass.
+Failures report error codes (IC-V00..V13) pinpointing each problem; unmet evidence expectations emit IC-W01..W03 warnings (they do not change the exit code); exit 0 means pass.
 
 ## Running the Tests
 
 ```bash
 node scripts/validate-verdict.mjs tests/fixtures/verdict-good.json   # expect: PASSED
-node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json    # expect: 9 errors (7 distinct codes: IC-V01-V06, V09), exit 1
+node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json    # expect: exit 1 with error codes IC-V01-V06, V09, and V11-V13
 ```
 
-The repo-root `.github/workflows/ci.yml` runs both assertions plus stdin/markdown mode gates on every push.
+The repo-root `.github/workflows/ci.yml` (not part of this skill's distributed package) runs both assertions plus stdin/markdown mode gates on every push.
 
 ## Documentation Guide
 
 | Want to know | Read |
 |--------------|------|
 | How to invoke the skill, inputs and outputs | SKILL.en.md |
-| Challenge strategies and the four modes | specs/challenge-protocol.en.md |
+| Five challenge strategies and the decision tree | specs/challenge-protocol.en.md |
 | Verdict fields and validation rules | specs/verdict-schema.en.md |
 | Validator usage | This file + `node scripts/validate-verdict.mjs` (no args prints Usage) |

@@ -11,7 +11,7 @@ insight-challenge/
 ├── README.md                      # 本文件：导航与运行说明
 ├── README.en.md                   # English navigation & usage
 ├── specs/
-│   ├── challenge-protocol.md      # 挑战协议：四种挑战模式与决策树
+│   ├── challenge-protocol.md      # 挑战协议：五种挑战策略与决策树
 │   ├── challenge-protocol.en.md
 │   ├── verdict-schema.md          # 结论 schema：字段定义与取值约束
 │   └── verdict-schema.en.md
@@ -43,22 +43,22 @@ cat verdict.json | node scripts/validate-verdict.mjs -
 node scripts/validate-verdict.mjs report.md
 ```
 
-校验失败时按错误码（IC-V00~V10）定位问题；证据期望未满足时输出 IC-W01~W03 警告（不影响 exit 码）；exit 0 表示通过。
+校验失败时按错误码（IC-V00~V13）定位问题；证据期望未满足时输出 IC-W01~W03 警告（不影响 exit 码）；exit 0 表示通过。
 
 ## 运行测试
 
 ```bash
 node scripts/validate-verdict.mjs tests/fixtures/verdict-good.json   # 期望：PASSED
-node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json     # 期望：9 个错误（7 种错误码：IC-V01~V06、V09），exit 1
+node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json     # 期望：校验失败 exit 1，错误码覆盖 IC-V01~V06、V09、V11~V13
 ```
 
-仓库根的 `.github/workflows/ci.yml` 在每次推送时运行这两组断言及 stdin/markdown 模式门。
+仓库根的 `.github/workflows/ci.yml`（不属于本技能分发包）在每次推送时运行这两组断言及 stdin/markdown 模式门。
 
 ## 文档导读
 
 | 想了解 | 看这里 |
 |--------|--------|
 | 技能如何调用、输入输出 | SKILL.md |
-| 挑战策略与四种模式 | specs/challenge-protocol.md |
+| 五种挑战策略与决策树 | specs/challenge-protocol.md |
 | 结论字段与校验规则 | specs/verdict-schema.md |
 | 校验器用法 | 本文件 + `node scripts/validate-verdict.mjs`（无参数显示 Usage） |

@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.5.0
+version: 1.6.0
 summary: 对代码质量发现进行对抗性审查，用源代码锚定的反向证据产出结构化结论。
 license: MIT
 disable-model-invocation: true

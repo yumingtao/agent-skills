@@ -13,7 +13,12 @@
       ],
       "supporting_evidence": [],
       "adjusted_severity": "none",
-      "recommendation": "Dismiss this finding; the claimed missing backoff logic does not exist"
+      "recommendation": "Dismiss this finding; the claimed missing backoff logic does not exist",
+      "metadata": {
+        "challenge_duration_ms": 1200,
+        "files_reviewed": ["src/http/retry.ts", "src/http/middleware.ts"],
+        "challenge_strategies_applied": ["direct contradiction"]
+      }
     },
     {
       "finding_id": "MED-02",

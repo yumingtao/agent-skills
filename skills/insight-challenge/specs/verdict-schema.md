@@ -2,7 +2,7 @@
 
 ## 概述
 
-本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。机器校验由 `scripts/validate-verdict.mjs` 实现（零依赖，fail-closed），测试夹具见 `tests/fixtures/`。校验器对必填字段与类型违规返回错误（IC-V00~V10）；证据期望未满足时返回警告（IC-W01：overturned 缺 counter_evidence、IC-W02：confirmed 缺 supporting_evidence、IC-W03：weakened 缺 counter_evidence），警告不改变 exit 码。
+本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。机器校验由 `scripts/validate-verdict.mjs` 实现（零依赖，fail-closed），测试夹具见 `tests/fixtures/`。校验器对必填字段与类型违规返回错误（IC-V00~V13；IC-V11~V13 覆盖可选字段 `recommendation`、`metadata` 及批量外层字段 `batch_id`、`total_findings`、`summary` 的类型与计数约束）；证据期望未满足时返回警告（IC-W01：overturned 缺 counter_evidence、IC-W02：confirmed 缺 supporting_evidence、IC-W03：weakened 缺 counter_evidence），警告不改变 exit 码。
 
 ## 结论 JSON Schema
 
@@ -125,6 +125,7 @@
 - **类型**: string
 - **必填**: 否
 - **描述**: 建议的下一步行动
+- **校验**: 出现时必须为非空 string，否则报 IC-V11
 - **示例**:
   - "驳回此发现；声称的缺失不存在"
   - "降级为中严重度；问题存在但不如声称严重"
@@ -134,6 +135,7 @@
 - **类型**: object
 - **必填**: 否
 - **描述**: 挑战过程的额外上下文
+- **校验**: 出现时必须为 object；已知子字段出现时按声明类型校验（`challenge_duration_ms` 为 integer，其余三个为 string 数组），违规报 IC-V12
 - **字段**:
   - `challenge_duration_ms`: 挑战耗时
   - `files_reviewed`: 检查的文件列表
@@ -220,6 +222,8 @@
   }
 }
 ```
+
+批量外层字段校验：`batch_id` 出现时必须为非空 string；`total_findings` 出现时必须为 integer 且等于 `verdicts` 数量；`summary` 出现时必须为 object。违规报 IC-V13（`summary` 计数与实际结果不符仍报 IC-V09）。
 
 ## 与下游系统的集成
 

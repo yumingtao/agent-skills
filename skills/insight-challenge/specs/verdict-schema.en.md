@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems. Machine validation is implemented by `scripts/validate-verdict.mjs` (zero-dependency, fail-closed); test fixtures live in `tests/fixtures/`. The validator reports errors (IC-V00..V10) for required-field and type violations, and warnings (IC-W01: overturned without counter_evidence, IC-W02: confirmed without supporting_evidence, IC-W03: weakened without counter_evidence) for unmet evidence expectations; warnings do not change the exit code.
+This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems. Machine validation is implemented by `scripts/validate-verdict.mjs` (zero-dependency, fail-closed); test fixtures live in `tests/fixtures/`. The validator reports errors (IC-V00..V13; IC-V11..V13 cover type and count constraints on the optional `recommendation` and `metadata` fields and the batch-level `batch_id`, `total_findings`, and `summary` fields) for required-field and type violations, and warnings (IC-W01: overturned without counter_evidence, IC-W02: confirmed without supporting_evidence, IC-W03: weakened without counter_evidence) for unmet evidence expectations; warnings do not change the exit code.
 
 ## Verdict JSON Schema
 
@@ -125,6 +125,7 @@ This document defines the structured output format for insight challenge verdict
 - **Type**: string
 - **Required**: no
 - **Description**: Recommended next action
+- **Validation**: when present, must be a non-empty string, otherwise IC-V11
 - **Examples**:
   - "Dismiss this finding; the claimed gap does not exist"
   - "Downgrade to medium severity; the issue exists but is less critical than claimed"
@@ -134,6 +135,7 @@ This document defines the structured output format for insight challenge verdict
 - **Type**: object
 - **Required**: no
 - **Description**: Additional context about the challenge process
+- **Validation**: when present, must be an object; known sub-fields are type-checked when present (`challenge_duration_ms` as integer, the other three as arrays of strings), violations report IC-V12
 - **Fields**:
   - `challenge_duration_ms`: Time spent on the challenge
   - `files_reviewed`: List of files examined
@@ -220,6 +222,8 @@ When processing multiple findings:
   }
 }
 ```
+
+Batch-level field validation: `batch_id`, when present, must be a non-empty string; `total_findings`, when present, must be an integer equal to the number of `verdicts`; `summary`, when present, must be an object. Violations report IC-V13 (`summary` count mismatches still report IC-V09).
 
 ## Integration with Downstream Systems
 

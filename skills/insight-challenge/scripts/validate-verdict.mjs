@@ -29,6 +29,26 @@ function validateVerdict(v, path, errors, warnings) {
   }
   if (v.adjusted_severity !== undefined && !SEVERITIES.has(v.adjusted_severity))
     errors.push(`${p('.adjusted_severity')}: must be one of none|critical|high|medium|low [IC-V06]`);
+  if (v.recommendation !== undefined && (typeof v.recommendation !== 'string' || v.recommendation.length === 0))
+    errors.push(`${p('.recommendation')}: must be a non-empty string [IC-V11]`);
+  if (v.metadata !== undefined) {
+    if (typeof v.metadata !== 'object' || v.metadata === null || Array.isArray(v.metadata)) {
+      errors.push(`${p('.metadata')}: must be an object [IC-V12]`);
+    } else {
+      const META_INT = ['challenge_duration_ms'];
+      const META_STR_ARRAY = ['files_reviewed', 'design_docs_checked', 'challenge_strategies_applied'];
+      for (const k of META_INT) {
+        const val = v.metadata[k];
+        if (val !== undefined && !Number.isInteger(val))
+          errors.push(`${p('.metadata.' + k)}: must be an integer [IC-V12]`);
+      }
+      for (const k of META_STR_ARRAY) {
+        const val = v.metadata[k];
+        if (val !== undefined && (!Array.isArray(val) || val.some((e) => typeof e !== 'string')))
+          errors.push(`${p('.metadata.' + k)}: must be an array of strings [IC-V12]`);
+      }
+    }
+  }
   if (v.challenge_result === 'overturned' && (!Array.isArray(v.counter_evidence) || v.counter_evidence.length === 0))
     warnings.push(`${p('.counter_evidence')}: expected non-empty for an overturned verdict [IC-W01]`);
   if (v.challenge_result === 'confirmed' && (!Array.isArray(v.supporting_evidence) || v.supporting_evidence.length === 0))
@@ -42,15 +62,23 @@ function validateDoc(doc, path, errors, warnings) {
   if (isBatch) {
     if (doc.verdicts.length === 0) errors.push(`${path}.verdicts: batch must contain at least one verdict [IC-V08]`);
     doc.verdicts.forEach((v, i) => validateVerdict(v, `${path}.verdicts[${i}]`, errors, warnings));
-    if (doc.summary !== undefined && typeof doc.summary === 'object' && doc.summary !== null) {
-      const counts = { overturned: 0, weakened: 0, confirmed: 0 };
-      for (const v of doc.verdicts) {
-        if (v && typeof v === 'object' && RESULTS.has(v.challenge_result)) counts[v.challenge_result]++;
-      }
-      for (const [k, actual] of Object.entries(counts)) {
-        const declared = doc.summary[k];
-        if (declared !== undefined && declared !== actual)
-          errors.push(`${path}.summary.${k}: declared ${declared} but ${actual} verdict(s) present [IC-V09]`);
+    if (doc.batch_id !== undefined && (typeof doc.batch_id !== 'string' || doc.batch_id.length === 0))
+      errors.push(`${path}.batch_id: must be a non-empty string [IC-V13]`);
+    if (doc.total_findings !== undefined && (!Number.isInteger(doc.total_findings) || doc.total_findings !== doc.verdicts.length))
+      errors.push(`${path}.total_findings: declared ${JSON.stringify(doc.total_findings)} but ${doc.verdicts.length} verdict(s) present [IC-V13]`);
+    if (doc.summary !== undefined) {
+      if (typeof doc.summary !== 'object' || doc.summary === null || Array.isArray(doc.summary)) {
+        errors.push(`${path}.summary: must be an object [IC-V13]`);
+      } else {
+        const counts = { overturned: 0, weakened: 0, confirmed: 0 };
+        for (const v of doc.verdicts) {
+          if (v && typeof v === 'object' && RESULTS.has(v.challenge_result)) counts[v.challenge_result]++;
+        }
+        for (const [k, actual] of Object.entries(counts)) {
+          const declared = doc.summary[k];
+          if (declared !== undefined && declared !== actual)
+            errors.push(`${path}.summary.${k}: declared ${declared} but ${actual} verdict(s) present [IC-V09]`);
+        }
       }
     }
   } else {

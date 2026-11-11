@@ -9,7 +9,7 @@
       "reasoning": "",
       "counter_evidence": "src/a.ts line 1: single string instead of array",
       "adjusted_severity": "severe",
-      "recommendation": "No reasoning provided"
+      "recommendation": 42
     },
     {
       "finding_id": "MED-02",
@@ -17,7 +17,8 @@
       "confidence": 75,
       "reasoning": "Partially correct but overstated.",
       "supporting_evidence": [42],
-      "adjusted_severity": "low"
+      "adjusted_severity": "low",
+      "metadata": { "challenge_duration_ms": "fast" }
     }
   ],
   "summary": {

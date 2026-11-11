@@ -59,6 +59,9 @@ jobs:
             && echo "$out" | grep -q "IC-V02" \
             && echo "$out" | grep -q "IC-V05" \
             && echo "$out" | grep -q "IC-V09" \
+            && echo "$out" | grep -q "IC-V11" \
+            && echo "$out" | grep -q "IC-V12" \
+            && echo "$out" | grep -q "IC-V13" \
             || { echo "::error::validator failed without reporting the injected defects"; echo "$out"; exit 1; }
           echo "validator correctly rejected the bad fixture"
 
