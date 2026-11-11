@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.6.0
+version: 1.7.0
 summary: 对代码质量发现进行对抗性审查，用源代码锚定的反向证据产出结构化结论。
 license: MIT
 disable-model-invocation: true
@@ -142,7 +142,7 @@ Evidence: types.ts KnowledgeEdgeKind 列表中缺少 'resolves'
 }
 ```
 
-产出结论后，运行校验器自检（输入形式：JSON 文件、stdin 管道、markdown 报告提取；JSON 内容可为单条结论或批量 verdicts 数组，用法见 README.md）：
+产出结论后，运行校验器自检（输入形式：JSON 文件、stdin 管道、markdown 报告提取；JSON 内容可为单条结论、批量 verdicts 对象或顶层数组，用法见 README.md）：
 
 ```bash
 node scripts/validate-verdict.mjs <verdict.json>   # 或 report.md，或 - 从 stdin 读
@@ -192,7 +192,7 @@ Counter: "The 28 refers to language types, not edge types; edge types are 21"
 
 默认输出为 markdown 报告，**内嵌完整 JSON 结论块**——人可直接阅读，机器可解析结论；仅当调用方显式要求纯 JSON 时才省略 markdown 包装：
 
-```markdown
+````markdown
 ## Challenge Report: <finding_id>
 
 **Verdict**: <overturned|weakened|confirmed>
@@ -214,7 +214,20 @@ Counter: "The 28 refers to language types, not edge types; edge types are 21"
 
 ### Recommendation
 <action recommendation>
+
+```json
+{
+  "finding_id": "<finding_id>",
+  "challenge_result": "<overturned|weakened|confirmed>",
+  "confidence": <0-100>,
+  "reasoning": "<detailed explanation>",
+  "counter_evidence": ["<evidence point>", "..."],
+  "supporting_evidence": ["<evidence point>", "..."],
+  "adjusted_severity": "<none|critical|high|medium|low>",
+  "recommendation": "<action recommendation>"
+}
 ```
+````
 
 ## 错误处理
 
@@ -266,7 +279,7 @@ Evidence: grep shows no export keyword
 
 本技能用于**对照源代码对代码质量发现进行对抗性审查**。**不适用**于：
 
-- 纯安全审计或漏洞扫描（使用专用安全审查工具）。
+- 纯安全审计或漏洞扫描任务本身（使用专用安全审查工具）；安全扫描产出的**具体发现**仍可作为输入做对抗性验证。
 - 没有具体发现可挑战的完整 MR/PR 通用代码审查。
 - 无法对照可访问的源代码、设计文档或运行时证据验证的发现——此时输出 `weakened` 并注明证据不可用。
 - 无可验证事实主张的纯风格或偏好类发现。

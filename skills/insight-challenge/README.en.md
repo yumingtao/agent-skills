@@ -34,7 +34,7 @@ Node.js ≥ 18 only; the validator has zero third-party dependencies — nothing
 Three input modes:
 
 ```bash
-# 1. Validate a JSON file (single verdict or batch verdicts array)
+# 1. Validate a JSON file (single verdict, batch verdicts object, or top-level array)
 node scripts/validate-verdict.mjs verdict.json
 
 # 2. Read from stdin

@@ -225,6 +225,8 @@
 
 批量外层字段校验：`batch_id` 出现时必须为非空 string；`total_findings` 出现时必须为 integer 且等于 `verdicts` 数量；`summary` 出现时必须为 object。违规报 IC-V13（`summary` 计数与实际结果不符仍报 IC-V09）。
 
+批量输入也接受顶层数组简写（`[{...verdict}, {...verdict}]`），校验器将其视作 `{verdicts: [...]}` 处理。
+
 ## 与下游系统的集成
 
 ### 质量仪表盘

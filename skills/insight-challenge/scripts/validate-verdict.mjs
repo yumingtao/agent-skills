@@ -96,7 +96,7 @@ function extractVerdictBlocks(mdText) {
       const parsed = JSON.parse(m[1]);
       const isVerdict =
         parsed && typeof parsed === 'object' &&
-        (('finding_id' in parsed && 'challenge_result' in parsed) || Array.isArray(parsed.verdicts));
+        (('finding_id' in parsed && 'challenge_result' in parsed) || Array.isArray(parsed.verdicts) || Array.isArray(parsed));
       if (isVerdict) blocks.push(parsed);
     } catch {
       // not valid JSON — skip non-verdict blocks
@@ -151,6 +151,7 @@ if (isMarkdown) {
     console.error(`[IC-V07] Invalid JSON: ${err.message}`);
     process.exit(1);
   }
+  if (Array.isArray(doc)) doc = { verdicts: doc }; // top-level array = batch shorthand
   docs = [doc];
 }
 

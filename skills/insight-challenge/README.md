@@ -33,7 +33,7 @@ insight-challenge/
 三种输入方式：
 
 ```bash
-# 1. 校验 JSON 文件（单条结论或批量 verdicts 数组）
+# 1. 校验 JSON 文件（单条结论、批量 verdicts 对象或顶层数组）
 node scripts/validate-verdict.mjs verdict.json
 
 # 2. 从 stdin 管道输入

@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.6.0
+version: 1.7.0
 summary: Adversarial review of code quality findings with source-anchored counter-evidence and structured verdicts.
 license: MIT
 disable-model-invocation: true
@@ -142,7 +142,7 @@ Produce structured output:
 }
 ```
 
-After producing the verdict, run the validator (supported input forms: a JSON file, a stdin pipe, or a markdown report; the JSON itself can be a single verdict or a batch verdicts array; see README.en.md):
+After producing the verdict, run the validator (supported input forms: a JSON file, a stdin pipe, or a markdown report; the JSON itself can be a single verdict, a batch verdicts object, or a top-level array; see README.en.md):
 
 ```bash
 node scripts/validate-verdict.mjs <verdict.json>   # or report.md, or - to read stdin
@@ -192,7 +192,7 @@ Counter: "The 28 refers to language types, not edge types; edge types are 21"
 
 The default output is a markdown report with the **complete JSON verdict embedded** — human-readable and machine-parseable; omit the markdown wrapper only when the caller explicitly requests raw JSON:
 
-```markdown
+````markdown
 ## Challenge Report: <finding_id>
 
 **Verdict**: <overturned|weakened|confirmed>
@@ -214,7 +214,20 @@ The default output is a markdown report with the **complete JSON verdict embedde
 
 ### Recommendation
 <action recommendation>
+
+```json
+{
+  "finding_id": "<finding_id>",
+  "challenge_result": "<overturned|weakened|confirmed>",
+  "confidence": <0-100>,
+  "reasoning": "<detailed explanation>",
+  "counter_evidence": ["<evidence point>", "..."],
+  "supporting_evidence": ["<evidence point>", "..."],
+  "adjusted_severity": "<none|critical|high|medium|low>",
+  "recommendation": "<action recommendation>"
+}
 ```
+````
 
 ## Error Handling
 
@@ -266,7 +279,7 @@ Evidence: grep shows no export keyword
 
 This skill is for **adversarial review of code-quality findings against source code**. It is **not** suitable for:
 
-- Security-only audits or vulnerability scanning (use a dedicated security review tool).
+- Security-only audits or vulnerability scanning as tasks themselves (use a dedicated security review tool); **specific findings** produced by a security scan can still be adversarially verified as input.
 - Generic code review of a full MR/PR without specific findings to challenge.
 - Findings that cannot be verified against accessible source code, design docs, or runtime evidence — in that case output `weakened` with a note that evidence is unavailable.
 - Style-only or preference-based findings with no factual claim to verify.

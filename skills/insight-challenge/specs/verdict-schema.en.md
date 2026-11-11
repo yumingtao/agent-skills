@@ -225,6 +225,8 @@ When processing multiple findings:
 
 Batch-level field validation: `batch_id`, when present, must be a non-empty string; `total_findings`, when present, must be an integer equal to the number of `verdicts`; `summary`, when present, must be an object. Violations report IC-V13 (`summary` count mismatches still report IC-V09).
 
+Batch input also accepts a top-level array shorthand (`[{...verdict}, {...verdict}]`); the validator treats it as `{verdicts: [...]}`.
+
 ## Integration with Downstream Systems
 
 ### Quality Dashboard
