@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.3.0
+version: 1.4.0
 summary: Adversarial review of code quality findings with source-anchored counter-evidence and structured verdicts.
 license: MIT
 disable-model-invocation: true
@@ -142,10 +142,10 @@ Produce structured output:
 }
 ```
 
-After producing the verdict, run the validator (single or batch):
+After producing the verdict, run the validator (single, batch, stdin pipe, and markdown-report extraction are all supported; see README.en.md):
 
 ```bash
-node scripts/validate-verdict.mjs <verdict.json>
+node scripts/validate-verdict.mjs <verdict.json>   # or report.md, or - to read stdin
 ```
 
 If it fails, fix the verdict per the reported errors and re-validate (see IC-E06).

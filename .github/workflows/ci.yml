@@ -58,8 +58,34 @@ jobs:
           echo "$out" | grep -q "IC-V01" \
             && echo "$out" | grep -q "IC-V02" \
             && echo "$out" | grep -q "IC-V05" \
+            && echo "$out" | grep -q "IC-V09" \
             || { echo "::error::validator failed without reporting the injected defects"; echo "$out"; exit 1; }
-          echo "validator correctly rejected the bad fixture:"
+          echo "validator correctly rejected the bad fixture"
+
+      - name: Verdict validator modes (stdin + markdown extraction)
+        run: |
+          cat skills/insight-challenge/tests/fixtures/verdict-good.json | node skills/insight-challenge/scripts/validate-verdict.mjs -
+          cat > /tmp/ci-report.md <<'EOF'
+          # Report
+
+          ```json
+          {
+            "finding_id": "CI-1",
+            "challenge_result": "confirmed",
+            "confidence": 90,
+            "reasoning": "md mode works",
+            "supporting_evidence": ["src/a.ts line 1: proof"]
+          }
+          ```
+          EOF
+          node skills/insight-challenge/scripts/validate-verdict.mjs /tmp/ci-report.md
+          printf '# Report\n\n```json\n{"foo": 1}\n```\n' > /tmp/ci-noverdict.md
+          set +e
+          node skills/insight-challenge/scripts/validate-verdict.mjs /tmp/ci-noverdict.md > /dev/null 2>&1
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then echo "::error::validator accepted markdown without a verdict block"; exit 1; fi
+          echo "validator modes OK"
 
       - name: Diagram checker behavior gate (known-good fixture)
         run: node skills/diagram-generator/scripts/check-diagram.mjs skills/diagram-generator/tests/fixtures/example-commerce-system-map.html

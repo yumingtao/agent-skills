@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // validate-verdict.mjs — validate an insight-challenge verdict (single or batch)
 // against specs/verdict-schema.md. Zero dependencies; fail-closed.
+// Input: a .json file path, a .md file path (extracts fenced ```json verdict
+// blocks), or `-` to read from stdin.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -33,42 +35,106 @@ function validateVerdict(v, path, errors, warnings) {
     warnings.push(`${p('.supporting_evidence')}: expected non-empty for a confirmed verdict [IC-W02]`);
 }
 
+function validateDoc(doc, path, errors, warnings) {
+  const isBatch = Array.isArray(doc.verdicts);
+  if (isBatch) {
+    if (doc.verdicts.length === 0) errors.push(`${path}.verdicts: batch must contain at least one verdict [IC-V08]`);
+    doc.verdicts.forEach((v, i) => validateVerdict(v, `${path}.verdicts[${i}]`, errors, warnings));
+    if (doc.summary !== undefined && typeof doc.summary === 'object' && doc.summary !== null) {
+      const counts = { overturned: 0, weakened: 0, confirmed: 0 };
+      for (const v of doc.verdicts) {
+        if (v && typeof v === 'object' && RESULTS.has(v.challenge_result)) counts[v.challenge_result]++;
+      }
+      for (const [k, actual] of Object.entries(counts)) {
+        const declared = doc.summary[k];
+        if (declared !== undefined && declared !== actual)
+          errors.push(`${path}.summary.${k}: declared ${declared} but ${actual} verdict(s) present [IC-V09]`);
+      }
+    }
+  } else {
+    validateVerdict(doc, path, errors, warnings);
+  }
+  return isBatch ? doc.verdicts.length : 1;
+}
+
+function extractVerdictBlocks(mdText) {
+  const blocks = [];
+  const re = /```json\s*\n([\s\S]*?)```/g;
+  let m;
+  while ((m = re.exec(mdText)) !== null) {
+    try {
+      const parsed = JSON.parse(m[1]);
+      const isVerdict =
+        parsed && typeof parsed === 'object' &&
+        (('finding_id' in parsed && 'challenge_result' in parsed) || Array.isArray(parsed.verdicts));
+      if (isVerdict) blocks.push(parsed);
+    } catch {
+      // not valid JSON — skip non-verdict blocks
+    }
+  }
+  return blocks;
+}
+
+function usage() {
+  console.error('Usage: node scripts/validate-verdict.mjs <verdict.json | report.md | ->');
+  console.error('  <path>.json  validate the JSON file (single verdict or batch)');
+  console.error('  <path>.md    extract and validate fenced ```json verdict blocks');
+  console.error('  -            read JSON from stdin');
+}
+
 const [inputPath] = process.argv.slice(2);
 if (!inputPath) {
-  console.error('Usage: node scripts/validate-verdict.mjs <path-to-verdict.json>');
+  usage();
   process.exit(1);
 }
 let raw;
-try {
-  raw = readFileSync(resolve(inputPath), 'utf8');
-} catch (err) {
-  console.error(`Cannot read input file: ${inputPath} (${err.code || err.message})`);
-  console.error('Usage: node scripts/validate-verdict.mjs <path-to-verdict.json>');
-  process.exit(1);
+if (inputPath === '-') {
+  try {
+    raw = readFileSync(0, 'utf8');
+  } catch (err) {
+    console.error(`Cannot read stdin: ${err.code || err.message}`);
+    process.exit(1);
+  }
+} else {
+  try {
+    raw = readFileSync(resolve(inputPath), 'utf8');
+  } catch (err) {
+    console.error(`Cannot read input file: ${inputPath} (${err.code || err.message})`);
+    usage();
+    process.exit(1);
+  }
 }
-let doc;
-try {
-  doc = JSON.parse(raw);
-} catch (err) {
-  console.error(`[IC-V07] Invalid JSON: ${err.message}`);
-  process.exit(1);
+
+let docs;
+const isMarkdown = inputPath.endsWith('.md');
+if (isMarkdown) {
+  docs = extractVerdictBlocks(raw);
+  if (docs.length === 0) {
+    console.error('[IC-V10] No fenced ```json verdict block found in markdown input');
+    process.exit(1);
+  }
+} else {
+  let doc;
+  try {
+    doc = JSON.parse(raw);
+  } catch (err) {
+    console.error(`[IC-V07] Invalid JSON: ${err.message}`);
+    process.exit(1);
+  }
+  docs = [doc];
 }
 
 const errors = [];
 const warnings = [];
-const isBatch = Array.isArray(doc.verdicts);
-if (isBatch) {
-  if (doc.verdicts.length === 0) errors.push('.verdicts: batch must contain at least one verdict [IC-V08]');
-  doc.verdicts.forEach((v, i) => validateVerdict(v, `.verdicts[${i}]`, errors, warnings));
-} else {
-  validateVerdict(doc, '', errors, warnings);
-}
+let count = 0;
+docs.forEach((doc, i) => {
+  count += validateDoc(doc, docs.length > 1 ? `block[${i}]` : '', errors, warnings);
+});
 
 if (errors.length > 0) {
   console.error(`validate-verdict: FAILED (${errors.length} error${errors.length > 1 ? 's' : ''})`);
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-const count = isBatch ? doc.verdicts.length : 1;
-console.log(`validate-verdict: PASSED (${isBatch ? 'batch, ' : ''}${count} verdict${count > 1 ? 's' : ''})`);
+console.log(`validate-verdict: PASSED (${count} verdict${count > 1 ? 's' : ''}${docs.length > 1 ? ` in ${docs.length} blocks` : ''})`);
 for (const w of warnings) console.log(`  warning: ${w}`);
