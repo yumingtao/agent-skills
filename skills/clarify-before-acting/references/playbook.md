@@ -6,6 +6,8 @@
 
 ---
 
+章节索引：1 思维模式 · 2 提问前先做功课 · 3 清晰度检查表 · 4 问题队列 · 5 深入前先映射范围 · 6 提问视角 · 7 知道何时停止 · 8 基于假设推进 · 9 任务契约 · 10 完整走查 · 验证与刻意不包含
+
 ## 1. 思维模式：暴露假设，而非收集功能
 
 模糊请求的失败模式不是"缺少功能"——而是你和请求方各自持有的*隐藏假设*不同。功能清单回答"你想要什么？"；它抓不到你想象的是批处理任务而对方想象的是实时 API 的那一刻。
@@ -161,6 +163,45 @@ Assumptions: The repeated lookup is the main bottleneck, based on the profile;
 ```
 
 不要编造未澄清的值。留空一个字段、陈述假设，或者当填充它会改变工作方向时停下来提问。
+
+## 10. 完整走查——从模糊请求到任务契约
+
+一个端到端示例，展示从用户的一句话到任务契约的全过程：三个方向性未知、三次提问、一次记忆复用。
+
+**用户请求：**"帮我优化一下订单服务。"
+
+**判定**：影响面未知、目标模糊、重做成本高 → ❓ 先问（SKILL.md 决策表）。
+
+**功课（提问前）：**
+
+- 读代码：`orders/service.py` 的 `list_orders` 每单产生两次数据库往返；监控显示结账路径 p95 = 1.8s。
+- 查记忆：该用户上月明确说过"本季度不动表结构"——范围约束直接复用并声明，不再问。
+
+**队列（按影响排序）：**
+
+1. 目标是降低延迟还是降低成本？还是两者都要？
+2. 成功标准是什么——多快、在什么负载下？
+3. 范围只含订单服务，还是包括网关和前端？
+
+**逐个提问：**
+
+- 问 1 →"延迟优先，结账场景最痛。"复述："目标：降低结账路径的尾延迟。"成本相关追问被答案否决，从队列移除。
+- 问 2 →"p95 低于 300ms，峰值两倍负载下。"复述并确认。
+- 问 3 →"只动订单服务；网关这季度不动。"（与记忆一致，声明复用。）
+
+**契约：**
+
+```text
+Result:      Reduce checkout-path p95 latency from 1.8s to under 300ms.
+Scope:       Change the orders service only; no schema or API contract changes.
+Checkpoints: Baseline under 2x peak load; apply the fix; re-measure p95; run affected tests.
+Stop if:     The fix requires a schema or API contract change.
+Assumptions: The N+1 lookup is the dominant bottleneck, based on the profile.
+```
+
+**交接：**契约交给执行者。执行中若触发停止条件（例如修复需要改表结构），回到提问，而不是自行绕过。
+
+全程没有问任何代码已能回答的事；记忆退役了一个潜在问题（表结构约束）；三个方向性未知在三次提问内收敛。
 
 ## 验证对本技能的改动
 

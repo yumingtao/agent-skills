@@ -2,7 +2,7 @@
 name: clarify-before-acting
 slug: yumingtao-clarify-before-acting
 displayName: Clarify Before Acting
-version: 1.2.0
+version: 1.3.0
 summary: Resolve direction-changing ambiguity before acting on complex or high-cost requests.
 license: MIT
 description: >
@@ -13,12 +13,25 @@ description: >
 
 Before acting on a non-trivial request, make sure you understand the *direction* of what's wanted — then act. The goal is a clear direction, not exhaustive detail.
 
+## Contents
+
+1. Quick Decision: Ask or Proceed?
+2. When this applies (with trigger examples)
+3. Do your homework first
+4. Find the weakest spot
+5. Work a question queue
+6. Ask well
+7. Know when to stop
+8. When you proceed on assumptions
+9. Close with a task contract when execution needs it
+10. Out of Scope / Exception Quick Reference / FAQ / Language Support
+
 ## Quick Decision: Ask or Proceed?
 
 | Decision | Action |
 |----------|--------|
 | ✅ Proceed directly | Trivial edits, low-risk file ops, reversible actions, user gave clear direction |
-| ❓ Ask first | Affects >1 module, irreversible (deletes, force pushes), ambiguous requirements, redo cost >5 min |
+| ❓ Ask first | Affects >1 module, irreversible (deletes, force pushes), ambiguous requirements, redo cost clearly exceeding investigation cost (default reference: about 5 minutes of work, scaled to task size) |
 | 🛑 Must ask | Direction-changing unknowns (see "Find the weakest spot") |
 
 ## When this applies
@@ -26,6 +39,12 @@ Before acting on a non-trivial request, make sure you understand the *direction*
 Engage when the request is complex, ambiguous, or costly to get wrong: architecture, requirements, schema or data changes, irreversible actions, or anything where "that's not what I meant" would waste real work.
 
 Skip it for clear, mechanical, low-risk tasks — formatting, renaming, a single translation, or any request that already names the file, symbol, or acceptance test. When unsure, do one quick check, not an interrogation. This rule is a scalpel, not a tollgate.
+
+Trigger examples:
+
+- "Help me optimize the orders service." — Goal, success criteria, and scope are all unspecified.
+- "Refactor the user module, and handle the performance too." — Two directional goals merged into one request; scope unknown.
+- "Should we remove the caching layer?" — A directional architecture decision; clarify motivation and constraints before acting.
 
 ## Do your homework first
 
@@ -80,6 +99,16 @@ When the clarified request will be handed to an executor, or when execution depe
 - **Stop conditions** — what should trigger a pause and re-asking.
 - **Assumptions** — assumptions carried and the risk if they're wrong.
 
+A ready-to-copy template (extended guidance and a filled example: [`references/playbook.en.md`](references/playbook.en.md) Section 9):
+
+```text
+Result:      {the outcome that must be true when the task is done}
+Scope:       {what is included; what is explicitly out of scope}
+Checkpoints: {the ordered evidence that proves the result was achieved}
+Stop if:     {a change in goal, scope, owner, data, or approach requires review}
+Assumptions: {what is assumed, on what basis, and the risk if it is wrong}
+```
+
 Skip the contract for clear, mechanical work that already names its file, symbol, or acceptance test. Keep it proportional; it is an execution handoff, not a mandatory questionnaire.
 
 ---
@@ -94,6 +123,15 @@ This skill does **not** apply when:
 - The direction is already unambiguous and testable.
 - The user explicitly says "just do it" and the remaining unknowns are detail-level, not direction-changing — in that case proceed with stated assumptions.
 - The task requires domain expertise the agent cannot verify internally; surface that as a known unknown rather than guessing.
+
+## Exception Quick Reference
+
+| Code | Scenario | Action |
+|------|----------|--------|
+| CBA-E01 | User stays silent on a directional question | Never silently fill: re-ask more concisely, or clearly state the risk and request a one-word confirmation |
+| CBA-E02 | User explicitly stops the questions (an unambiguous "stop asking, just do it") | Stop asking immediately; convert each remaining unknown into a stated assumption with risk, say what remains unclear, and proceed |
+| CBA-E03 | Pace complaints ("you ask too much", "hurry up") | Not a stop signal: keep the queue members unchanged and keep asking each directional unknown, but make the questions shorter and sharper |
+| CBA-E04 | Direction still unknown after homework and memory checks | Do not act on a vague direction: list the remaining directional unknowns and ask one by one; if still blocked, ask the other party to decide between explicit options |
 
 ## FAQ
 

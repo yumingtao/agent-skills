@@ -6,6 +6,8 @@ The techniques here are distilled from practice and from how mature requirements
 
 ---
 
+Section index: 1 Mindset · 2 Homework before asking · 3 Clarity checklist · 4 Question queue · 5 Map the scope first · 6 Questioning lenses · 7 Knowing when to stop · 8 Proceeding on assumptions · 9 Task contract · 10 Full walkthrough · Validation and deliberate omissions
+
 ## 1. The mindset: expose assumptions, don't collect features
 
 The failure mode of a vague request is not "missing features" — it is *hidden assumptions* that you and the requester hold differently. A feature list answers "what do you want?"; it does not catch the moment where you pictured a batch job and they pictured a real-time API.
@@ -161,6 +163,45 @@ Assumptions: The repeated lookup is the main bottleneck, based on the profile;
 ```
 
 Do not invent values that were not clarified. Leave a field open, state the assumption, or stop and ask when filling it would change the direction of work.
+
+## 10. Full walkthrough — from a vague request to a task contract
+
+An end-to-end example showing the whole journey from a one-line user request to a task contract: three direction-changing unknowns, three questions, one memory reuse.
+
+**User request:** "Help me optimize the orders service."
+
+**Decision:** Unknown blast radius, vague goal, high redo cost → ❓ ask first (SKILL.md decision table).
+
+**Homework (before asking):**
+
+- Read the code: `list_orders` in `orders/service.py` issues two database round-trips per order; monitoring shows checkout-path p95 = 1.8s.
+- Check memory: this user stated last month "no schema changes this quarter" — reuse that scope constraint, say so, and don't ask.
+
+**Queue (ordered by impact):**
+
+1. Is the goal lower latency or lower cost? Or both?
+2. What is the success criterion — how fast, under what load?
+3. Is the scope the orders service only, or does it include the gateway and frontend?
+
+**Ask one at a time:**
+
+- Q1 → "Latency first; checkout is the pain point." Reflect back: "Goal: reduce tail latency on the checkout path." Cost-related follow-ups are voided by the answer and dropped from the queue.
+- Q2 → "p95 under 300ms at twice peak load." Reflect back and confirm.
+- Q3 → "Orders service only; gateway is frozen this quarter." (Matches memory; state the reuse.)
+
+**Contract:**
+
+```text
+Result:      Reduce checkout-path p95 latency from 1.8s to under 300ms.
+Scope:       Change the orders service only; no schema or API contract changes.
+Checkpoints: Baseline under 2x peak load; apply the fix; re-measure p95; run affected tests.
+Stop if:     The fix requires a schema or API contract change.
+Assumptions: The N+1 lookup is the dominant bottleneck, based on the profile.
+```
+
+**Handoff:** The contract goes to the executor. If a stop condition triggers during execution (say, the fix needs a schema change), return to asking — don't route around it.
+
+Nothing already answerable from the code was asked; memory retired one potential question (the schema constraint); three direction-changing unknowns converged within three questions.
 
 ## Validating changes to this skill
 
