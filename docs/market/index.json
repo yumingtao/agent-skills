@@ -149,12 +149,12 @@
       },
       "versions": [
         {
-          "version": "1.6.0",
+          "version": "1.7.0",
           "publishTimestamp": 1794292003,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "082949696fb4d939cff4b67d25b3b64375a32189",
+            "commit": "a0cab6395d7c17c65978c8734c4c9dd24d97868c",
             "path": "skills/insight-challenge"
           }
         }
