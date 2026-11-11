@@ -2,7 +2,7 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.4.0
+version: 1.5.0
 summary: 对代码质量发现进行对抗性审查，用源代码锚定的反向证据产出结构化结论。
 license: MIT
 disable-model-invocation: true
@@ -142,7 +142,7 @@ Evidence: types.ts KnowledgeEdgeKind 列表中缺少 'resolves'
 }
 ```
 
-产出结论后，运行校验器自检（支持单条、批量、stdin 管道与 markdown 报告提取四种输入，用法见 README.md）：
+产出结论后，运行校验器自检（输入形式：JSON 文件、stdin 管道、markdown 报告提取；JSON 内容可为单条结论或批量 verdicts 数组，用法见 README.md）：
 
 ```bash
 node scripts/validate-verdict.mjs <verdict.json>   # 或 report.md，或 - 从 stdin 读

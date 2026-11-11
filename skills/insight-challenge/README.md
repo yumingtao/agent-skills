@@ -43,13 +43,13 @@ cat verdict.json | node scripts/validate-verdict.mjs -
 node scripts/validate-verdict.mjs report.md
 ```
 
-校验失败时按错误码（IC-V01~V10）定位问题；exit 0 表示通过。
+校验失败时按错误码（IC-V00~V10）定位问题；证据期望未满足时输出 IC-W01~W03 警告（不影响 exit 码）；exit 0 表示通过。
 
 ## 运行测试
 
 ```bash
 node scripts/validate-verdict.mjs tests/fixtures/verdict-good.json   # 期望：PASSED
-node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json     # 期望：9 个错误，exit 1
+node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json     # 期望：9 个错误（7 种错误码：IC-V01~V06、V09），exit 1
 ```
 
 仓库根的 `.github/workflows/ci.yml` 在每次推送时运行这两组断言及 stdin/markdown 模式门。

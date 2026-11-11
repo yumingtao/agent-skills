@@ -33,6 +33,8 @@ function validateVerdict(v, path, errors, warnings) {
     warnings.push(`${p('.counter_evidence')}: expected non-empty for an overturned verdict [IC-W01]`);
   if (v.challenge_result === 'confirmed' && (!Array.isArray(v.supporting_evidence) || v.supporting_evidence.length === 0))
     warnings.push(`${p('.supporting_evidence')}: expected non-empty for a confirmed verdict [IC-W02]`);
+  if (v.challenge_result === 'weakened' && (!Array.isArray(v.counter_evidence) || v.counter_evidence.length === 0))
+    warnings.push(`${p('.counter_evidence')}: expected non-empty for a weakened verdict [IC-W03]`);
 }
 
 function validateDoc(doc, path, errors, warnings) {

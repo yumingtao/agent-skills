@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems. Machine validation is implemented by `scripts/validate-verdict.mjs` (zero-dependency, fail-closed); test fixtures live in `tests/fixtures/`.
+This document defines the structured output format for insight challenge verdicts. The schema ensures consistent, machine-readable results that can be consumed by downstream systems. Machine validation is implemented by `scripts/validate-verdict.mjs` (zero-dependency, fail-closed); test fixtures live in `tests/fixtures/`. The validator reports errors (IC-V00..V10) for required-field and type violations, and warnings (IC-W01: overturned without counter_evidence, IC-W02: confirmed without supporting_evidence, IC-W03: weakened without counter_evidence) for unmet evidence expectations; warnings do not change the exit code.
 
 ## Verdict JSON Schema
 

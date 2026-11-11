@@ -2,7 +2,7 @@
 
 ## 概述
 
-本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。机器校验由 `scripts/validate-verdict.mjs` 实现（零依赖，fail-closed），测试夹具见 `tests/fixtures/`。
+本文档定义洞察挑战结论的结构化输出格式。该 schema 确保结果一致、机器可读，可供下游系统消费。机器校验由 `scripts/validate-verdict.mjs` 实现（零依赖，fail-closed），测试夹具见 `tests/fixtures/`。校验器对必填字段与类型违规返回错误（IC-V00~V10）；证据期望未满足时返回警告（IC-W01：overturned 缺 counter_evidence、IC-W02：confirmed 缺 supporting_evidence、IC-W03：weakened 缺 counter_evidence），警告不改变 exit 码。
 
 ## 结论 JSON Schema
 

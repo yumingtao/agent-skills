@@ -44,13 +44,13 @@ cat verdict.json | node scripts/validate-verdict.mjs -
 node scripts/validate-verdict.mjs report.md
 ```
 
-Failures report error codes (IC-V01..V10) pinpointing each problem; exit 0 means pass.
+Failures report error codes (IC-V00..V10) pinpointing each problem; unmet evidence expectations emit IC-W01..W03 warnings (they do not change the exit code); exit 0 means pass.
 
 ## Running the Tests
 
 ```bash
 node scripts/validate-verdict.mjs tests/fixtures/verdict-good.json   # expect: PASSED
-node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json    # expect: 9 errors, exit 1
+node scripts/validate-verdict.mjs tests/fixtures/verdict-bad.json    # expect: 9 errors (7 distinct codes: IC-V01-V06, V09), exit 1
 ```
 
 The repo-root `.github/workflows/ci.yml` runs both assertions plus stdin/markdown mode gates on every push.
