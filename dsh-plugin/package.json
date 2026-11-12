@@ -1,0 +1,42 @@
+{
+  "name": "yumingtao-dsh-skills",
+  "version": "1.0.0",
+  "description": "DSH bundle that installs four production-grade agent skills: diagram-generator, clarify-before-acting, insight-challenge, and workflow-skill-designer.",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "cordis.patch.yml",
+    "index.js",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-bundle",
+    "agent-skills",
+    "diagram",
+    "architecture",
+    "clarify",
+    "code-review",
+    "workflow",
+    "meta-skill"
+  ],
+  "license": "MIT",
+  "author": "yumingtao",
+  "homepage": "https://github.com/yumingtao/agent-skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yumingtao/agent-skills.git",
+    "directory": "dsh-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/yumingtao/agent-skills/issues"
+  }
+}
