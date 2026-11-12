@@ -4,6 +4,12 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+[![SkillHub](https://img.shields.io/badge/SkillHub-4%20published-green)](https://skillhub.cn/user/user_95900c57)
+[![ClawHub](https://img.shields.io/badge/ClawHub-4%20published-orange)](https://clawhub.ai/@yumingtao)
+[![skills.sh](https://skills.sh/b/yumingtao/agent-skills)](https://skills.sh/yumingtao/agent-skills)
+[![DSH Index](https://img.shields.io/badge/DSH-market--index-blue)](https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 零运行时依赖、零网络调用、零构建步骤。每个 skill 都是一个自包含的指令文件夹；当一个 skill 支持多平台时，平台文件只是薄适配层，把所有 agent 引向同一份共享行为。
 
 ## Skills
@@ -35,6 +41,92 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 
 - **diagram-generator** 自带逐平台适配层：`AGENTS.md`（Cursor / OpenCode / Windsurf）、`GEMINI.md`、`COPILOT-INSTRUCTIONS.md`、`CODEBUDDY.md`、`HERMES.md` —— 见其 [README](skills/diagram-generator/README.md#installation)。
 - 其余三个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
+
+### SkillHub（国内社区市场）
+
+从 [SkillHub](https://skillhub.cn/user/user_95900c57) 直接安装：
+
+```bash
+# 安装 CLI
+curl -fsSL https://skillhub.cn/install/install.sh | bash
+
+# 安装 skill（命名空间：user_95900c57）
+skillhub install yumingtao-diagram-generator --namespace user_95900c57
+skillhub install yumingtao-clarify-before-acting --namespace user_95900c57
+skillhub install yumingtao-insight-challenge --namespace user_95900c57
+skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
+```
+
+### ClawHub（OpenClaw 官方全球 Registry）
+
+从 [ClawHub](https://clawhub.ai/@yumingtao) 全球 Registry 安装：
+
+```bash
+# 安装 CLI
+npm i -g clawhub
+
+# 安装 skill（所有者：yumingtao）
+clawhub install yumingtao/diagram-generator
+clawhub install yumingtao/clarify-before-acting
+clawhub install yumingtao/insight-challenge
+clawhub install yumingtao/workflow-skill-designer
+```
+
+### skills.sh（去中心化 GitHub 索引）
+
+无需注册——技能直接从本公开仓库索引。通过 `skills` CLI 安装：
+
+```bash
+# 一次性安装全部 4 个 skill
+npx skills add yumingtao/agent-skills
+
+# 或安装单个 skill
+npx skills add yumingtao/agent-skills --skill diagram-generator
+npx skills add yumingtao/agent-skills --skill clarify-before-acting
+npx skills add yumingtao/agent-skills --skill insight-challenge
+npx skills add yumingtao/agent-skills --skill workflow-skill-designer
+```
+
+### DeepSeek Harness（DSH）
+
+每个 skill 以独立 npm 包发布，按需安装。两种方式任选：
+
+#### 方式一 — npm 包（推荐；逐 skill 安装）
+
+```bash
+dsh plugin --profile web add yumingtao-diagram-generator
+dsh plugin --profile web add yumingtao-clarify-before-acting
+dsh plugin --profile web add yumingtao-insight-challenge
+dsh plugin --profile web add yumingtao-workflow-skill-designer
+```
+
+web 配置首次启动时，每个包会将其 skill 目录复制到 `~/.agents/skills`（DSH 与 Codex CLI 共享的用户全局 skill 根目录）。
+
+#### 方式二 — 市场索引（一次性添加全部 4 个）
+
+添加市场索引后安装任意 skill。索引 URL 三选一：
+
+```bash
+# 选项 A — jsDelivr CDN（推荐；@main 可能缓存数分钟到数小时）
+dsh plugin index add https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json
+
+# 选项 B — GitHub raw（始终最新，无 CDN 缓存）
+dsh plugin index add https://raw.githubusercontent.com/yumingtao/agent-skills/main/docs/market/index.json
+
+# 选项 C — 本地文件（离线 / 开发用）
+dsh plugin index add file:///path/to/agent-skills/docs/market/index.json
+```
+
+安装：
+
+```bash
+dsh plugin install diagram-generator
+dsh plugin install clarify-before-acting
+dsh plugin install insight-challenge
+dsh plugin install workflow-skill-designer
+```
+
+> 使用市场索引时，skill 内容从 `github.com/yumingtao/agent-skills` 按索引中记录的固定 commit 拉取，与所选索引 URL 无关。CDN/raw 的选择只影响索引文件本身的分发方式。
 
 ## Sync
 

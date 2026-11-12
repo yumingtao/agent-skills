@@ -5,6 +5,8 @@ Original, platform-neutral agent skills — prompt assets that work across Claud
 [English](README.md) | [简体中文](README.zh-CN.md)
 
 [![SkillHub](https://img.shields.io/badge/SkillHub-4%20published-green)](https://skillhub.cn/user/user_95900c57)
+[![ClawHub](https://img.shields.io/badge/ClawHub-4%20published-orange)](https://clawhub.ai/@yumingtao)
+[![skills.sh](https://skills.sh/b/yumingtao/agent-skills)](https://skills.sh/yumingtao/agent-skills)
 [![DSH Index](https://img.shields.io/badge/DSH-market--index-blue)](https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -53,6 +55,36 @@ skillhub install yumingtao-diagram-generator --namespace user_95900c57
 skillhub install yumingtao-clarify-before-acting --namespace user_95900c57
 skillhub install yumingtao-insight-challenge --namespace user_95900c57
 skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
+```
+
+### ClawHub (OpenClaw official registry)
+
+Install any skill from the [ClawHub](https://clawhub.ai/@yumingtao) global registry:
+
+```bash
+# Install the CLI once
+npm i -g clawhub
+
+# Install a skill (owner: yumingtao)
+clawhub install yumingtao/diagram-generator
+clawhub install yumingtao/clarify-before-acting
+clawhub install yumingtao/insight-challenge
+clawhub install yumingtao/workflow-skill-designer
+```
+
+### skills.sh (decentralized GitHub index)
+
+No sign-up required — skills are indexed directly from this public repository. Install via the `skills` CLI:
+
+```bash
+# Install all four skills at once
+npx skills add yumingtao/agent-skills
+
+# Or install a single skill
+npx skills add yumingtao/agent-skills --skill diagram-generator
+npx skills add yumingtao/agent-skills --skill clarify-before-acting
+npx skills add yumingtao/agent-skills --skill insight-challenge
+npx skills add yumingtao/agent-skills --skill workflow-skill-designer
 ```
 
 ### DeepSeek Harness (DSH)
