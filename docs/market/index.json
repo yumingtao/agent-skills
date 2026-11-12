@@ -189,7 +189,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "276d3e3034f2810c296a9007c58e03175d0821bf",
+            "commit": "ce09968464885582ff1ea241923b009497a681dd",
             "path": "skills/workflow-skill-designer"
           }
         }
