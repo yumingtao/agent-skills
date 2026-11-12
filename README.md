@@ -57,6 +57,22 @@ skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
 
 ### DeepSeek Harness (DSH)
 
+Each skill ships as its own npm bundle, so you can install only what you need. Pick one of the two methods below.
+
+#### Method 1 — npm packages (recommended; per-skill install)
+
+```bash
+dsh plugin --profile web add yumingtao-diagram-generator
+dsh plugin --profile web add yumingtao-clarify-before-acting
+dsh plugin --profile web add yumingtao-insight-challenge
+dsh plugin --profile web add yumingtao-workflow-skill-designer
+```
+
+On first boot of the web profile each bundle copies its skill directory into
+`~/.agents/skills` (the user-global skill root shared by DSH and Codex CLI).
+
+#### Method 2 — market index (add all four at once)
+
 Add the market index, then install any skill. Pick one index URL:
 
 ```bash
@@ -79,7 +95,7 @@ dsh plugin install insight-challenge
 dsh plugin install workflow-skill-designer
 ```
 
-> Skill content is fetched from `github.com/yumingtao/agent-skills` at the pinned commit recorded in the index, regardless of which index URL you use. The CDN/raw choice only affects how the index file itself is delivered.
+> With the market index, skill content is fetched from `github.com/yumingtao/agent-skills` at the pinned commit recorded in the index, regardless of which index URL you use. The CDN/raw choice only affects how the index file itself is delivered.
 
 ## Sync
 
