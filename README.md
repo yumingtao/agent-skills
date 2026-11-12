@@ -57,18 +57,29 @@ skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
 
 ### DeepSeek Harness (DSH)
 
-Add the market index, then install any skill:
+Add the market index, then install any skill. Pick one index URL:
 
 ```bash
-# Add the index source (one-time)
+# Option A — jsDelivr CDN (recommended; may cache `@main` for minutes to hours)
 dsh plugin index add https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json
 
-# Install
+# Option B — GitHub raw (always fresh, no CDN cache)
+dsh plugin index add https://raw.githubusercontent.com/yumingtao/agent-skills/main/docs/market/index.json
+
+# Option C — local file (for offline / development)
+dsh plugin index add file:///path/to/agent-skills/docs/market/index.json
+```
+
+Install:
+
+```bash
 dsh plugin install diagram-generator
 dsh plugin install clarify-before-acting
 dsh plugin install insight-challenge
 dsh plugin install workflow-skill-designer
 ```
+
+> Skill content is fetched from `github.com/yumingtao/agent-skills` at the pinned commit recorded in the index, regardless of which index URL you use. The CDN/raw choice only affects how the index file itself is delivered.
 
 ## Sync
 
