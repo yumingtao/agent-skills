@@ -45,6 +45,7 @@ SYNC_COPY_EXCLUDES=(
   "*.log"
   "*.tmp"
   "*.bak"
+  ".gitignore"
 )
 
 # Identity hygiene for a public collection. Declared here so the rule lives in
