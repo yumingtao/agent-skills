@@ -17,10 +17,10 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
 
       - name: Syntax check
-        run: bash -n sync/*.sh
+        run: bash -n sync/*.sh dsh-plugin/sync.sh
 
       - name: Shellcheck
-        run: shellcheck sync/*.sh
+        run: shellcheck sync/*.sh dsh-plugin/sync.sh
 
   validate:
     name: Validate collection
@@ -34,6 +34,9 @@ jobs:
 
       - name: Collection integrity
         run: sync/check.sh --collection-only
+
+      - name: DSH bundle copies in sync
+        run: dsh-plugin/sync.sh --check
 
       - name: Diagram checker syntax
         run: node --check skills/diagram-generator/scripts/check-diagram.mjs

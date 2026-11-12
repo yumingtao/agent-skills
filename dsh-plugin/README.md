@@ -41,6 +41,26 @@ with `force: true`:
     force: true
 ```
 
+## Maintainers: sync and publish
+
+The four skill directories under `skills/` are **copies** of the canonical
+source at the repo root (`skills/<skill>/`). Keep them in sync and release new
+versions with `sync.sh`:
+
+```bash
+# Sync copies from canonical source (no version change)
+dsh-plugin/sync.sh
+
+# Check for drift between copies and canonical source
+dsh-plugin/sync.sh --check
+
+# Bump version (patch|minor|major|x.y.z) and publish to npm
+dsh-plugin/sync.sh --bump patch --publish
+```
+
+The script uses `rsync` with the repo's standard exclude list (`.DS_Store`,
+`node_modules/`, etc.) and supports `--dry-run` to preview changes.
+
 ## License
 
 MIT
