@@ -1,0 +1,11 @@
+# yumingtao-clarify-before-acting bundle: installs the clarify-before-acting agent skill into the DSH
+# skill discovery root on web profile boot.
+#
+# Activate with:
+#   dsh plugin --profile web add yumingtao-clarify-before-acting
+#
+# On boot the row copies the packaged skill directory into the user-global
+# skill root (~/.agents/skills). Installation is idempotent.
+- insert:
+  - id: yumingtao-clarify-before-acting
+    name: 'yumingtao-clarify-before-acting'

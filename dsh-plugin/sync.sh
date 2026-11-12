@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-# dsh-plugin/sync.sh — keep dsh-plugin/skills/ in sync with the canonical
-# skills/ source, and (optionally) bump + publish the npm package.
+# dsh-plugin/sync.sh — keep each standalone package's skill/ copy in sync with
+# the canonical skills/ source, and (optionally) bump + publish every npm package.
 #
-# The npm package must be self-contained, so the four skills are materialized
-# as copies (not symlinks) under dsh-plugin/skills/. This script is the single
-# way to refresh those copies.
+# Each skill is published as its own npm package under
+# dsh-plugin/packages/<skill>/. The skill content lives at
+# dsh-plugin/packages/<skill>/skill/ (a materialized copy of skills/<skill>/).
+# This script is the single way to refresh those copies and release new versions.
 #
 # Usage:
-#   dsh-plugin/sync.sh                sync skills (rsync, no version change)
+#   dsh-plugin/sync.sh                sync all skill copies (no version change)
 #   dsh-plugin/sync.sh --check        verify copies match canonical source
-#   dsh-plugin/sync.sh --bump patch   bump version (patch|minor|major|x.y.z)
-#   dsh-plugin/sync.sh --publish      run npm publish after sync
+#   dsh-plugin/sync.sh --bump patch   bump version of all packages (patch|minor|major|x.y.z)
+#   dsh-plugin/sync.sh --publish      run npm publish for every package after sync
 #   dsh-plugin/sync.sh --bump patch --publish   full release flow
 #
 # Exit codes:
@@ -26,7 +27,7 @@ repo_root="$(cd "$script_dir/.." && pwd)"
 # shellcheck source=sync/manifest.sh
 source "$repo_root/sync/manifest.sh"
 
-# The four skills bundled into the npm package.
+# The four standalone packages. Directory name == skill id == npm package suffix.
 DSH_SKILLS=(
   "diagram-generator"
   "clarify-before-acting"
@@ -35,7 +36,7 @@ DSH_SKILLS=(
 )
 
 src_root="$repo_root/skills"
-dst_root="$script_dir/skills"
+packages_root="$script_dir/packages"
 check_only=0
 bump=""
 do_publish=0
@@ -49,12 +50,13 @@ usage() {
   cat <<'USAGE'
 usage: dsh-plugin/sync.sh [options]
 
-Sync canonical skills/ into dsh-plugin/skills/ and optionally publish.
+Sync canonical skills/ into each dsh-plugin/packages/<skill>/skill/ and
+optionally bump + publish every npm package.
 
 Options:
   --check            Verify copies match canonical source (exit 1 on drift).
-  --bump LEVEL       Bump version before publish: patch|minor|major|x.y.z.
-  --publish          Run `npm publish` after sync.
+  --bump LEVEL       Bump version of all packages: patch|minor|major|x.y.z.
+  --publish          Run `npm publish` for every package after sync.
   --dry-run          Print planned actions without writing.
   -h, --help         Show this help.
 USAGE
@@ -79,10 +81,21 @@ for pattern in "${SYNC_COPY_EXCLUDES[@]}"; do
   rsync_excludes+=(--exclude="$pattern")
 done
 
+# Path to the packaged skill copy directory for a given skill id.
+pkg_skill_dir() {
+  printf '%s/%s/skill' "$packages_root" "$1"
+}
+
+# Path to the package root directory for a given skill id.
+pkg_dir() {
+  printf '%s/%s' "$packages_root" "$1"
+}
+
 sync_one() {
   local skill="$1"
   local src="$src_root/$skill"
-  local dst="$dst_root/$skill"
+  local dst
+  dst="$(pkg_skill_dir "$skill")"
 
   [[ -d "$src" ]] || die "canonical skill missing: $src"
 
@@ -115,13 +128,14 @@ sync_one() {
 }
 
 bump_version() {
-  local level="$1"
+  local pkg="$1"
+  local level="$2"
   local current new
-  current="$(node -e "console.log(require('./package.json').version)")"
+  current="$(cd "$pkg" && node -e "console.log(require('./package.json').version)")"
 
   case "$level" in
     patch|minor|major)
-      new="$(npm version "$level" --no-git-tag-version --silent)"
+      new="$(cd "$pkg" && npm version "$level" --no-git-tag-version --silent)"
       new="${new#v}"
       ;;
     *)
@@ -130,18 +144,28 @@ bump_version() {
         die "invalid --bump value: $level (use patch|minor|major|x.y.z)"
       fi
       new="$level"
-      npm version "$new" --no-git-tag-version --silent >/dev/null
+      (cd "$pkg" && npm version "$new" --no-git-tag-version --silent >/dev/null)
       ;;
   esac
-  printf 'version %s -> %s\n' "$current" "$new"
+  printf '  %s: %s -> %s\n' "$(basename "$pkg")" "$current" "$new"
+}
+
+publish_one() {
+  local pkg="$1"
+  if [[ "$dry_run" -eq 1 ]]; then
+    dry "npm publish (from $pkg)"
+    return 0
+  fi
+  (cd "$pkg" && npm publish 2>&1) || die "npm publish failed for $pkg"
+  printf '  published %s\n' "$(basename "$pkg")"
 }
 
 main() {
-  local skill rc=0
+  local skill pkg rc=0
 
   log "dsh-plugin sync"
-  log "source: $src_root"
-  log "target: $dst_root"
+  log "source:   $src_root"
+  log "packages: $packages_root"
   log ""
 
   for skill in "${DSH_SKILLS[@]}"; do
@@ -162,22 +186,26 @@ main() {
   fi
 
   if [[ -n "$bump" ]]; then
-    if [[ "$dry_run" -eq 1 ]]; then
-      dry "npm version $bump"
-    else
-      (cd "$script_dir" && bump_version "$bump")
-    fi
+    log ""
+    log "bumping versions ($bump):"
+    for skill in "${DSH_SKILLS[@]}"; do
+      pkg="$(pkg_dir "$skill")"
+      if [[ "$dry_run" -eq 1 ]]; then
+        dry "npm version $bump (from $pkg)"
+      else
+        bump_version "$pkg" "$bump"
+      fi
+    done
   fi
 
   if [[ "$do_publish" -eq 1 ]]; then
-    if [[ "$dry_run" -eq 1 ]]; then
-      dry "npm publish (from $script_dir)"
-    else
-      log ""
-      log "publishing..."
-      (cd "$script_dir" && npm publish 2>&1) || die "npm publish failed"
-      log "published OK"
-    fi
+    log ""
+    log "publishing:"
+    for skill in "${DSH_SKILLS[@]}"; do
+      pkg="$(pkg_dir "$skill")"
+      publish_one "$pkg"
+    done
+    log "published OK"
   fi
 
   printf '\nsummary: sync complete\n'

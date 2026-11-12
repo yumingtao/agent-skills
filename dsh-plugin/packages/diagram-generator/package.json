@@ -1,0 +1,38 @@
+{
+  "name": "yumingtao-diagram-generator",
+  "version": "1.0.0",
+  "description": "Generate production-quality standalone HTML/SVG technical diagrams: architecture, infrastructure, topology, deployment, data flow, trust boundary, and process maps.",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "cordis.patch.yml",
+    "index.js",
+    "skill/",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "diagram",
+    "architecture",
+    "svg",
+    "agent-skill"
+  ],
+  "license": "MIT",
+  "author": "yumingtao",
+  "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/diagram-generator",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yumingtao/agent-skills.git",
+    "directory": "dsh-plugin/packages/diagram-generator"
+  },
+  "bugs": {
+    "url": "https://github.com/yumingtao/agent-skills/issues"
+  }
+}

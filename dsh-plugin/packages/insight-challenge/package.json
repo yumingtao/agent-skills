@@ -1,13 +1,13 @@
 {
-  "name": "yumingtao-dsh-skills",
+  "name": "yumingtao-insight-challenge",
   "version": "1.0.0",
-  "description": "DSH bundle that installs four production-grade agent skills: diagram-generator, clarify-before-acting, insight-challenge, and workflow-skill-designer.",
+  "description": "Adversarial review of code-quality findings. Challenges insights with counter-evidence, verifies claims against source code, and produces structured verdicts.",
   "type": "module",
   "main": "index.js",
   "files": [
     "cordis.patch.yml",
     "index.js",
-    "skills/",
+    "skill/",
     "README.md",
     "LICENSE"
   ],
@@ -19,22 +19,17 @@
   "keywords": [
     "dsh",
     "dsh-plugin",
-    "dsh-bundle",
-    "agent-skills",
-    "diagram",
-    "architecture",
-    "clarify",
     "code-review",
-    "workflow",
-    "meta-skill"
+    "adversarial",
+    "agent-skill"
   ],
   "license": "MIT",
   "author": "yumingtao",
-  "homepage": "https://github.com/yumingtao/agent-skills",
+  "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/insight-challenge",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yumingtao/agent-skills.git",
-    "directory": "dsh-plugin"
+    "directory": "dsh-plugin/packages/insight-challenge"
   },
   "bugs": {
     "url": "https://github.com/yumingtao/agent-skills/issues"

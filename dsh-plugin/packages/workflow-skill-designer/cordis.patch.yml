@@ -1,0 +1,11 @@
+# yumingtao-workflow-skill-designer bundle: installs the workflow-skill-designer agent skill into the DSH
+# skill discovery root on web profile boot.
+#
+# Activate with:
+#   dsh plugin --profile web add yumingtao-workflow-skill-designer
+#
+# On boot the row copies the packaged skill directory into the user-global
+# skill root (~/.agents/skills). Installation is idempotent.
+- insert:
+  - id: yumingtao-workflow-skill-designer
+    name: 'yumingtao-workflow-skill-designer'

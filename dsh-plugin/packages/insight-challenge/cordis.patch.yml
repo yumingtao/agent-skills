@@ -1,0 +1,11 @@
+# yumingtao-insight-challenge bundle: installs the insight-challenge agent skill into the DSH
+# skill discovery root on web profile boot.
+#
+# Activate with:
+#   dsh plugin --profile web add yumingtao-insight-challenge
+#
+# On boot the row copies the packaged skill directory into the user-global
+# skill root (~/.agents/skills). Installation is idempotent.
+- insert:
+  - id: yumingtao-insight-challenge
+    name: 'yumingtao-insight-challenge'
