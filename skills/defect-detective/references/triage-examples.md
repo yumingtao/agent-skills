@@ -20,7 +20,7 @@ java.lang.NullPointerException
 **步骤 2 — 降级查重（跨栈，未过滤组件）：**
 
 - 第一级：`NullPointerException + OrderService + 下单` → 无结果
-- 第二级：`NullPointerException + 订单服务` → 命中 TICKET-8842「下单偶发空指针」（open，相似度：高——异常类型、模块、端点全命中）
+- 第二级：`NullPointerException + 订单服务` → 命中 TICKET-8842「下单偶发空指针」（open，相似度：高——指纹所含核心项[异常类型、模块/端点、消息特征]全命中；指纹无错误码，不参与判定）
 - 第三级：未执行（第二级已命中，命中后停止降级）
 
 **步骤 3 — 涉及层已知**（服务名 + 服务端堆栈），`git blame OrderService.java` 附近近期合并：PR-3021 三天前重构了优惠卷计算。
@@ -34,7 +34,7 @@ java.lang.NullPointerException
 指纹：NullPointerException · OrderService.submit / order
 
 已知问题？  可能
-  - TICKET-8842  下单偶发空指针  (open, 高) — 异常类型/模块/端点全命中；"偶发"与本例"每次必现"待工程师复核
+  - TICKET-8842  下单偶发空指针  (open, 高) — 指纹所含核心项全命中；"偶发"与本例"每次必现"待工程师复核
 
 可能的归属团队：订单服务团队 — TICKET-8842 历史归属 + PR-3021 作者
 
@@ -64,7 +64,7 @@ java.lang.NullPointerException
 
 **步骤 4 — 归属：** 前端 Web 团队——依据：TICKET-9013 的组件标签为 checkout-web。
 
-**建议：** 链接到已有工单（TICKET-9013，相似度中，作为候选交工程师判断是否同因）。
+**建议：** 需要更多信息——TICKET-9013（相似度中）列为候选，是否同因由工程师确认后再链接（中相似不足以支撑"链接到已有工单"，见 FAQ 判定规则）。
 
 ## 例 C：环境/配置类问题 —— 跳过步骤 3 + 无匹配建票（真实冒烟案例）
 

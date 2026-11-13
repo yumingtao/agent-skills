@@ -20,7 +20,7 @@ java.lang.NullPointerException
 **Step 2 — relaxation ladder (cross-stack, no component filter):**
 
 - Level 1: `NullPointerException + OrderService + checkout` → no results
-- Level 2: `NullPointerException + order service` → hits TICKET-8842 "Intermittent NPE on checkout" (open, similarity: high — exception type, module, and endpoint all match)
+- Level 2: `NullPointerException + order service` → hits TICKET-8842 "Intermittent NPE on checkout" (open, similarity: high — all fingerprint-present core items [exception type, module/endpoint, message traits] match; the fingerprint has no error code, which does not participate)
 - Level 3: not executed (ladder stops descending once a level hits)
 
 **Step 3 — layer known** (service name + server-side stack): `git blame` near OrderService.java shows PR-3021 refactored the coupon calculation three days ago.
@@ -34,7 +34,7 @@ Defect: NPE on order checkout API
 Fingerprint: NullPointerException · OrderService.submit / order
 
 Known issue?  likely
-  - TICKET-8842  Intermittent NPE on checkout  (open, high) — exception/module/endpoint all match; "intermittent" vs this report's "every time" needs engineer review
+  - TICKET-8842  Intermittent NPE on checkout  (open, high) — all fingerprint-present core items match; "intermittent" vs this report's "every time" needs engineer review
 
 Likely owner: Order Service team — TICKET-8842 history + PR-3021 author
 
@@ -64,7 +64,7 @@ Note: similarity is "high" yet "Known issue?" stays "likely" — the repro discr
 
 **Step 4 — ownership:** Web frontend team — basis: TICKET-9013 carries the checkout-web component tag.
 
-**Recommendation:** link to existing ticket (TICKET-9013, medium similarity, as a candidate for the engineer to judge whether same root cause).
+**Recommendation:** needs more info — TICKET-9013 (medium similarity) stays a candidate; the engineer confirms whether same root cause before linking (medium similarity does not support "link to existing ticket" per the FAQ rules).
 
 ## Case C: Environment/config issue — skip step 3 + no-match ticket suggestion (real smoke-test case)
 

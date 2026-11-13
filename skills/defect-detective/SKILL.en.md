@@ -2,7 +2,7 @@
 name: defect-detective
 slug: yumingtao-defect-detective
 displayName: Defect Detective
-version: 1.0.0
+version: 1.0.1
 summary: Read-only triage for a defect signal: normalize a fingerprint, search duplicates, correlate recent changes, infer the owning team, then decide whether to file a new ticket.
 license: MIT
 tags:
@@ -207,6 +207,7 @@ with no hard dependency:
 | DD-E03 | Signal too vague to extract a stable fingerprint | Do not guess the fingerprint; follow clarify-before-acting to obtain at least one searchable anchor (exception type / module / endpoint), otherwise recommend "needs more info" |
 | DD-E04 | Multiple high-similarity candidates found | List all as candidates with similarity scores; do not merge on your own — leave the call to the engineer |
 | DD-E05 | Engineer asks to file a ticket or fix directly | Stop read-only triage; state plainly that this skill performs no writes, hand off to the corresponding write flow |
+| DD-E06 | Query timeout / unstable network (e.g., reaching an external tracker from a domestic network) | Set a ~30-second timeout per read-only query; on timeout or network error retry once as-is (read-only, no side effects); on a second failure follow DD-E01 and report unreachable; never retry auth failures |
 
 ## Triage Anti-Patterns
 
@@ -230,7 +231,7 @@ Before emitting the report, confirm each item:
 - [ ] Owning-team inference has a basis (component / ticket history / recent authorship — at least one)
 - [ ] All conclusions state their evidence source (keywords per search level, search scope)
 - [ ] "Known issue?" verdict matches the search results (no search → no "known")
-- [ ] Similarity labeled high/medium/low and consistent with the number of fingerprint hits
+- [ ] Similarity labeled high/medium/low and consistent with the FAQ rules (baseline: the core items the fingerprint contains)
 - [ ] No write operations performed (no ticket create/transition/comment, no code change)
 - [ ] Doc works standalone: no cross-skill relative paths, in-skill references (references/) verified to exist
 - [ ] Status field is accurate (complete / needs more info / tracker unreachable)
@@ -250,7 +251,9 @@ A: No. Pure frontend rendering/style/interaction issues have no backend code to 
 A: Inference is based on component, ticket history, and recent authorship — it is not a final assignment. The output states the basis for the inference, and the engineer can correct it before the ticket-filing flow.
 
 **Q: How is similarity judged?**
-A: Three grades: **high** = all core fingerprint items (exception type, error code, module/endpoint, message traits) hit; **medium** = most hit but one is missing or worded differently; **low** = only the module or part of the message matches. Only "high" supports a "link to existing ticket" recommendation; medium/low are always listed as candidates for the engineer to judge.
+A: Three grades. The baseline is **the core items the fingerprint actually contains** — among exception type, error code, module/endpoint, and message traits, only items present in the fingerprint count; absent items do not lower the grade (a stack with no error code must not be downgraded for lacking one): **high** = all fingerprint-present core items hit; **medium** = most hit but one is missing or worded differently; **low** = only the module or part of the message matches. Only "high" supports a "link to existing ticket" recommendation; medium/low are always listed as candidates for the engineer to judge.
+
+The "Known issue?" verdict maps to similarity: **yes** = high similarity with matching reproduction path and impact; **likely** = high similarity but reproduction or environment differs, or only medium-similarity candidates; **no** = no match across the full three-level ladder.
 
 ## Language Support
 
