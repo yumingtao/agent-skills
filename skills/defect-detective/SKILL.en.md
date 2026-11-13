@@ -25,6 +25,14 @@ back to the engineer. It does not file or mutate anything.
 
 Read-only, always: no ticket create/transition/comment/link, no code change.
 
+## Triage Iron Laws
+
+Three inviolable rules — breaking any one makes the triage result untrustworthy:
+
+1. **No search, no "known".** Without actually querying the issue tracker, you cannot claim "this is a known issue." Even if the symptom looks familiar, you must search before concluding.
+2. **No evidence, no ownership.** Owning-team inference must be grounded in at least one piece of evidence — component tag, historical ownership of similar tickets, or recent authorship of the implicated code. Without evidence, say "ownership cannot be inferred."
+3. **Insufficient evidence, no definitive conclusion.** When the fingerprint is vague or search results are inconclusive, the verdict must be "likely" or "needs more info" with what's missing stated — not a definitive "yes/no."
+
 ## When to use
 
 - The engineer reports a bug, or pastes an error message, stack trace, or log.
@@ -107,14 +115,35 @@ Known issue?  <yes/likely/no>
   - TICKET-123  <title>  (<status>, <similarity>) — <why it matches>
   - TICKET-456  ...
 
-Likely owner: <team>  — <basis>
+Likely owner: <team>  — <basis: component/ticket history/authorship>
 
 Recent suspect changes:
   - <commit/PR>  <area>  — <why relevant>
   (if step 3 was skipped, fill: N/A — frontend display issue, no backend code to correlate)
 
+Evidence:
+  - Search keywords: <the fingerprint terms actually used>
+  - Search scope: <cross-stack / backend-only / frontend-only>
+  - Code correlation: <which repos, branches, commits were inspected>
+
+Related: <historical issues in the same area, known architectural constraints, or none>
+
 Recommendation: <link to existing ticket | file new ticket | needs more info>
+
+Status: <complete | needs more info | tracker unreachable>
+
+--- if recommendation is "file new ticket", include ticket suggestion ---
+Ticket suggestion:
+  Title: <one-line defect description>
+  Description: <fingerprint + reproduction path + user-visible impact>
+  Suggested owner: <team>
+  (Engineer confirms and files via the write-gated flow; this skill does not file)
 ```
+
+**Field notes:**
+- **Status**: `complete` = all conclusions are evidence-backed; `needs more info` = key fingerprint is missing; `tracker unreachable` = external system failure prevented dedup
+- **Evidence**: must list the actual keywords and search scope so the engineer can review and audit
+- **Ticket suggestion**: appears only when recommending "file new ticket"; provides copy-ready ticket content but does not file
 
 ## Handoff
 
@@ -132,6 +161,31 @@ Recommendation: <link to existing ticket | file new ticket | needs more info>
 | DD-E03 | Signal too vague to extract a stable fingerprint | Do not guess the fingerprint; follow clarify-before-acting to obtain at least one searchable anchor (exception type / module / endpoint), otherwise recommend "needs more info" |
 | DD-E04 | Multiple high-similarity candidates found | List all as candidates with similarity scores; do not merge on your own — leave the call to the engineer |
 | DD-E05 | Engineer asks to file a ticket or fix directly | Stop read-only triage; state plainly that this skill performs no writes, hand off to the corresponding write flow |
+
+## Triage Anti-Patterns
+
+When you catch yourself doing or thinking these, **stop immediately and return to the relevant step**:
+
+| What you're doing / thinking | What it really means | Correct action |
+|---|---|---|
+| Filtering search by component only | Will miss cross-stack duplicates | Search cross-stack, do not filter by component |
+| "This looks like a known issue" without searching | Guessing from experience, no evidence | Must search before concluding (Iron Law 1) |
+| Guessing the fingerprint then searching | Unreliable search results | Normalize to extract a stable fingerprint first, then search |
+| Treating high-similarity candidates as definite duplicates | Risk of misjudgment | Label with similarity and evidence; let the engineer decide |
+| Filing the ticket directly | Violates read-only principle | Provide ticket suggestion, hand off to the write flow |
+| Stating owning team without basis | Inference is not auditable | Must state the basis (component/ticket history/authorship) |
+
+## Triage Completion Checklist
+
+Before emitting the report, confirm each item:
+
+- [ ] Fingerprint normalized (stripped timestamps, request ids, thread names, and other volatile parts)
+- [ ] Duplicate search done cross-stack (not filtered by component)
+- [ ] Owning-team inference has a basis (component / ticket history / recent authorship — at least one)
+- [ ] All conclusions state their evidence source (search keywords, search scope)
+- [ ] "Known issue?" verdict matches the search results (no search → no "known")
+- [ ] No write operations performed (no ticket create/transition/comment, no code change)
+- [ ] Status field is accurate (complete / needs more info / tracker unreachable)
 
 ## FAQ
 
