@@ -142,6 +142,7 @@ Before emitting the summary, confirm each item:
 - [ ] Multi-turn corrections of one issue merged (recurrence marked where applicable)
 - [ ] Each JSON line passes the field enum validation (platform/area/result/issue_type/priority)
 - [ ] Feedback log not committed to git (metrics/ ignored or engineer reminded)
+- [ ] Doc works standalone: no cross-skill relative paths, in-skill references (references/) verified to exist
 - [ ] A `success` entry written when nothing went wrong
 
 ## After Writing Feedback

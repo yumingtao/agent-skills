@@ -204,6 +204,7 @@ Before emitting the report, confirm each item:
 - [ ] "Known issue?" verdict matches the search results (no search → no "known")
 - [ ] Similarity labeled high/medium/low and consistent with the number of fingerprint hits
 - [ ] No write operations performed (no ticket create/transition/comment, no code change)
+- [ ] Doc works standalone: no cross-skill relative paths, in-skill references (references/) verified to exist
 - [ ] Status field is accurate (complete / needs more info / tracker unreachable)
 
 ## FAQ

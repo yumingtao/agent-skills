@@ -133,6 +133,7 @@ description: >
 - [ ] 同一问题的多轮纠正已合并（recurring 标注复发）
 - [ ] 每行 JSON 通过字段枚举校验（platform/area/result/issue_type/priority）
 - [ ] 反馈日志未被提交到 git（metrics/ 已忽略或已提醒）
+- [ ] 文档独立安装可用：无跨技能相对路径，skill 内引用（references/）已验证存在
 - [ ] 无事发生时写了一条 success
 
 ## 写完反馈之后

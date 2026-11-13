@@ -110,6 +110,27 @@ function validateReferences(config) {
     }
   }
 
+  // Standalone-install perspective: cross-skill references must not use
+  // relative file paths. When a user installs only this skill, the sibling
+  // skill folder is absent and any ../xxx/ link is a guaranteed dead link.
+  // Reference other skills by plain name instead, e.g. "follow the
+  // question-queue rules of clarify-before-acting".
+  const crossSkillLinks = skillMd.match(/\]\(\.\.\/[^)]+\)/g) || [];
+  for (const link of crossSkillLinks) {
+    results.errors.push(`Cross-skill relative path breaks standalone install: ${link}`);
+  }
+
+  // Standalone-install perspective: skill-internal references must resolve
+  // inside the skill directory itself
+  const internalLinks = skillMd.match(/\]\((?!http|#)[^)]+\)/g) || [];
+  for (const link of internalLinks) {
+    const target = link.slice(2, -1).split('#')[0];
+    if (target.startsWith('../')) continue; // handled above
+    if (target && !fileExists(`${skillDir}/${target}`)) {
+      results.errors.push(`Referenced resource not found inside skill: ${target}`);
+    }
+  }
+
   return results;
 }
 ```

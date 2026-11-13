@@ -110,6 +110,24 @@ function validateReferences(config) {
     }
   }
 
+  // 独立安装视角：跨技能引用禁止相对文件路径
+  // （用户只安装本 skill 时，旁边的兄弟 skill 目录不存在，../xxx/ 链接必然断链；
+  //   引用其他技能一律用技能名纯文本，如"按 clarify-before-acting 的问题队列规则"）
+  const crossSkillLinks = skillMd.match(/\]\(\.\.\/[^)]+\)/g) || [];
+  for (const link of crossSkillLinks) {
+    results.errors.push(`Cross-skill relative path breaks standalone install: ${link}`);
+  }
+
+  // 独立安装视角：skill 内部引用必须解析到本 skill 目录内
+  const internalLinks = skillMd.match(/\]\((?!http|#)[^)]+\)/g) || [];
+  for (const link of internalLinks) {
+    const target = link.slice(2, -1).split('#')[0];
+    if (target.startsWith('../')) continue; // handled above
+    if (target && !fileExists(`${skillDir}/${target}`)) {
+      results.errors.push(`Referenced resource not found inside skill: ${target}`);
+    }
+  }
+
   return results;
 }
 ```
