@@ -5,6 +5,11 @@ displayName: Session Retrospective
 version: 1.0.0
 summary: Review the current session at its end, extract workflow issues, and write structured feedback to a log for systemic improvement signals.
 license: MIT
+tags:
+  - session review
+  - workflow improvement
+  - feedback log
+  - developer tools
 description: >
   Review the current development session at its end, extract
   development-workflow issues — wrong answers that needed correction,
