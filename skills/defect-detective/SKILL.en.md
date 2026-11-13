@@ -11,13 +11,19 @@ tags:
   - ticket management
   - developer tools
 description: >
-  Read-only triage for a defect signal — a bug report, error message, stack
-  trace, or failing log. Normalizes a stable fingerprint, searches the issue
-  tracker for duplicates (cross-stack, never over-filtered), correlates recent
-  code changes only when the implicated layer is known, infers the likely
-  owning team, and returns a structured verdict before any new ticket is
-  filed. Strictly read-only: never creates, transitions, comments on, or
-  links tickets, and never modifies code. Triggers on "defect detective",
+  The first stop before fixing a bug: read-only triage for a defect signal
+  (a bug report, error message, stack trace, or failing log) — is this
+  already known, who owns it, and what changed. Normalizes a stable
+  fingerprint, searches the issue tracker for duplicates (cross-stack,
+  never over-filtered), correlates recent code changes only when the
+  implicated layer is known, infers the likely owning team, and returns a
+  structured verdict with a ready-to-paste ticket draft before any new
+  ticket is filed. Triage, not repair: fix-it skills handle the "how",
+  this skill answers the three questions before it — upstream companions,
+  not competitors. Strictly read-only: never creates, transitions,
+  comments on, or links tickets, and never modifies code. Smoke-tested
+  against a real Jira tracker (three-level dedup ladder, hit and no-match
+  paths) plus git blame correlation. Triggers on "defect detective",
   "triage this bug", "is this a known issue", "is this a duplicate",
   "who owns this", "查重复工单", "缺陷分诊", "这个缺陷已知吗",
   "这个 bug 有人报过吗", "建票前先查重".
