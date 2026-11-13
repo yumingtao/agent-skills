@@ -217,8 +217,9 @@ Emit a summary: N item(s) fixed (mapped to which log entries), M item(s) skipped
 All pairings are optional; this skill has no hard dependency on any of them:
 
 - **Scheduler/automation tools** (platform cron, schedule-style automations): this skill does not self-trigger — reviews run when the engineer or a workflow invokes it at session end; for scheduled retrospectives, have the scheduler call this skill's triggers at fixed times.
-- **Experience-promotion/memory skills** (retrospective-lesson, self-improving style): this skill's log is their input — they consume structured signals for lesson promotion and continuous improvement; this skill only keeps the signals accurate.
-- **Report-style retrospective skills** (eight-dimension analysis, AAR templates): when they need traceable turn evidence or signal statistics, this skill's log serves directly as the data source.
+- **workflow-skill-designer** (same-repo meta-skill): when the log keeps surfacing "a workflow/skill is missing" gaps, combine it with Fix Mode's confirmed needs to design an orchestrator + phases structured workflow skill.
+- **Experience-promotion/memory skills** (the kind that promote general lessons to workspace files like AGENTS.md): this skill's log is their input — they consume structured signals for lesson promotion and continuous improvement; this skill only keeps the signals accurate.
+- **Report-style retrospective skills** (structured templates, retros with facilitation guides): when they need traceable turn evidence or signal statistics, this skill's log serves directly as the data source.
 
 ## FAQ
 
@@ -234,9 +235,9 @@ A: This skill only appends. When size hurts readability, the engineer decides an
 **Q: Will Fix Mode touch my files without confirmation?**
 A: No. It proposes a fix per item and applies one confirmation at a time; every fix appends a closure entry pointing at the original entry's timestamp, keeping the log append-only and auditable. Fix Mode runs from the log alone, across sessions.
 
-**Q: How does this relate to self-improving skills?**
+**Q: How does this relate to experience-promotion or self-improvement skills?**
 A: Complementary: they target continuous learning and promote general lessons to workspace files like AGENTS.md; this skill focuses on structured extraction of session-level workflow issues. Its log output can be consumed directly by them as input.
 
 ## Language Support
 
-This skill supports both Chinese and English interaction. Triggers include "session review", "log session feedback", "retrospective", "回顾一下这个会话", "记录会话反馈", "会话复盘". Write notes in the session's primary language.
+This skill supports both Chinese and English interaction. Triggers include "session review", "log session feedback", "retrospective", "start fixing", "fix from the feedback log", "回顾一下这个会话", "记录会话反馈", "会话复盘", "开始修复". Write notes in the session's primary language.
