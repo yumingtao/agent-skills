@@ -3,7 +3,7 @@ name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
 version: 1.0.0
-summary: Review the current session at its end, extract workflow issues, and write structured feedback to a log for systemic improvement signals.
+summary: Review the session at its end, log workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.
 license: MIT
 tags:
   - session review
@@ -11,15 +11,22 @@ tags:
   - feedback log
   - developer tools
 description: >
-  Review the current development session at its end, extract
-  development-workflow issues — wrong answers that needed correction,
-  skipped gates, wrong routing, MCP errors, skill/doc gaps, multi-turn
-  corrections — and append structured entries with priority and recurrence
-  markers to a local JSONL log: a recurring issue is a rule gap, and its
-  priority escalates. Skips trivial clarifications and
-  focuses on systemic signals indicating a skill, doc, or workflow rule needs
-  updating. Triggers on "session review", "log session feedback",
-  "retrospective", "回顾一下这个会话", "记录会话反馈", "会话复盘".
+  A read-only retro of your development session at its end: extract only
+  systemic issues that actually happened — wrong answers that needed
+  correction, skipped gates, wrong routing, MCP errors, skill/doc gaps,
+  multi-turn corrections — and append them as enum-validated JSONL entries
+  to a local feedback log: a recurring issue is a rule gap and its priority
+  escalates automatically; when nothing went wrong, log one success entry
+  and never fabricate. Say "start fixing" to enter Fix Mode: items ordered
+  by recurrence and priority, one fix proposal per item, one confirmation
+  per item, every fix closing the loop with an append-only audit entry —
+  and Fix Mode runs from the log alone, across sessions. Complementary to
+  report-style retro skills: this skill is the machine-aggregable
+  signal-data layer, not a report for humans. Smoke-tested on a real
+  session across both the main path and the corrupted-line exception.
+  Triggers on "session review", "log session feedback", "retrospective",
+  "fix from the feedback log", "start fixing", "回顾一下这个会话",
+  "记录会话反馈", "会话复盘", "开始修复".
 ---
 
 # Session Retrospective
@@ -48,6 +55,7 @@ git-ignored on first write, remind the engineer to add it.
 - Engineer says "review this session", "log session feedback", or "session review"
 - End of a working session on any workflow task
 - After resolving a problem that took multiple back-and-forth exchanges
+- Engineer says "fix from the feedback log", "process the feedback", or "start fixing" → go straight to [Fix Mode](#fix-mode-optional-second-phase)
 
 ## When NOT to use
 
@@ -162,10 +170,55 @@ Print a brief summary table:
 
 Then suggest which files in the current project likely need updating based
 on the issues found — this is the lower half of the feedback loop: **the log
-records the signal; the file suggestions turn it into action**.
+records the signal; the file suggestions turn it into action**. The engineer
+can say "start fixing" to enter Fix Mode and turn those suggestions into
+confirmed changes (see below).
 
 A full real-session worked example lives in
 [`references/retrospective-example.en.md`](references/retrospective-example.en.md).
+
+## Fix Mode (Optional Second Phase)
+
+The review phase stays read-only + append-to-log; fixing is an explicit
+second step. Enter when the engineer says "fix from the feedback log",
+"process the feedback", or "start fixing" right after a review.
+
+### Why a Separate Phase
+
+If review mixes with fixing, measurement gets polluted by modification —
+the log's credibility depends on the review phase never touching any rule.
+Keeping them separate has an extra payoff: **Fix Mode works from the log
+alone, no original conversation needed** — it can run in a brand-new session,
+across sessions.
+
+### Fix Workflow
+
+1. **Load the log**: read the feedback log; skip corrupted lines per SR-E04 and report them.
+2. **Order**: entries marked `recurring` first, then by `priority` (high → medium → low); within the same level, newest first.
+3. **Propose per item**: for each entry, present a fix proposal — target file, concrete change, why this change — **one confirmation per item**; never batch-apply.
+4. **Execute**: apply the change after the engineer confirms; skip without pushing if not confirmed.
+5. **Close the loop**: after each fix, append a `result=success` closure entry whose notes say "fixed: <original entry timestamp>" — the log stays append-only and the fix history stays auditable.
+
+### Fix Guardrails
+
+| Situation | Action |
+|---|---|
+| Entry has no fix target (`success`, pure observation) | Skip and state so in the summary |
+| Single low-priority, non-recurring observation | Do not change rules directly; ask the engineer whether to escalate |
+| Fix touches a skill itself or a team-level rule | Must propose a revertible change (e.g., a separate commit) and prompt for review |
+| Recurring entries sharing the same `area`+`issue_type` | Check that group's full history and confirm the root cause matches before fixing |
+
+### Fix Completion
+
+Emit a summary: N item(s) fixed (mapped to which log entries), M item(s) skipped and why, and a priority list of remaining items.
+
+## Recommended Pairings
+
+All pairings are optional; this skill has no hard dependency on any of them:
+
+- **Scheduler/automation tools** (platform cron, schedule-style automations): this skill does not self-trigger — reviews run when the engineer or a workflow invokes it at session end; for scheduled retrospectives, have the scheduler call this skill's triggers at fixed times.
+- **Experience-promotion/memory skills** (retrospective-lesson, self-improving style): this skill's log is their input — they consume structured signals for lesson promotion and continuous improvement; this skill only keeps the signals accurate.
+- **Report-style retrospective skills** (eight-dimension analysis, AAR templates): when they need traceable turn evidence or signal statistics, this skill's log serves directly as the data source.
 
 ## FAQ
 
@@ -177,6 +230,9 @@ A: The log is append-only — never delete. Append a correction entry whose note
 
 **Q: The log keeps growing — what then?**
 A: This skill only appends. When size hurts readability, the engineer decides an archiving/cleanup strategy; the recurring marks help identify which patterns have already been absorbed into rules and can be archived.
+
+**Q: Will Fix Mode touch my files without confirmation?**
+A: No. It proposes a fix per item and applies one confirmation at a time; every fix appends a closure entry pointing at the original entry's timestamp, keeping the log append-only and auditable. Fix Mode runs from the log alone, across sessions.
 
 **Q: How does this relate to self-improving skills?**
 A: Complementary: they target continuous learning and promote general lessons to workspace files like AGENTS.md; this skill focuses on structured extraction of session-level workflow issues. Its log output can be consumed directly by them as input.
