@@ -5,6 +5,11 @@ displayName: Diagram Generator
 version: 1.4.0
 summary: Generate production-quality standalone HTML/SVG technical diagrams with a built-in geometry checker.
 license: MIT
+tags:
+  - developer tools
+  - technical diagrams
+  - architecture diagrams
+  - documentation
 description: >
   Generate professional standalone HTML/SVG technical diagrams. Use when the user asks to draw, create, or generate an architecture diagram, system map, infrastructure diagram, topology diagram, deployment map, data-flow diagram, sequence diagram, process flow, trust boundary, cloud diagram, or draw.io export. Triggers on "帮我画个架构图", "画一张拓扑图", "生成系统图", "画个时序图", "画个部署图", "画个流程图".
 ---

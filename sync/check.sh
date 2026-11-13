@@ -180,11 +180,24 @@ build_diff_args() {
   done
 }
 
+frontmatter_tags_count() {
+  awk '
+    NR == 1 { if ($0 != "---") exit; fm = 1; next }
+    fm && $0 == "---" { exit }
+    fm && /^tags:/ { in_tags = 1; next }
+    fm && /^[A-Za-z_-]+:/ { in_tags = 0 }
+    fm && in_tags && /^[[:space:]]*-[[:space:]]/ { count++ }
+    END { print count + 0 }
+  ' "$1"
+}
+
 validate_skill() {
   local skill="$1"
   local dir="$repo_root/skills/$skill"
   local label="skills/$skill"
   local problem=""
+  local zh_tags en_tags
+  local parity_ok=1
 
   if [[ ! -f "$dir/SKILL.md" ]]; then
     fail "$label: missing SKILL.md"
@@ -214,7 +227,26 @@ validate_skill() {
 
   if [[ -n "$problem" ]]; then
     fail "$label: $problem"
-  else
+  fi
+
+  # zh-en frontmatter parity: when an English mirror exists, both sides must
+  # declare tags, and the entry counts must match (translations, not copies).
+  if [[ -f "$dir/SKILL.en.md" ]]; then
+    zh_tags="$(frontmatter_tags_count "$dir/SKILL.md")"
+    en_tags="$(frontmatter_tags_count "$dir/SKILL.en.md")"
+    if [[ "$zh_tags" -eq 0 && "$en_tags" -ne 0 ]]; then
+      fail "$label: tags declared in SKILL.en.md but missing in SKILL.md"
+      parity_ok=0
+    elif [[ "$zh_tags" -ne 0 && "$en_tags" -eq 0 ]]; then
+      fail "$label: tags declared in SKILL.md but missing in SKILL.en.md"
+      parity_ok=0
+    elif [[ "$zh_tags" -ne "$en_tags" ]]; then
+      fail "$label: tags count mismatch between SKILL.md ($zh_tags) and SKILL.en.md ($en_tags)"
+      parity_ok=0
+    fi
+  fi
+
+  if [[ -z "$problem" && "$parity_ok" -eq 1 ]]; then
     log "ok   $label"
   fi
 }
