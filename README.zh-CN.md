@@ -20,6 +20,8 @@
 | **[clarify-before-acting](skills/clarify-before-acting/)** | 面对非平凡请求的行为规则：先自行调研、复用记忆中已有的答案、按问题队列逐个提问直到所有影响方向的未知项全部澄清、方向上绝不靠猜。 |
 | **[insight-challenge](skills/insight-challenge/)** | 对代码审查发现的对抗式验证。用锚定到实际源码的反证逐条质询每个发现，输出结构化裁决 —— overturned（推翻）/ weakened（削弱）/ confirmed（确认）—— 而不是照单全收。 |
 | **[workflow-skill-designer](skills/workflow-skill-designer/)** | 设计 orchestrator + phases 结构化 workflow skill 的元技能：薄 `SKILL.md` 协调器 + 渐进加载的 `phases/` 文件，含 TodoWrite 模式、跨阶段数据流与校验清单。 |
+| **[defect-detective](skills/defect-detective/)** | 缺陷信号的只读分诊 —— bug 报告、堆栈或日志：归一化稳定指纹、跨栈查重复工单（不过滤组件）、在涉及层已知时关联近期变更、推断归属团队，输出结构化结论。绝不建票、绝不改动任何东西。 |
+| **[session-retrospective](skills/session-retrospective/)** | 会话结束回顾 —— 提取工作流问题（需纠正的错误答案、跳过的闸门、错误路由、MCP 错误、skill/文档缺口、多轮纠正）并追加结构化条目到本地反馈日志，跳过琐碎澄清，只留系统性信号。 |
 
 ## 安装
 

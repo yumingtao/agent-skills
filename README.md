@@ -20,6 +20,8 @@ No runtime dependencies, no network calls, no build step. Each skill is a self-c
 | **[clarify-before-acting](skills/clarify-before-acting/)** | A behavior rule for non-trivial requests: do your own homework first, reuse answers already in memory, work a question queue one item at a time until every direction-changing unknown is resolved, and never guess where direction is at stake. |
 | **[insight-challenge](skills/insight-challenge/)** | Adversarial verification of code-review findings. Challenges each claim with counter-evidence anchored to actual source code and emits structured verdicts — overturned / weakened / confirmed — instead of trusting findings as-is. |
 | **[workflow-skill-designer](skills/workflow-skill-designer/)** | Meta-skill that designs orchestrator + phases workflow skills: a thin `SKILL.md` coordinator plus progressively loaded `phases/` files, with TodoWrite patterns, inter-phase data flow, and validation checklists. |
+| **[defect-detective](skills/defect-detective/)** | Read-only triage for a defect signal — bug report, stack trace, or log: normalize a stable fingerprint, search the issue tracker for duplicates cross-stack, correlate recent changes when the implicated layer is known, infer the owning team, and emit a structured verdict. Never files or mutates anything. |
+| **[session-retrospective](skills/session-retrospective/)** | End-of-session review that extracts workflow issues (wrong answers, skipped gates, wrong routing, MCP errors, skill/doc gaps, multi-turn corrections) and appends structured entries to a local feedback log — skipping trivial clarifications, keeping only systemic signals. |
 
 ## Install
 
