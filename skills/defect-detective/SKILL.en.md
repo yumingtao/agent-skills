@@ -77,14 +77,17 @@ report, never a command.
    create or transition.
 
 3. **Correlate recent code changes (read-only) — only if the implicated layer
-   is known.** How to tell: the signal contains a service name, API path,
-   backend module, or stack frames pointing to server-side code → layer is
-   known; it is purely a frontend rendering/style/interaction issue with no
-   backend clue → layer is unknown, say "frontend display issue, no backend
-   code to correlate" and skip this step. When the layer is known (API error,
-   stack pointing to server side, or a duplicate tagged to that component),
-   look at recent merges and blame on the failing area via read-only `git`/`gh`
-   against the affected repository.
+   is known.** Three cases when deciding:
+   - The signal contains a service name, API path, backend module, or stack
+     frames pointing to server-side code → **layer is known**: inspect recent
+     merges and blame on the failing area via read-only `git`/`gh` against the
+     affected repository.
+   - It is purely a frontend rendering/style/interaction issue with no
+     backend clue → **frontend display issue**: say "no backend code to
+     correlate" and skip this step.
+   - It is an environment/config issue (sandbox policy, file permissions,
+     network proxy, build environment) → **no code repository to correlate**:
+     say "environment/config issue" and skip this step.
 
 4. **Identify the likely owning team.** Infer ownership from the component,
    the ticket history of similar issues, and recent authorship of the
@@ -119,7 +122,7 @@ Likely owner: <team>  — <basis: component/ticket history/authorship>
 
 Recent suspect changes:
   - <commit/PR>  <area>  — <why relevant>
-  (if step 3 was skipped, fill: N/A — frontend display issue, no backend code to correlate)
+  (if step 3 was skipped, state the reason: frontend display issue with no backend code to correlate / environment·config issue with no code repository to correlate)
 
 Evidence:
   - Search keywords: <the fingerprint terms actually used>
