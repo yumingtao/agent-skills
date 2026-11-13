@@ -5,6 +5,11 @@ displayName: Defect Detective
 version: 1.0.0
 summary: Read-only triage for a defect signal: normalize a fingerprint, search duplicates, correlate recent changes, infer the owning team, then decide whether to file a new ticket.
 license: MIT
+tags:
+  - defect triage
+  - debugging
+  - ticket management
+  - developer tools
 description: >
   Read-only triage for a defect signal — a bug report, error message, stack
   trace, or failing log. Normalizes a stable fingerprint, searches the issue
