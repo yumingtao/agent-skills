@@ -55,12 +55,12 @@ report, never a command.
 
    If a detail that would change the *direction* of triage is missing — which
    environment, the reproduction path, the affected build/version, or the
-   user-visible impact — ask the engineer one targeted question at a time and
-   let each answer shape the next, rather than guessing the fingerprint or
-   batching a checklist. Only ask about a gap that would actually change which
-   tickets you search for or which team you name; if the remaining unknowns do
-   not, proceed and report them as open items via the `needs more info`
-   recommendation. Do not invent a numeric "confidence" threshold.
+   user-visible impact — follow the question-queue rules in
+   [`clarify-before-acting`](../clarify-before-acting/) and ask only about gaps
+   that would actually change the search scope or ownership call. When the
+   remaining unknowns do not affect direction, proceed and report them as open
+   items via the `needs more info` recommendation. Do not invent a numeric
+   "confidence" threshold.
 
 2. **Search the issue tracker for duplicates (read-only).** Query tickets by
    the fingerprint terms; do **not** over-filter by component — the same defect
@@ -69,11 +69,14 @@ report, never a command.
    create or transition.
 
 3. **Correlate recent code changes (read-only) — only if the implicated layer
-   is known.** Many defects are frontend display issues with no backend code
-   to correlate; say so and skip this step. When the defect is
-   backend/service-relevant (an API error, or a duplicate tagged to that
-   component), look at recent merges and blame on the failing area via
-   read-only `git`/`gh` against the affected repository.
+   is known.** How to tell: the signal contains a service name, API path,
+   backend module, or stack frames pointing to server-side code → layer is
+   known; it is purely a frontend rendering/style/interaction issue with no
+   backend clue → layer is unknown, say "frontend display issue, no backend
+   code to correlate" and skip this step. When the layer is known (API error,
+   stack pointing to server side, or a duplicate tagged to that component),
+   look at recent merges and blame on the failing area via read-only `git`/`gh`
+   against the affected repository.
 
 4. **Identify the likely owning team.** Infer ownership from the component,
    the ticket history of similar issues, and recent authorship of the
@@ -108,6 +111,7 @@ Likely owner: <team>  — <basis>
 
 Recent suspect changes:
   - <commit/PR>  <area>  — <why relevant>
+  (if step 3 was skipped, fill: N/A — frontend display issue, no backend code to correlate)
 
 Recommendation: <link to existing ticket | file new ticket | needs more info>
 ```
@@ -118,3 +122,31 @@ Recommendation: <link to existing ticket | file new ticket | needs more info>
 - New issue → hand off to the write-gated ticket-filing flow (that flow owns
   the write and its gate).
 - Cause localized → hand off to the implementation workflow to fix.
+
+## Exception Quick Reference
+
+| Code | Scenario | Action |
+|------|----------|--------|
+| DD-E01 | Issue tracker unreachable / auth failed | Do not retry writes; report "tracker unreachable, cannot dedup" and advise the engineer to manually confirm duplicates before filing |
+| DD-E02 | git / gh access failed or repo unreachable | Skip step 3, output "Recent suspect changes: N/A — repo unreachable", still infer ownership from ticket history |
+| DD-E03 | Signal too vague to extract a stable fingerprint | Do not guess the fingerprint; follow clarify-before-acting to obtain at least one searchable anchor (exception type / module / endpoint), otherwise recommend "needs more info" |
+| DD-E04 | Multiple high-similarity candidates found | List all as candidates with similarity scores; do not merge on your own — leave the call to the engineer |
+| DD-E05 | Engineer asks to file a ticket or fix directly | Stop read-only triage; state plainly that this skill performs no writes, hand off to the corresponding write flow |
+
+## FAQ
+
+**Q: Why don't you just file the ticket for me?**
+A: This skill is strictly read-only. Filing a ticket is a write operation that belongs to a human-gated flow — the engineer should confirm the title, priority, and owner before submission, to avoid mistaken or duplicate tickets.
+
+**Q: If no duplicate is found, is it definitely a new issue?**
+A: Not necessarily. Search is limited by fingerprint quality and the tracker's index. When nothing matches, we recommend "file new ticket" but also list which keywords were searched, so the engineer can review.
+
+**Q: Do frontend defects also need code-change correlation?**
+A: No. Pure frontend rendering/style/interaction issues have no backend code to correlate; step 3 is skipped and noted in the output. If the defect involves frontend-backend integration (e.g., an API error), correlate along the backend path.
+
+**Q: What if the owning-team inference is wrong?**
+A: Inference is based on component, ticket history, and recent authorship — it is not a final assignment. The output states the basis for the inference, and the engineer can correct it before the ticket-filing flow.
+
+## Language Support
+
+This skill supports both Chinese and English interaction. Triggers include "缺陷分诊", "查重复工单", "这个缺陷已知吗", "defect detective", "triage this bug", "is this a known issue". The output format field labels are in Chinese; adjust as needed.
