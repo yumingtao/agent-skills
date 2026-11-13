@@ -6,10 +6,12 @@ version: 1.0.0
 summary: Review the current session at its end, extract workflow issues, and write structured feedback to a log for systemic improvement signals.
 license: MIT
 description: >
-  Review the current conversation session at its end, extract workflow issues
-  — wrong answers that needed correction, skipped gates, wrong routing, MCP
-  errors, skill/doc gaps, multi-turn corrections — and append structured
-  feedback entries to a local JSONL log. Skips trivial clarifications and
+  Review the current development session at its end, extract
+  development-workflow issues — wrong answers that needed correction,
+  skipped gates, wrong routing, MCP errors, skill/doc gaps, multi-turn
+  corrections — and append structured entries with priority and recurrence
+  markers to a local JSONL log: a recurring issue is a rule gap, and its
+  priority escalates. Skips trivial clarifications and
   focuses on systemic signals indicating a skill, doc, or workflow rule needs
   updating. Triggers on "session review", "log session feedback",
   "retrospective", "回顾一下这个会话", "记录会话反馈", "会话复盘".
