@@ -181,6 +181,23 @@ Three full worked examples (backend dedup hit / frontend skip / environment skip
   the write and its gate).
 - Cause localized → hand off to the implementation workflow to fix.
 
+## Recommended Companions
+
+All optional enhancements — this skill fully completes triage standalone,
+with no hard dependency:
+
+- **clarify-before-acting**: when the fingerprint is missing a
+  direction-changing detail (environment, reproduction path, affected
+  build), it fills the gaps one question at a time via its question-queue
+  rules — step 1 and DD-E03 already integrate this handoff.
+- **workflow-skill-designer**: orchestrate this skill as one phase of a
+  "defect-handling pipeline" workflow skill (triage → write-gated ticket
+  filing → fix → regression verification) — for teams that want triage
+  baked into their process.
+- **session-retrospective**: session retrospectives capture systemic
+  "triage misjudgment / missed search" issues and feed them back into this
+  skill's search ladder and inference rules.
+
 ## Exception Quick Reference
 
 | Code | Scenario | Action |
