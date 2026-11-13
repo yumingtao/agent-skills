@@ -12,7 +12,7 @@ description: >
   feedback entries to a local JSONL log. Skips trivial clarifications and
   focuses on systemic signals indicating a skill, doc, or workflow rule needs
   updating. Triggers on "session review", "log session feedback",
-  "回顾一下这个会话", "记录会话反馈".
+  "retrospective", "回顾一下这个会话", "记录会话反馈", "会话复盘".
 ---
 
 # Session Retrospective
@@ -20,18 +20,33 @@ description: >
 Use this skill to review the current session and append structured feedback
 entries to the project's workflow feedback log.
 
+## Retrospective Iron Laws
+
+Three inviolable rules — breaking any one makes the feedback log worthless:
+
+1. **No fabricating conversation facts.** Every entry must point at a turn that actually happened — the AI really got it wrong, a gate really was skipped, a tool really errored. If you cannot recall it, do not write it; less is better.
+2. **Only systemic signals.** An entry's value is that it points at a fixable skill/doc/rule gap. Pure execution slips (a forgotten parameter, a typo) have no fix target — skip them.
+3. **No secrets.** No tokens, keys, passwords, internal addresses, or full raw transcripts in notes. The log is read by future improvement decisions, not leaked from.
+
 ## Where feedback goes
 
 Default location: `metrics/workflow-feedback.jsonl` in the current project
 root. If the project establishes a different log location (check the project
 docs or an existing log file), use that. Create the file on first write; it is
-append-only local state and never committed to git.
+append-only local state and never committed to git — if `metrics/` is not
+git-ignored on first write, remind the engineer to add it.
 
 ## When to Use
 
 - Engineer says "review this session", "log session feedback", or "session review"
 - End of a working session on any workflow task
 - After resolving a problem that took multiple back-and-forth exchanges
+
+## When NOT to use
+
+- The session just started and there is nothing substantive to review → say so; do not generate empty entries
+- The whole session was trivial clarifications with no workflow issues → write one `success` entry and stop
+- The engineer only wants a conversation summary, not workflow feedback → that is a summarization task, not this skill
 
 ## What to Analyze
 
@@ -42,7 +57,7 @@ Review the conversation and identify:
 3. **Wrong routing** — the AI used the wrong skill, workflow, or approach
 4. **MCP errors** — a tool call failed or blocked the workflow
 5. **Skill/doc gaps** — repeated clarifications needed because a rule was missing or unclear
-6. **Multi-turn corrections** — 2+ exchanges needed to reach a correct answer
+6. **Multi-turn corrections** — 2+ exchanges needed to reach a correct answer (merge all turns of one issue into a single entry, noting the turn count)
 7. **Successful completions** — worth recording as positive signal
 
 Write one feedback entry per distinct issue. If nothing went wrong, write one `success` entry.
@@ -52,7 +67,7 @@ Write one feedback entry per distinct issue. If nothing went wrong, write one `s
 Append one JSON object per line to the feedback log:
 
 ```json
-{"timestamp": "2026-11-13T14:30:00+08:00", "platform": "claude", "area": "review", "result": "corrected", "issue_type": "wrong-routing", "notes": "<what went wrong and what the correct behavior should be>", "ref": "PR-123"}
+{"timestamp": "2026-11-13T14:30:00+08:00", "platform": "claude", "area": "review", "result": "corrected", "issue_type": "wrong-routing", "priority": "medium", "notes": "<what went wrong and what the correct behavior should be>", "ref": "PR-123"}
 ```
 
 | Field | Values |
@@ -62,10 +77,30 @@ Append one JSON object per line to the feedback log:
 | `area` | `planning`, `implementation`, `review`, `git-pr`, `mcp`, `environment`, `docs`, `other` |
 | `result` | `success`, `blocked`, `corrected`, `failed` |
 | `issue_type` | `none`, `gate-skipped`, `wrong-routing`, `mcp-error`, `skill-sync-missing`, `generated-code-hygiene`, `logging-convention`, `utility-reuse`, `title-format`, `ticket-field`, `auth`, `tool-error`, `other` |
+| `priority` | optional: `low`, `medium`, `high` — impact scope × recurrence frequency |
 | `notes` | what went wrong and what the correct behavior should be |
 | `ref` | optional ticket / PR number |
 
 Infer `platform` from the current AI tool unless the engineer specifies otherwise.
+
+**Recurrence marking:** before appending, scan the existing log — if the same
+`area` + `issue_type` has appeared before, this is a recurrence: append
+`recurring (occurrence N)` to notes and set `priority` to at least `medium`.
+Recurrence is the strongest signal of a rule gap.
+
+## Quick Reference
+
+| Situation | Action |
+|---|---|
+| AI got it wrong, engineer corrected | One `result=corrected` entry per distinct issue |
+| Required phase/confirmation skipped | One `gate-skipped` entry |
+| Wrong skill, workflow, or approach used | One `wrong-routing` entry |
+| MCP/tool call failed | One `mcp-error` or `tool-error` entry |
+| Repeated clarifications from a missing rule | One entry with the gap's `issue_type` |
+| 2+ turns to reach a correct answer | Merge into one entry, note the turn count |
+| Task completed smoothly | One `success` entry |
+| User forgot a parameter, made a typo | **Do not log** (no fix target) |
+| User simply complimented the work | **Do not log** (unless it reveals a missing rule) |
 
 ## Rules
 
@@ -74,12 +109,70 @@ Infer `platform` from the current AI tool unless the engineer specifies otherwis
 - Focus on systemic issues: things indicating a skill, doc, or workflow rule needs updating
 - Do NOT commit the feedback log — it is append-only local state
 
+## Exception Quick Reference
+
+| Code | Scenario | Action |
+|------|----------|--------|
+| SR-E01 | Log file/directory not writable | Report the failure, print the entries in the conversation for the engineer to save manually; never write to a different location |
+| SR-E02 | No conversation to review (invoked right after session start) | Say "no session history to review"; do not generate empty or fabricated entries |
+| SR-E03 | Invoked mid-session | Review only up to the current turn, state "review truncated at current turn", suggest another retrospective at session end; record entries normally |
+| SR-E04 | JSONL file exists but some lines are corrupted | Do not rewrite or delete corrupted lines; skip them, report "N corrupted line(s) found" in the summary table, append starting from a new line |
+| SR-E05 | Engineer disputes a recorded entry | Do not delete it (append-only); append a correction entry whose notes point at the disputed entry's timestamp |
+
+## Retrospective Anti-Patterns
+
+When you catch yourself doing or thinking these, **stop immediately**:
+
+| What you're doing / thinking | What it really means | Correct action |
+|---|---|---|
+| Logging "user forgot the parameter" | No fix target | Skip per the Quick Reference |
+| Logging a user compliment as feedback | Not a workflow issue | Log only if it reveals a missing rule |
+| Writing an essay in notes | Over 200 characters, unusable | One sentence problem + one sentence correct behavior |
+| Putting tokens/keys/raw transcripts in notes | Leak risk (Iron Law 3) | Redact before logging |
+| One entry per turn of the same issue | Noise that hides the recurrence signal | Merge into one entry with a recurring mark |
+| Inventing an entry that "should have happened" | The log loses credibility (Iron Law 1) | Delete it; less is better |
+
+## Retrospective Completion Checklist
+
+Before emitting the summary, confirm each item:
+
+- [ ] Every entry points at a conversation turn that actually happened (traceable, no fabrication)
+- [ ] No trivial clarifications, no compliment entries
+- [ ] notes ≤ 200 characters and contain no secrets/raw transcripts
+- [ ] Multi-turn corrections of one issue merged (recurrence marked where applicable)
+- [ ] Each JSON line passes the field enum validation (platform/area/result/issue_type/priority)
+- [ ] Feedback log not committed to git (metrics/ ignored or engineer reminded)
+- [ ] A `success` entry written when nothing went wrong
+
 ## After Writing Feedback
 
 Print a brief summary table:
 
-| Area | Issue Type | Notes |
-|------|-----------|-------|
-| ...  | ...       | ...   |
+| Area | Issue Type | Priority | Notes |
+|------|-----------|----------|-------|
+| ...  | ...       | ...      | ...   |
 
-Then suggest which files in the current project likely need updating based on the issues found.
+Then suggest which files in the current project likely need updating based
+on the issues found — this is the lower half of the feedback loop: **the log
+records the signal; the file suggestions turn it into action**.
+
+A full real-session worked example lives in
+[`references/retrospective-example.en.md`](references/retrospective-example.en.md).
+
+## FAQ
+
+**Q: Why not commit the feedback log to git?**
+A: It is local working state containing trial-and-error detail; committing would push personal workflow noise into the team repo. Archiving is the engineer's call.
+
+**Q: What if an entry turns out to be wrong?**
+A: The log is append-only — never delete. Append a correction entry whose notes point at the disputed entry's timestamp (see SR-E05). A wrong record plus its correction is itself a workflow signal.
+
+**Q: The log keeps growing — what then?**
+A: This skill only appends. When size hurts readability, the engineer decides an archiving/cleanup strategy; the recurring marks help identify which patterns have already been absorbed into rules and can be archived.
+
+**Q: How does this relate to self-improving skills?**
+A: Complementary: they target continuous learning and promote general lessons to workspace files like AGENTS.md; this skill focuses on structured extraction of session-level workflow issues. Its log output can be consumed directly by them as input.
+
+## Language Support
+
+This skill supports both Chinese and English interaction. Triggers include "session review", "log session feedback", "retrospective", "回顾一下这个会话", "记录会话反馈", "会话复盘". Write notes in the session's primary language.

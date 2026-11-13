@@ -73,8 +73,8 @@ Note: similarity is "high" yet "Known issue?" stays "likely" — the repro discr
 ```text
 Environment: macOS + zsh, AI agent running in a sandboxed execution environment
 Symptom: agent fails to write skill files:
-  [Errno 13] Permission denied: '/Users/xxx/.trae-cn/skills/fast-commit/SKILL.md'
-  os.makedirs('/Users/xxx/.trae-cn/skills/fast-commit') also Permission denied
+  [Errno 13] Permission denied: '~/.trae-cn/skills/fast-commit/SKILL.md'
+  os.makedirs('~/.trae-cn/skills/fast-commit') also Permission denied
 The same process writes to the project directory without issue; only ~/.trae-cn/skills/ is denied. Reproduces every time.
 ```
 

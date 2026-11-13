@@ -73,8 +73,8 @@ java.lang.NullPointerException
 ```text
 环境：macOS + zsh，AI agent 运行在沙盒执行环境
 现象：agent 写入 skill 文件失败：
-  [Errno 13] Permission denied: '/Users/xxx/.trae-cn/skills/fast-commit/SKILL.md'
-  os.makedirs('/Users/xxx/.trae-cn/skills/fast-commit') 同样 Permission denied
+  [Errno 13] Permission denied: '~/.trae-cn/skills/fast-commit/SKILL.md'
+  os.makedirs('~/.trae-cn/skills/fast-commit') 同样 Permission denied
 同一进程对项目目录的写入完全正常，只有写 ~/.trae-cn/skills/ 被拒。每次必现。
 ```
 
