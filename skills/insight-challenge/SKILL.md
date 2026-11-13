@@ -2,9 +2,13 @@
 name: insight-challenge
 slug: yumingtao-insight-challenge
 displayName: Insight Challenge
-version: 1.7.0
+version: 1.7.1
 summary: 对代码质量发现进行对抗性审查，用源代码锚定的反向证据产出结构化结论。
 license: MIT
+tags:
+  - 代码审查
+  - 开发工具
+  - 质量分析
 disable-model-invocation: true
 description: >
   对代码质量发现进行对抗性审查：用反向证据挑战发现、对照源代码验证主张、产出结构化结论。适用于代码审查、质量分析、架构评估中的发现验证。触发词："审查发现"、"挑战发现"、"insight-challenge"、"challenge finding"。

@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-workflow-skill-designer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Meta-skill for designing orchestrator + phases structured workflow skills with progressive phase loading, task tracking, and inter-phase data flow.",
   "type": "module",
   "main": "index.js",

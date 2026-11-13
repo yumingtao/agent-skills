@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-insight-challenge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adversarial review of code-quality findings. Challenges insights with counter-evidence, verifies claims against source code, and produces structured verdicts.",
   "type": "module",
   "main": "index.js",

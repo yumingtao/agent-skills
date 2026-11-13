@@ -2,9 +2,14 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.4.0
+version: 1.4.1
 summary: 生成专业独立 HTML/SVG 技术图表，内置几何检查器。
 license: MIT
+tags:
+  - 开发工具
+  - 技术图表
+  - 架构图
+  - 文档
 description: >
   生成专业独立 HTML/SVG 技术图表。适用于架构图、系统图、基础设施图、拓扑图、部署图、数据流图、时序图、流程图、信任边界图、云图、draw.io 导出等场景。触发词："帮我画个架构图"、"画一张拓扑图"、"生成系统图"、"画个时序图"、"画个部署图"、"画个流程图"。
 ---

@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-diagram-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate production-quality standalone HTML/SVG technical diagrams: architecture, infrastructure, topology, deployment, data flow, trust boundary, and process maps.",
   "type": "module",
   "main": "index.js",

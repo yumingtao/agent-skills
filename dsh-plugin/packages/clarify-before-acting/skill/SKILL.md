@@ -2,9 +2,13 @@
 name: clarify-before-acting
 slug: yumingtao-clarify-before-acting
 displayName: Clarify Before Acting
-version: 1.3.0
+version: 1.3.1
 summary: 在处理复杂或高成本请求前，先解决方向性歧义。
 license: MIT
+tags:
+  - 开发工具
+  - 需求分析
+  - 工作流
 description: >
   在处理复杂、模糊或高成本请求前，先解决方向性歧义：自己做功课、检查记忆中已回答的问题、逐个处理问题队列、绝不猜测方向。跳过琐碎、机械、低风险的任务。触发词："确认需求"、"先澄清再做"、"方向不确定"、"clarify before acting"、"ask before doing"。
 ---

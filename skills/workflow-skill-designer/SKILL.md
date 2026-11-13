@@ -2,9 +2,13 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.3.0
+version: 1.3.1
 summary: 元技能：设计编排器+阶段（orchestrator+phases）结构化工作流技能。
 license: MIT
+tags:
+  - 开发工具
+  - 工作流
+  - 元技能
 disable-model-invocation: true
 description: >
   元技能：设计编排器+阶段（orchestrator+phases）结构化工作流技能。生成以 SKILL.md 为协调器、phases/ 文件夹存放执行细节的完整技能包，支持渐进式阶段加载、TodoWrite 模式和数据流。触发词："设计工作流技能"、"创建 workflow skill"、"workflow skill designer"。

@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-clarify-before-acting",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Resolve direction-changing ambiguity before acting on complex, ambiguous, or high-cost requests. Skips trivial, mechanical, low-risk tasks.",
   "type": "module",
   "main": "index.js",
