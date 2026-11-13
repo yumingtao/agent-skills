@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.0
+version: 1.0.1
 summary: 会话结束时回顾当前对话，把工作流问题写入结构化反馈日志；复发即升级，一句话进入修复模式闭环。
 license: MIT
 tags:
@@ -80,6 +80,14 @@ description: >
 
 **复发标注：** 追加前扫一眼已有日志——同一 `area` + `issue_type` 若已出现过，这是复发：notes 末尾加 `recurring(第N次)`，且 `priority` 至少 `medium`。复发是规则缺口的 strongest signal。
 
+## 自动检查
+
+可靠的日志靠校验而非自觉。三道自动检查全部由本技能自己执行，无需外部工具：
+
+- **写入前校验**：条目组装后、追加前，先核对本轮全部条目——JSON 可解析、platform/area/result/issue_type/priority 全部通过枚举、notes ≤ 200 字符且不含秘密；不过就先修再写。
+- **写入后确认**：追加完成后重新读取日志，确认新增行确实落盘且可解析；若因编码或截断损坏，不重写原行（append-only），当场报告并按 SR-E05 追加更正条目。
+- **修复模式全量校验**：进入修复模式加载日志时，先逐行做 JSON 解析 + 枚举 + notes 长度检查，统计损坏行数（SR-E04）与各 `area` + `issue_type` 的复发计数——计数结果直接作为修复排序依据，不靠印象。
+
 ## 快速参考
 
 | 情形 | 动作 |
@@ -133,6 +141,7 @@ description: >
 - [ ] notes ≤ 200 字符且不含秘密/完整报文
 - [ ] 同一问题的多轮纠正已合并（recurring 标注复发）
 - [ ] 每行 JSON 通过字段枚举校验（platform/area/result/issue_type/priority）
+- [ ] 追加后已重读日志，确认新增行落盘且通过校验
 - [ ] 反馈日志未被提交到 git（metrics/ 已忽略或已提醒）
 - [ ] 文档独立安装可用：无跨技能相对路径，skill 内引用（references/）已验证存在
 - [ ] 无事发生时写了一条 success
@@ -159,7 +168,7 @@ description: >
 
 ### 修复流程
 
-1. **读取日志**：加载反馈日志；损坏行按 SR-E04 跳过并报告。
+1. **读取日志并全量校验**：加载反馈日志，按「自动检查」逐行校验并统计复发计数；损坏行按 SR-E04 跳过并报告。
 2. **排序**：带 `recurring` 标注的条目最优先，其次按 `priority`（high → medium → low），同级按时间新者在前。
 3. **逐项出预案**：每个条目先给出修复预案——目标文件、具体改动、为什么这样改——**一项一确认**，绝不批量盲改。
 4. **执行**：工程师确认后执行改动；不确认就跳过，不强推。

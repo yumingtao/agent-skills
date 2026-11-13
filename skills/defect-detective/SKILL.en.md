@@ -2,7 +2,7 @@
 name: defect-detective
 slug: yumingtao-defect-detective
 displayName: Defect Detective
-version: 1.0.1
+version: 1.0.2
 summary: Read-only triage for a defect signal: normalize a fingerprint, search duplicates, correlate recent changes, infer the owning team, then decide whether to file a new ticket.
 license: MIT
 tags:
@@ -36,6 +36,15 @@ already known, who owns it, and what changed** — and hands a concise report
 back to the engineer. It does not file or mutate anything.
 
 Read-only, always: no ticket create/transition/comment/link, no code change.
+
+## Quick TOC
+
+- **Want to run it now**: Workflow (read-only) → Output format
+- **Something went wrong**: Exception quick reference (DD-E01 ~ DD-E06)
+- **Unsure about a verdict**: FAQ (similarity and "Known issue?" rules, ownership inference, why it never files)
+- **Want full examples**: references/triage-examples.en.md (backend hit / frontend skip / environment skip)
+
+Other sections on demand: Triage Iron Laws / When to use / Inputs / Guardrails / Handoff / Recommended pairings / Triage anti-patterns / Completion checklist.
 
 ## Triage Iron Laws
 
