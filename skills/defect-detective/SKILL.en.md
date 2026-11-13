@@ -63,8 +63,8 @@ report, never a command.
 
    If a detail that would change the *direction* of triage is missing — which
    environment, the reproduction path, the affected build/version, or the
-   user-visible impact — follow the question-queue rules in
-   [`clarify-before-acting`](../clarify-before-acting/) and ask only about gaps
+   user-visible impact — follow the question-queue rules of the
+   clarify-before-acting skill (if installed) and ask only about gaps
    that would actually change the search scope or ownership call. When the
    remaining unknowns do not affect direction, proceed and report them as open
    items via the `needs more info` recommendation. Do not invent a numeric
