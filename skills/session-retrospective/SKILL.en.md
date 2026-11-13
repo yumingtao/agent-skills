@@ -73,7 +73,7 @@ Append one JSON object per line to the feedback log:
 | Field | Values |
 |---|---|
 | `timestamp` | ISO-8601 local time |
-| `platform` | `claude`, `codex`, `codebuddy`, `cursor`, `github-copilot`, `intellij-copilot`, `gemini`, `opencode`, `other` |
+| `platform` | `claude`, `codex`, `codebuddy`, `cursor`, `trae`, `github-copilot`, `intellij-copilot`, `gemini`, `opencode`, `other` |
 | `area` | `planning`, `implementation`, `review`, `git-pr`, `mcp`, `environment`, `docs`, `other` |
 | `result` | `success`, `blocked`, `corrected`, `failed` |
 | `issue_type` | `none`, `gate-skipped`, `wrong-routing`, `mcp-error`, `skill-sync-missing`, `generated-code-hygiene`, `logging-convention`, `utility-reuse`, `title-format`, `ticket-field`, `auth`, `tool-error`, `other` |

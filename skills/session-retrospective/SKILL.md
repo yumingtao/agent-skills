@@ -67,7 +67,7 @@ description: >
 | 字段 | 取值 |
 |---|---|
 | `timestamp` | ISO-8601 本地时间 |
-| `platform` | `claude`, `codex`, `codebuddy`, `cursor`, `github-copilot`, `intellij-copilot`, `gemini`, `opencode`, `other` |
+| `platform` | `claude`, `codex`, `codebuddy`, `cursor`, `trae`, `github-copilot`, `intellij-copilot`, `gemini`, `opencode`, `other` |
 | `area` | `planning`, `implementation`, `review`, `git-pr`, `mcp`, `environment`, `docs`, `other` |
 | `result` | `success`, `blocked`, `corrected`, `failed` |
 | `issue_type` | `none`, `gate-skipped`, `wrong-routing`, `mcp-error`, `skill-sync-missing`, `generated-code-hygiene`, `logging-convention`, `utility-reuse`, `title-format`, `ticket-field`, `auth`, `tool-error`, `other` |
