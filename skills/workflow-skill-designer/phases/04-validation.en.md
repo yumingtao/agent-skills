@@ -18,6 +18,23 @@ Validate the generated skill package for structural completeness, reference inte
 - Verify cross-phase data flow consistency
 - Report validation results to user
 
+## Verification Layers
+
+The structural validation in this phase is only the first of three
+verification layers. When reporting results to the engineer, name the layer
+— **never claim a layer that did not run**:
+
+| Layer | What it covers | Method |
+|---|---|---|
+| 1. Structural check | frontmatter, manifest, reference integrity, section completeness (steps 4.1–4.6 of this phase) | automated check scripts |
+| 2. Content self-test | zh/en section parity, JSON/enum consistency, link resolution, example validity | ad-hoc validation scripts or item-by-item manual review |
+| 3. Functional smoke test | one real end-to-end run of the skill's main flow, verifying the tool chain and output format | real environment (read-only tracker queries, real file writes, etc.) |
+
+The layers are not interchangeable: a green structural check ≠ content
+tested, and passing content tests ≠ smoke tested. "Structural check
+passed" is not "testing complete" — always state verification status at the
+granularity of layers that actually ran.
+
 ## Step 4.1: Structural Validation
 
 ```javascript

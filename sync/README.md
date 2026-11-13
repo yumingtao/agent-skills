@@ -72,7 +72,33 @@ Everything is declared in `sync/manifest.sh`:
 `description` must be present, and `README.md` must list exactly the skills on
 disk.
 
+## Verification layers
+
+A skill is verified in three layers. Structure checks alone are not
+"testing complete" — when reporting, name the layers that actually ran:
+
+| Layer | What it covers | Tooling |
+|---|---|---|
+| 1. Structural check | frontmatter, manifest, index, identity guard | `sync/check.sh --collection-only` |
+| 2. Content self-test | zh/en section parity, JSON/enum consistency, link resolution, example validity | ad-hoc validation scripts or item-by-item manual review |
+| 3. Functional smoke test | one real end-to-end run of the skill's main flow with real tooling and inputs | real environment (read-only tracker queries, real log writes, etc.) |
+
+The layers are not interchangeable: a green structural check does not mean
+the content was tested, and passing content tests does not mean the skill
+works end to end.
+
 ## CI
 
 `.github/workflows/ci.yml` runs `bash -n`, `shellcheck`, and
 `sync/check.sh --collection-only` on pushes to `main` and on pull requests.
+
+CI catches what slipped through locally. To fail earlier — at commit time,
+including newly staged files — enable the bundled pre-commit hook:
+
+```sh
+git config core.hooksPath .githooks
+```
+
+`.githooks/pre-commit` runs the collection check against the index; the
+identity guard reads the index via `git ls-files`, so files that were just
+`git add`ed are covered before the commit ever lands.
