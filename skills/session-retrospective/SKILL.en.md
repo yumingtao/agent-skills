@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.1
+version: 1.0.2
 summary: Review the session at its end, log workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.
 license: MIT
 tags:
@@ -33,6 +33,16 @@ description: >
 
 Use this skill to review the current session and append structured feedback
 entries to the project's workflow feedback log.
+
+## Quick TOC
+
+- **Session over, want to log now**: What to Analyze → How to Write Feedback (JSONL field table) → Quick Reference
+- **Unsure whether something gets logged**: Quick Reference (includes the two "do not log" cases) and Anti-Patterns
+- **Something went wrong**: Exception quick reference (SR-E01 ~ SR-E05)
+- **Want to fix**: Fix Mode (optional second phase)
+- **Want a full example**: references/retrospective-example.en.md
+
+Other sections on demand: Iron Laws / Where feedback goes / When to Use / When NOT to use / Automatic Self-Checks / Rules / Completion Checklist / FAQ.
 
 ## Retrospective Iron Laws
 
@@ -92,16 +102,18 @@ Append one JSON object per line to the feedback log:
 | `area` | `planning`, `implementation`, `review`, `git-pr`, `mcp`, `environment`, `docs`, `other` |
 | `result` | `success`, `blocked`, `corrected`, `failed` |
 | `issue_type` | `none`, `gate-skipped`, `wrong-routing`, `mcp-error`, `skill-sync-missing`, `generated-code-hygiene`, `logging-convention`, `utility-reuse`, `title-format`, `ticket-field`, `auth`, `tool-error`, `other` |
-| `priority` | optional: `low`, `medium`, `high` — impact scope × recurrence frequency |
+| `priority` | optional: `low`, `medium`, `high` — impact scope × recurrence frequency; omitted means `low`, and `success` entries usually omit it |
 | `notes` | what went wrong and what the correct behavior should be |
 | `ref` | optional ticket / PR number |
 
 Infer `platform` from the current AI tool unless the engineer specifies otherwise.
 
-**Recurrence marking:** before appending, scan the existing log — if the same
-`area` + `issue_type` has appeared before, this is a recurrence: append
-`recurring (occurrence N)` to notes and set `priority` to at least `medium`.
-Recurrence is the strongest signal of a rule gap.
+**Recurrence marking:** before appending, scan the existing log — the same
+`area` + `issue_type` **and substantively the same issue** counts as a
+recurrence: append `recurring (occurrence N)` to notes and set `priority` to
+at least `medium`. Same enum pair but a substantively different issue is
+recorded as a new issue — false escalation pollutes the signal. Recurrence is
+the strongest signal of a rule gap.
 
 ## Automatic Self-Checks
 

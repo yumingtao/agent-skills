@@ -58,7 +58,7 @@ Note: similarity is "high" yet "Known issue?" stays "likely" — the repro discr
 
 **Step 1 — fingerprint:** `style misalignment · checkout coupon list · Safari`. Pure UI description, no exception or error code; the fingerprint is area + symptom.
 
-**Step 2 — ladder:** Level 1 `Safari style misalignment + coupon list` → hits TICKET-9013 (open, similarity: medium — area and symptom match, but the ticket describes all Chromium browsers). Listed as candidate.
+**Step 2 — ladder:** Level 1 `Safari style misalignment + coupon list` → hits TICKET-9013 (open, similarity: medium — per the FAQ baseline, the fingerprint-present core items module/area and symptom match, but the message traits differ: this report is Safari-only while the ticket covers all Chromium browsers). Listed as candidate.
 
 **Step 3 — skipped:** frontend rendering/style issue with no backend clue → note "frontend display issue, no backend code to correlate".
 

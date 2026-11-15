@@ -2,7 +2,7 @@
 name: defect-detective
 slug: yumingtao-defect-detective
 displayName: Defect Detective
-version: 1.0.2
+version: 1.0.3
 summary: Read-only triage for a defect signal: normalize a fingerprint, search duplicates, correlate recent changes, infer the owning team, then decide whether to file a new ticket.
 license: MIT
 tags:
@@ -40,6 +40,7 @@ Read-only, always: no ticket create/transition/comment/link, no code change.
 ## Quick TOC
 
 - **Want to run it now**: Workflow (read-only) → Output format
+- **First use**: Prerequisites (credentials and connectivity)
 - **Something went wrong**: Exception quick reference (DD-E01 ~ DD-E06)
 - **Unsure about a verdict**: FAQ (similarity and "Known issue?" rules, ownership inference, why it never files)
 - **Want full examples**: references/triage-examples.en.md (backend hit / frontend skip / environment skip)
@@ -67,6 +68,13 @@ Three inviolable rules — breaking any one makes the triage result untrustworth
   belongs to a write flow with a human gate. Hand off to the skill that owns
   that write in your workflow.
 - To fix the defect → use the implementation workflow after triage.
+
+## Prerequisites
+
+- **Reachable tracker system**: read-only credentials configured and network reachable — from a domestic network, confirm connectivity to external tracker/code platforms first; for timeout and network-error retry/degradation see DD-E06.
+- **Code-change correlation (optional)**: when the involved layer is known, a local or reachable code repository is needed; if unreachable, skip step 3 and state so honestly in the report.
+
+If any prerequisite is missing, declare what is missing and how far triage can proceed — never pretend the full workflow ran.
 
 ## Inputs
 

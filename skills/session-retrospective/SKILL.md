@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.1
+version: 1.0.2
 summary: 会话结束时回顾当前对话，把工作流问题写入结构化反馈日志；复发即升级，一句话进入修复模式闭环。
 license: MIT
 tags:
@@ -17,6 +17,16 @@ description: >
 # 会话回顾
 
 用本技能回顾当前会话，并把结构化反馈条目追加到项目的工作流反馈日志。
+
+## 快速目录
+
+- **会话结束想直接记**：分析什么 → 如何写反馈（含 JSONL 字段表）→ 快速参考
+- **拿不准某情况记不记**：快速参考表（含两种"不记"情形）与回顾反模式
+- **出了状况**：异常场景速查（SR-E01 ~ SR-E05）
+- **想修复**：修复模式（可选第二阶段）
+- **想看完整示例**：references/retrospective-example.md
+
+其余章节按需查阅：回顾铁律 / 反馈存到哪里 / 何时使用 / 何时不用 / 自动检查 / 规则 / 回顾完成检查清单 / 常见问题。
 
 ## 回顾铁律
 
@@ -72,13 +82,13 @@ description: >
 | `area` | `planning`, `implementation`, `review`, `git-pr`, `mcp`, `environment`, `docs`, `other` |
 | `result` | `success`, `blocked`, `corrected`, `failed` |
 | `issue_type` | `none`, `gate-skipped`, `wrong-routing`, `mcp-error`, `skill-sync-missing`, `generated-code-hygiene`, `logging-convention`, `utility-reuse`, `title-format`, `ticket-field`, `auth`, `tool-error`, `other` |
-| `priority` | 可选：`low`, `medium`, `high` — 影响范围 × 复发频率 |
+| `priority` | 可选：`low`, `medium`, `high` — 影响范围 × 复发频率；缺省视为 `low`，`success` 条目通常省略 |
 | `notes` | 出了什么问题，正确行为应该是什么 |
 | `ref` | 可选的工单 / PR 编号 |
 
 从当前 AI 工具推断 `platform`，除非工程师另行指定。
 
-**复发标注：** 追加前扫一眼已有日志——同一 `area` + `issue_type` 若已出现过，这是复发：notes 末尾加 `recurring(第N次)`，且 `priority` 至少 `medium`。复发是规则缺口的 strongest signal。
+**复发标注：** 追加前扫一眼已有日志——同一 `area` + `issue_type` 且**问题实质相同**才算复发：notes 末尾加 `recurring(第N次)`，且 `priority` 至少 `medium`。仅枚举组合相同但问题实质不同的，按新问题记录——误升级会污染信号。复发是规则缺口的 strongest signal。
 
 ## 自动检查
 
