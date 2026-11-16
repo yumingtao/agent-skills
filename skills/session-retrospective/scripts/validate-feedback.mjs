@@ -57,16 +57,16 @@ raw.split('\n').forEach((line, i) => {
   entries.push(obj);
 });
 
-// 复发计数 + 漏标检查（success / issue_type=none 不参与）
+// 复发候选统计（success / issue_type=none 不参与）：按枚举配对计数，
+// 配对相同 ≠ 问题实质相同 —— 是否复发由执行者确认后再标 recurring
 const groups = new Map();
 for (const e of entries) {
   if (e.result === 'success' || e.issue_type === 'none') continue;
   const key = `${e.area}+${e.issue_type}`;
-  const idx = (groups.get(key)?.count ?? 0) + 1;
-  groups.set(key, { count: idx });
-  if (idx >= 2 && !/recurring/i.test(String(e.notes))) {
-    errors.push({ no: e.__line, errs: [`${key} 第 ${idx} 次出现但 notes 未标 recurring`] });
-  }
+  const g = groups.get(key) ?? { count: 0, missing: [] };
+  g.count += 1;
+  if (g.count >= 2 && !/recurring/i.test(String(e.notes))) g.missing.push(e.__line);
+  groups.set(key, g);
 }
 
 console.log(`条目 ${entries.length} 条；损坏行 ${corrupted.length} 条${corrupted.length ? `（行号: ${corrupted.join(', ')}）` : ''}`);
@@ -76,8 +76,10 @@ if (errors.length) {
 }
 const recurring = [...groups.entries()].filter(([, v]) => v.count >= 2).sort((a, b) => b[1].count - a[1].count);
 if (recurring.length) {
-  console.log('复发分组（按次数排序，修复模式从此处开始）:');
-  for (const [key, v] of recurring) console.log(`  ${key} × ${v.count}`);
+  console.log('复发候选分组（按枚举配对统计、次数排序；是否「问题实质相同」由执行者确认后再标 recurring，修复模式从次数最多的候选组开始）:');
+  for (const [key, v] of recurring) {
+    console.log(`  ${key} × ${v.count}${v.missing.length ? `（第2次及以后未标 recurring 的行: ${v.missing.join(', ')}）` : ''}`);
+  }
 }
 
 process.exit(errors.length || corrupted.length ? 1 : 0);

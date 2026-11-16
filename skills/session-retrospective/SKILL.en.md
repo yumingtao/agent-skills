@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.3
+version: 1.0.4
 summary: Review the session at its end, log workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.
 license: MIT
 tags:
@@ -138,10 +138,12 @@ node scripts/validate-feedback.mjs metrics/workflow-feedback.jsonl
 ```
 
 Performs all three checks in one run: line-by-line JSON parse + field enums +
-notes length, corrupted-line tally, recurrence grouping that flags missing
-recurring marks, and a fix-ordering suggestion by recurrence count. Exit code
-0 = log healthy, non-zero = errors — run it once after each append and once
-when Fix Mode loads the log.
+notes length, corrupted-line tally, enum-pair recurrence candidate grouping
+(the script pairs on `area` + `issue_type`; **same pair ≠ substantively the
+same issue** — you confirm per the operational rule before marking
+recurring), and a fix-ordering suggestion by count. Exit code 0 = log healthy
+(candidate notices do not affect it), non-zero = hard errors — run it once
+after each append and once when Fix Mode loads the log.
 
 ## Quick Reference
 

@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.3
+version: 1.0.4
 summary: 会话结束时回顾当前对话，把工作流问题写入结构化反馈日志；复发即升级，一句话进入修复模式闭环。
 license: MIT
 tags:
@@ -104,7 +104,7 @@ description: >
 node scripts/validate-feedback.mjs metrics/workflow-feedback.jsonl
 ```
 
-一次完成全部三道检查：逐行 JSON 解析 + 字段枚举 + notes 长度、损坏行统计、复发分组计数并抓出漏标的 recurring、按复发次数输出修复排序建议。退出码 0 = 日志健康，非 0 = 有错误——写入后与修复模式加载时各跑一次。
+一次完成全部三道检查：逐行 JSON 解析 + 字段枚举 + notes 长度、损坏行统计、复发候选分组（脚本按 `area` + `issue_type` 配对统计，**配对相同不等于问题实质相同**——是否复发由你按「问题实质相同」口径确认后再标 recurring）、按次数输出修复排序建议。退出码 0 = 日志健康（候选提醒不影响退出码），非 0 = 有硬错误——写入后与修复模式加载时各跑一次。
 
 ## 快速参考
 
