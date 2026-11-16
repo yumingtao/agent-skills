@@ -2,7 +2,7 @@
 name: defect-detective
 slug: yumingtao-defect-detective
 displayName: Defect Detective
-version: 1.0.3
+version: 1.0.4
 summary: Read-only triage for a defect signal: normalize a fingerprint, search duplicates, correlate recent changes, infer the owning team, then decide whether to file a new ticket.
 license: MIT
 tags:
@@ -71,10 +71,10 @@ Three inviolable rules — breaking any one makes the triage result untrustworth
 
 ## Prerequisites
 
-- **Reachable tracker system**: read-only credentials configured and network reachable — from a domestic network, confirm connectivity to external tracker/code platforms first; for timeout and network-error retry/degradation see DD-E06.
+- **Reachable tracker system**: read-only credentials configured and network reachable. Most domestic enterprises run their tracker on an intranet or self-hosted instance, where connectivity matches the internal network; only public SaaS instances require a connectivity check first. For timeout and network-error retry/degradation see DD-E06.
 - **Code-change correlation (optional)**: when the involved layer is known, a local or reachable code repository is needed; if unreachable, skip step 3 and state so honestly in the report.
 
-If any prerequisite is missing, declare what is missing and how far triage can proceed — never pretend the full workflow ran.
+If any prerequisite is missing, declare what is missing and how far triage can proceed — never pretend the full workflow ran. Even when the tracker is unreachable (DD-E01), the skill still yields the normalized fingerprint, copy-ready dedup keywords, and a ticket-filing suggestion — degradation is not an empty-handed return.
 
 ## Inputs
 
@@ -271,6 +271,9 @@ A: Inference is based on component, ticket history, and recent authorship — it
 A: Three grades. The baseline is **the core items the fingerprint actually contains** — among exception type, error code, module/endpoint, and message traits, only items present in the fingerprint count; absent items do not lower the grade (a stack with no error code must not be downgraded for lacking one): **high** = all fingerprint-present core items hit; **medium** = most hit but one is missing or worded differently; **low** = only the module or part of the message matches. Only "high" supports a "link to existing ticket" recommendation; medium/low are always listed as candidates for the engineer to judge.
 
 The "Known issue?" verdict maps to similarity: **yes** = high similarity with matching reproduction path and impact; **likely** = high similarity but reproduction or environment differs, or only medium-similarity candidates; **no** = no match across the full three-level ladder.
+
+**Q: How do I verify this skill's conclusions?**
+A: Two paths that take minutes each: run triage on a defect description from a known ticket (it should hit that ticket — verifies dedup); then run it on a brand-new issue (it should report no match after the full ladder — verifies honest degradation). The fingerprint, search terms, and evidence chain in the report can be copied back into the tracker for manual cross-checking.
 
 ## Language Support
 
