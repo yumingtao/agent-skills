@@ -22,7 +22,7 @@ java.lang.NullPointerException
 **Step 2 — relaxation ladder (cross-stack, no component filter):**
 
 - Level 1: `NullPointerException + OrderService + checkout` → no results
-- Level 2: `NullPointerException + order service` → hits TICKET-8842 "Intermittent NPE on checkout" (open, similarity: high — all fingerprint-present core items [exception type, module/endpoint, message traits] match; the fingerprint has no error code, which does not participate)
+- Level 2: `NullPointerException + order service` → hits TICKET-8842 "Intermittent NPE on checkout" (open, similarity: high — all fingerprint-present core items [exception type, module/endpoint, message traits] match; the fingerprint has no error code, which does not participate). With no error code in the fingerprint, L2 runs as "exception type + module/endpoint" per the workflow rule
 - Level 3: not executed (ladder stops descending once a level hits)
 
 **Step 3 — layer known** (service name + server-side stack): `git blame` near OrderService.java shows PR-3021 refactored the coupon calculation three days ago.
@@ -48,6 +48,8 @@ Evidence:
   - Search scope: cross-stack
   - Code correlation: order repo main branch blame
 
+Related: two other closed NPE tickets in the same area within the last 30 days, neither touching the checkout path
+
 Recommendation: link to existing ticket (TICKET-8842)
 Status: complete
 ```
@@ -66,7 +68,23 @@ Note: similarity is "high" yet "Known issue?" stays "likely" — the repro discr
 
 **Step 4 — ownership:** Web frontend team — basis: TICKET-9013 carries the checkout-web component tag.
 
-**Recommendation:** needs more info — TICKET-9013 (medium similarity) stays a candidate; the engineer confirms whether same root cause before linking (medium similarity does not support "link to existing ticket" per the FAQ rules).
+**Report (excerpt):**
+
+```text
+Defect: Safari checkout coupon list misaligned
+Fingerprint: style misalignment · checkout coupon list · Safari
+
+Known issue?  likely (medium-similarity candidates only)
+  - TICKET-9013  Chromium-wide checkout coupon list misaligned  (open, medium) — module/area and symptom hit; message traits differ (this report is Safari-only)
+
+Likely owner: Web frontend team — TICKET-9013 component tag checkout-web
+
+Recent suspect changes: N/A — frontend display issue, no backend code to correlate
+Related: none
+
+Recommendation: needs more info — the engineer confirms whether same root cause; do not link on your own (medium similarity does not support linking per the FAQ rules)
+Status: complete
+```
 
 ## Case C: Environment/config issue — skip step 3 + no-match ticket suggestion (real smoke-test case)
 
@@ -104,6 +122,8 @@ Evidence:
   - Search keywords: L1 "EPERM+skills+Permission denied"; L2 "EPERM"; L3 "skill write" (all no results)
   - Search scope: cross-stack; the reachable tracker does not cover this domain
   - Code correlation: skipped
+
+Related: none
 
 Recommendation: file new ticket (reachable tracker does not cover this domain; cannot fully rule out a known issue)
 Status: complete

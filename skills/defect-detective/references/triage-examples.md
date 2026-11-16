@@ -22,7 +22,7 @@ java.lang.NullPointerException
 **步骤 2 — 降级查重（跨栈，未过滤组件）：**
 
 - 第一级：`NullPointerException + OrderService + 下单` → 无结果
-- 第二级：`NullPointerException + 订单服务` → 命中 TICKET-8842「下单偶发空指针」（open，相似度：高——指纹所含核心项[异常类型、模块/端点、消息特征]全命中；指纹无错误码，不参与判定）
+- 第二级：`NullPointerException + 订单服务` → 命中 TICKET-8842「下单偶发空指针」（open，相似度：高——指纹所含核心项[异常类型、模块/端点、消息特征]全命中；指纹无错误码，不参与判定）。指纹无错误码，L2 按流程规则以"异常类型 + 模块/端点"执行
 - 第三级：未执行（第二级已命中，命中后停止降级）
 
 **步骤 3 — 涉及层已知**（服务名 + 服务端堆栈），`git blame OrderService.java` 附近近期合并：PR-3021 三天前重构了优惠卷计算。
@@ -48,6 +48,8 @@ java.lang.NullPointerException
   - 搜索范围：跨栈
   - 代码关联：order 仓库 main 分支 blame
 
+相关：同区域近 30 天另有 2 张已关闭的 NPE 工单，均不涉及下单路径
+
 建议：链接到已有工单（TICKET-8842）
 状态：完成
 ```
@@ -66,7 +68,23 @@ java.lang.NullPointerException
 
 **步骤 4 — 归属：** 前端 Web 团队——依据：TICKET-9013 的组件标签为 checkout-web。
 
-**建议：** 需要更多信息——TICKET-9013（相似度中）列为候选，是否同因由工程师确认后再链接（中相似不足以支撑"链接到已有工单"，见 FAQ 判定规则）。
+**报告（节选）：**
+
+```text
+缺陷：Safari 结账页优惠券列表错位
+指纹：样式错位 · checkout 优惠券列表 · Safari
+
+已知问题？  可能（仅中相似候选）
+  - TICKET-9013  Chromium 全系结账优惠券列表错位  (open, 中) — 模块/区域与现象命中，消息特征差异（本例限 Safari）
+
+可能的归属团队：前端 Web 团队 — TICKET-9013 组件标签 checkout-web
+
+近期可疑变更：不适用 — 前端展示问题，无后端代码可关联
+相关：无
+
+建议：需要更多信息 — 是否同因由工程师确认，不代为链接（中相似不足以支撑链接，见 FAQ 判定规则）
+状态：完成
+```
 
 ## 例 C：环境/配置类问题 —— 跳过步骤 3 + 无匹配建票（真实冒烟案例）
 
@@ -104,6 +122,8 @@ java.lang.NullPointerException
   - 搜索关键词：L1 "EPERM+skills+Permission denied"；L2 "EPERM"；L3 "skill 写入"（均无结果）
   - 搜索范围：跨栈；可达的工单系统不覆盖此域
   - 代码关联：跳过
+
+相关：无
 
 建议：新建工单（可达工单系统不含此域，无法完全排除已知问题）
 状态：完成

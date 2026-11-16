@@ -2,7 +2,7 @@
 name: defect-detective
 slug: yumingtao-defect-detective
 displayName: Defect Detective
-version: 1.0.5
+version: 1.0.6
 summary: Read-only triage for a defect signal: normalize a fingerprint, search duplicates, correlate recent changes, infer the owning team, then decide whether to file a new ticket.
 license: MIT
 tags:
@@ -106,7 +106,7 @@ report, never a command.
    returns nothing:
    - Level 1: full fingerprint terms (exception type + error code +
      module/endpoint + message keywords);
-   - Level 2: exception type + error code;
+   - Level 2: exception type + error code (when the fingerprint has no error code, use exception type + module/endpoint instead);
    - Level 3: module/endpoint name only.
    Conclude "no match" only after all three levels come up empty — ticket
    descriptions often word things differently from the raw error, and the
