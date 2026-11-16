@@ -13,6 +13,20 @@ const ENUMS = {
 };
 const REQUIRED = ['timestamp', 'platform', 'area', 'result', 'issue_type', 'notes'];
 
+// 敏感信息模式（铁律 3 的机器版）：命中即硬错误。模式从紧，宁可漏报不误报。
+const SECRETS = [
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  /\bsk-[A-Za-z0-9]{16,}/,            // OpenAI 风格密钥
+  /\bgh[pousr]_[A-Za-z0-9]{20,}/,     // GitHub token
+  /\bglpat-[A-Za-z0-9-]{16,}/,        // GitLab token
+  /\bAKIA[0-9A-Z]{16}/,              // AWS 访问密钥
+  /\bxox[baprs]-[A-Za-z0-9-]{10,}/,  // Slack token
+  /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/, // JWT
+  /\b(password|passwd|pwd|token|secret)\s*[=:]\s*\S{12,}/i,
+];
+// 完整 ISO-8601：必须带日期时间与时区（Z 或 ±hh:mm），且是真实日期
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+
 const path = process.argv[2];
 if (!path) {
   console.error('用法: node validate-feedback.mjs <log-path>');
@@ -48,7 +62,8 @@ raw.split('\n').forEach((line, i) => {
     if (f in obj && obj[f] !== undefined && !values.includes(obj[f])) errs.push(`${f}="${obj[f]}" 不在枚举内`);
   }
   if (typeof obj.notes === 'string' && obj.notes.length > 200) errs.push(`notes ${obj.notes.length} 字符 > 200`);
-  if (obj.timestamp !== undefined && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(String(obj.timestamp))) errs.push('timestamp 非 ISO-8601');
+  if (typeof obj.notes === 'string' && SECRETS.some((re) => re.test(obj.notes))) errs.push('notes 疑似包含敏感信息（铁律 3：不记录秘密）');
+  if (obj.timestamp !== undefined && (!ISO.test(String(obj.timestamp)) || Number.isNaN(Date.parse(String(obj.timestamp))))) errs.push('timestamp 非完整 ISO-8601（需含时区与真实日期）');
   if (errs.length) {
     errors.push({ no, errs });
     return;

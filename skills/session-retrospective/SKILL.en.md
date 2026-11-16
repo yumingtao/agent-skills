@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.4
+version: 1.0.5
 summary: Review the session at its end, log workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.
 license: MIT
 tags:
@@ -138,12 +138,15 @@ node scripts/validate-feedback.mjs metrics/workflow-feedback.jsonl
 ```
 
 Performs all three checks in one run: line-by-line JSON parse + field enums +
-notes length, corrupted-line tally, enum-pair recurrence candidate grouping
-(the script pairs on `area` + `issue_type`; **same pair ≠ substantively the
-same issue** — you confirm per the operational rule before marking
-recurring), and a fix-ordering suggestion by count. Exit code 0 = log healthy
-(candidate notices do not affect it), non-zero = hard errors — run it once
-after each append and once when Fix Mode loads the log.
+notes length, **secret scanning** (common key/token patterns are hard errors
+— the machine-enforced version of Iron Law 3), **full ISO-8601 validation**
+(timezone offset and a real calendar date required), corrupted-line tally,
+enum-pair recurrence candidate grouping (the script pairs on `area` +
+`issue_type`; **same pair ≠ substantively the same issue** — you confirm per
+the operational rule before marking recurring), and a fix-ordering suggestion
+by count. Exit code 0 = log healthy (candidate notices do not affect it),
+non-zero = hard errors — run it once after each append and once when Fix Mode
+loads the log.
 
 ## Quick Reference
 
@@ -170,7 +173,7 @@ after each append and once when Fix Mode loads the log.
 
 | Code | Scenario | Action |
 |------|----------|--------|
-| SR-E01 | Log file/directory not writable | Report the failure, print the entries in the conversation for the engineer to save manually; never write to a different location |
+| SR-E01 | Log file/directory not writable | Create the `metrics/` directory on first write; retry once on transient failure; if still unwritable, report the cause and print the entries in the conversation for the engineer to save manually; never write to a different location |
 | SR-E02 | No conversation to review (invoked right after session start) | Say "no session history to review"; do not generate empty or fabricated entries |
 | SR-E03 | Invoked mid-session | Review only up to the current turn, state "review truncated at current turn", suggest another retrospective at session end; record entries normally |
 | SR-E04 | JSONL file exists but some lines are corrupted | Do not rewrite or delete corrupted lines; skip them, report "N corrupted line(s) found" in the summary table, append starting from a new line |
@@ -238,7 +241,7 @@ across sessions.
 
 1. **Load the log and validate fully**: read the feedback log, run the line-by-line validation from "Automatic Self-Checks" and tally recurrence counts; skip corrupted lines per SR-E04 and report them. `node scripts/validate-feedback.mjs <log-path>` does it in one step (includes fix-ordering suggestion).
 2. **Order**: entries marked `recurring` first, then by `priority` (high → medium → low); within the same level, newest first.
-3. **Propose per item**: for each entry, present a fix proposal — target file, concrete change, why this change — **one confirmation per item**; never batch-apply.
+3. **Propose per item**: for each entry, present a fix proposal — target file, concrete change, why this change — **one confirmation per item**; never batch-apply. When notes are too terse to ground a proposal, confirm the missing background with the engineer first — never guess.
 4. **Execute**: apply the change after the engineer confirms; skip without pushing if not confirmed.
 5. **Close the loop**: after each fix, append a `result=success` closure entry whose notes say "fixed: <original entry timestamp>" — the log stays append-only and the fix history stays auditable.
 
