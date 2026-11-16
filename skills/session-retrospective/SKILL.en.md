@@ -2,7 +2,7 @@
 name: session-retrospective
 slug: yumingtao-session-retrospective
 displayName: Session Retrospective
-version: 1.0.2
+version: 1.0.3
 summary: Review the session at its end, log workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.
 license: MIT
 tags:
@@ -20,7 +20,10 @@ description: >
   and never fabricate. Say "start fixing" to enter Fix Mode: items ordered
   by recurrence and priority, one fix proposal per item, one confirmation
   per item, every fix closing the loop with an append-only audit entry —
-  and Fix Mode runs from the log alone, across sessions. Complementary to
+  and Fix Mode runs from the log alone, across sessions. Ships a
+  zero-dependency validation script (Node 18+) that machine-checks log
+  health and recurrence groups after each append and before fixing.
+  Complementary to
   report-style retro skills: this skill is the machine-aggregable
   signal-data layer, not a report for humans. Smoke-tested on a real
   session across both the main path and the corrupted-line exception.
@@ -113,16 +116,32 @@ Infer `platform` from the current AI tool unless the engineer specifies otherwis
 recurrence: append `recurring (occurrence N)` to notes and set `priority` to
 at least `medium`. Same enum pair but a substantively different issue is
 recorded as a new issue — false escalation pollutes the signal. Recurrence is
-the strongest signal of a rule gap.
+the strongest signal of a rule gap. Operational meaning of "substantively the
+same issue": the same kind of rule gap acting on the **same target** — the
+same skill, the same doc, or the same workflow step; a different target or a
+different gap type is a new issue.
 
 ## Automatic Self-Checks
 
-A reliable log is built on validation, not good intentions. Three automatic
-checks, all performed by this skill itself, no external tools:
+A reliable log is built on validation, not good intentions. When Node ≥ 18 is
+available, prefer the bundled script for machine validation; without Node,
+perform the three checks below entry by entry — equivalent in effect:
 
 - **Pre-append validation**: after assembling entries and before appending, verify every entry of this turn — parses as JSON, platform/area/result/issue_type/priority all pass their enums, notes ≤ 200 characters with no secrets; fix first if any check fails.
 - **Post-append confirmation**: after appending, re-read the log and confirm the new line actually landed and parses; if it got corrupted by encoding or truncation, do not rewrite the original line (append-only) — report it and append a correction entry per SR-E05.
 - **Fix-mode full-log validation**: when Fix Mode loads the log, first run a line-by-line JSON parse + enum + notes-length check, tally corrupted lines (SR-E04) and recurrence counts per `area` + `issue_type` — those counts drive the fix ordering, not impressions.
+
+**Machine validation script (zero dependencies, Node ≥ 18)**:
+
+```bash
+node scripts/validate-feedback.mjs metrics/workflow-feedback.jsonl
+```
+
+Performs all three checks in one run: line-by-line JSON parse + field enums +
+notes length, corrupted-line tally, recurrence grouping that flags missing
+recurring marks, and a fix-ordering suggestion by recurrence count. Exit code
+0 = log healthy, non-zero = errors — run it once after each append and once
+when Fix Mode loads the log.
 
 ## Quick Reference
 
@@ -177,7 +196,7 @@ Before emitting the summary, confirm each item:
 - [ ] notes ≤ 200 characters and contain no secrets/raw transcripts
 - [ ] Multi-turn corrections of one issue merged (recurrence marked where applicable)
 - [ ] Each JSON line passes the field enum validation (platform/area/result/issue_type/priority)
-- [ ] Log re-read after appending; new line confirmed on disk and passing validation
+- [ ] Log re-read after appending; new line confirmed on disk and passing validation (or `validate-feedback.mjs` exits 0)
 - [ ] Feedback log not committed to git (metrics/ ignored or engineer reminded)
 - [ ] Doc works standalone: no cross-skill relative paths, in-skill references (references/) verified to exist
 - [ ] A `success` entry written when nothing went wrong
@@ -215,7 +234,7 @@ across sessions.
 
 ### Fix Workflow
 
-1. **Load the log and validate fully**: read the feedback log, run the line-by-line validation from "Automatic Self-Checks" and tally recurrence counts; skip corrupted lines per SR-E04 and report them.
+1. **Load the log and validate fully**: read the feedback log, run the line-by-line validation from "Automatic Self-Checks" and tally recurrence counts; skip corrupted lines per SR-E04 and report them. `node scripts/validate-feedback.mjs <log-path>` does it in one step (includes fix-ordering suggestion).
 2. **Order**: entries marked `recurring` first, then by `priority` (high → medium → low); within the same level, newest first.
 3. **Propose per item**: for each entry, present a fix proposal — target file, concrete change, why this change — **one confirmation per item**; never batch-apply.
 4. **Execute**: apply the change after the engineer confirms; skip without pushing if not confirmed.
