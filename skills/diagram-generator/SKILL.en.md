@@ -2,7 +2,7 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.4.0
+version: 1.4.2
 summary: Generate production-quality standalone HTML/SVG technical diagrams with a built-in geometry checker.
 license: MIT
 tags:

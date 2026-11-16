@@ -2,7 +2,7 @@
 name: diagram-generator
 slug: yumingtao-diagram-generator
 displayName: Diagram Generator
-version: 1.4.1
+version: 1.4.2
 summary: 生成专业独立 HTML/SVG 技术图表，内置几何检查器。
 license: MIT
 tags:

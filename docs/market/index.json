@@ -94,12 +94,12 @@
       },
       "versions": [
         {
-          "version": "1.4.1",
-          "publishTimestamp": 1794544692,
+          "version": "1.4.2",
+          "publishTimestamp": 1794818451,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "eeb92bb6cb453bfe36979d97c0de74373cd13573",
+            "commit": "59cb478f8aa92e40f4eb35363f15ceaa6b9f66a1",
             "path": "skills/diagram-generator"
           }
         }
