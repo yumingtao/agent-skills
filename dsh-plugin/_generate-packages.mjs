@@ -1,6 +1,7 @@
-// One-off generator: creates the four standalone npm packages under packages/.
+// One-off generator: creates the standalone npm packages under packages/.
+// Re-run safe: existing package versions are preserved.
 // Run from dsh-plugin/: node _generate-packages.mjs
-import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const repoRoot = new URL('../', import.meta.url).pathname
@@ -28,6 +29,16 @@ const skills = [
     description: 'Meta-skill for designing orchestrator + phases structured workflow skills with progressive phase loading, task tracking, and inter-phase data flow.',
     keywords: ['dsh', 'dsh-plugin', 'workflow', 'meta-skill', 'agent-skill'],
   },
+  {
+    id: 'defect-detective',
+    description: 'Read-only triage for a defect signal: normalize a fingerprint, search duplicate tickets, correlate recent changes, infer the owning team, then decide whether to file a new ticket.',
+    keywords: ['dsh', 'dsh-plugin', 'bug-triage', 'dedup', 'agent-skill'],
+  },
+  {
+    id: 'session-retrospective',
+    description: 'End-of-session retro that logs workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.',
+    keywords: ['dsh', 'dsh-plugin', 'retrospective', 'feedback', 'agent-skill'],
+  },
 ]
 
 for (const s of skills) {
@@ -39,10 +50,16 @@ for (const s of skills) {
   // sync.sh --check stays clean on regenerated copies).
   cpSync(skillSrc, join(pkgDir, 'skill'), { recursive: true, preserveTimestamps: true })
 
-  // package.json
+  // package.json — preserve the version of packages that already exist,
+  // so re-running the generator never resets a published version.
+  let version = '1.0.0'
+  const existingPkg = join(pkgDir, 'package.json')
+  if (existsSync(existingPkg)) {
+    try { version = JSON.parse(readFileSync(existingPkg, 'utf8')).version } catch { /* keep default */ }
+  }
   const pkg = {
     name: pkgName,
-    version: '1.0.0',
+    version,
     description: s.description,
     type: 'module',
     main: 'index.js',
@@ -193,7 +210,7 @@ MIT
   // LICENSE (copy from repo root)
   cpSync(join(repoRoot, 'LICENSE'), join(pkgDir, 'LICENSE'))
 
-  console.log(`created ${pkgName}@1.0.0`)
+  console.log(`created ${pkgName}@${version}`)
 }
 
 console.log('done')

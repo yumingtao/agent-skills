@@ -5,6 +5,10 @@ displayName: Insight Challenge
 version: 1.7.0
 summary: Adversarial review of code quality findings with source-anchored counter-evidence and structured verdicts.
 license: MIT
+tags:
+  - code review
+  - developer tools
+  - quality analysis
 disable-model-invocation: true
 description: >
   Adversarial review of code quality findings: challenge insights with counter-evidence, verify claims against source code, and produce structured verdicts. Use for findings from code review, quality analysis, or architecture assessment. Triggers on 'insight-challenge', 'challenge finding', '审查发现'.

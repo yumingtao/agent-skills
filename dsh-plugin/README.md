@@ -1,6 +1,6 @@
 # yumingtao agent skills — DSH bundles
 
-Four standalone [DSH](https://www.dsh.so) bundles, one per skill. Each bundle
+Six standalone [DSH](https://www.dsh.so) bundles, one per skill. Each bundle
 copies a single agent skill into your DSH skill discovery root on web profile
 boot, so each skill can be installed (and tracked) independently.
 
@@ -15,6 +15,8 @@ boot, so each skill can be installed (and tracked) independently.
 | `yumingtao-clarify-before-acting` | `clarify-before-acting` | Resolve direction-changing ambiguity before acting on complex, ambiguous, or high-cost requests. Skips trivial, mechanical, low-risk tasks. |
 | `yumingtao-insight-challenge` | `insight-challenge` | Adversarial review of code-quality findings. Challenges insights with counter-evidence, verifies claims against source code, and produces structured verdicts. |
 | `yumingtao-workflow-skill-designer` | `workflow-skill-designer` | Meta-skill for designing orchestrator + phases structured workflow skills with progressive phase loading, task tracking, and inter-phase data flow. |
+| `yumingtao-defect-detective` | `defect-detective` | Read-only triage for a defect signal: normalize a fingerprint, search duplicate tickets, correlate recent changes, infer the owning team, then decide whether to file a new ticket. |
+| `yumingtao-session-retrospective` | `session-retrospective` | End-of-session retro that logs workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop. |
 
 ## Install
 
@@ -25,6 +27,8 @@ dsh plugin --profile web add yumingtao-diagram-generator
 dsh plugin --profile web add yumingtao-clarify-before-acting
 dsh plugin --profile web add yumingtao-insight-challenge
 dsh plugin --profile web add yumingtao-workflow-skill-designer
+dsh plugin --profile web add yumingtao-defect-detective
+dsh plugin --profile web add yumingtao-session-retrospective
 ```
 
 Or from the GitHub repository directly:
@@ -62,13 +66,13 @@ dsh-plugin/sync.sh
 # Check for drift between copies and canonical source
 dsh-plugin/sync.sh --check
 
-# Bump version (patch|minor|major|x.y.z) of all four packages and publish
+# Bump version (patch|minor|major|x.y.z) of all packages and publish
 dsh-plugin/sync.sh --bump patch --publish
 ```
 
 The script uses `rsync` with the repo's standard exclude list (`.DS_Store`,
 `node_modules/`, etc.) and supports `--dry-run` to preview changes. It operates
-on all four packages; `--bump` and `--publish` loop over every package under
+on all packages; `--bump` and `--publish` loop over every package under
 `packages/`.
 
 ## Layout
@@ -85,7 +89,9 @@ dsh-plugin/
 │   │   └── LICENSE
 │   ├── clarify-before-acting/
 │   ├── insight-challenge/
-│   └── workflow-skill-designer/
+│   ├── workflow-skill-designer/
+│   ├── defect-detective/
+│   └── session-retrospective/
 ├── sync.sh                     # sync + bump + publish all packages
 └── README.md
 ```

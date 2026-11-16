@@ -18,6 +18,18 @@
 - 验证跨阶段数据流一致性
 - 向用户报告校验结果
 
+## 验证分层
+
+本阶段的结构校验只是三层验证的第一层。向工程师报告验证结果时，声明到层——**未运行的层不说已做**：
+
+| 层 | 内容 | 手段 |
+|---|---|---|
+| 1. 结构校验 | frontmatter、清单、引用完整性、章节完整（本阶段步骤 4.1–4.6） | 自动检查脚本 |
+| 2. 内容自测 | 中英文章节对齐、JSON/枚举一致性、链接解析、示例有效性 | 按内容编写一次性校验或逐项人工核对 |
+| 3. 功能冒烟 | 用真实输入端到端执行一次 skill 主流程，验证工具链与输出格式落地 | 真实环境（如只读工单查询、真实文件写入） |
+
+三层不可互相替代：结构校验全绿 ≠ 自测通过，自测通过 ≠ 冒烟通过。"结构校验通过"不是"测试完成"——描述验证状态时必须精确到已运行的层。
+
 ## 步骤 4.1：结构校验
 
 ```javascript
@@ -107,6 +119,24 @@ function validateReferences(config) {
     const filename = `${String(phase.number).padStart(2, '0')}-${phase.slug}.md`;
     if (!skillMd.includes(filename)) {
       results.errors.push(`Phase Reference table missing entry for: ${filename}`);
+    }
+  }
+
+  // 独立安装视角：跨技能引用禁止相对文件路径
+  // （用户只安装本 skill 时，旁边的兄弟 skill 目录不存在，../xxx/ 链接必然断链；
+  //   引用其他技能一律用技能名纯文本，如"按 clarify-before-acting 的问题队列规则"）
+  const crossSkillLinks = skillMd.match(/\]\(\.\.\/[^)]+\)/g) || [];
+  for (const link of crossSkillLinks) {
+    results.errors.push(`Cross-skill relative path breaks standalone install: ${link}`);
+  }
+
+  // 独立安装视角：skill 内部引用必须解析到本 skill 目录内
+  const internalLinks = skillMd.match(/\]\((?!http|#)[^)]+\)/g) || [];
+  for (const link of internalLinks) {
+    const target = link.slice(2, -1).split('#')[0];
+    if (target.startsWith('../')) continue; // handled above
+    if (target && !fileExists(`${skillDir}/${target}`)) {
+      results.errors.push(`Referenced resource not found inside skill: ${target}`);
     }
   }
 

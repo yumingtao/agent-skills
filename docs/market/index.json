@@ -5,8 +5,8 @@
     "zh": "Yumingtao Agent Skills"
   },
   "description": {
-    "en": "Standalone agent skills for diagram generation, clarification discipline, adversarial review, and workflow skill design.",
-    "zh": "面向 Agent 的独立技能集：架构图生成、需求澄清、对抗式审查、工作流技能设计。"
+    "en": "Standalone agent skills for diagram generation, clarification discipline, adversarial review, workflow skill design, defect triage, and session retrospectives.",
+    "zh": "面向 Agent 的独立技能集：架构图生成、需求澄清、对抗式审查、工作流技能设计、缺陷分诊、会话复盘。"
   },
   "metadata": {
     "categories": {
@@ -52,6 +52,18 @@
         "title": {
           "en": "Code Review",
           "zh": "代码审查"
+        }
+      },
+      "triage": {
+        "title": {
+          "en": "Triage",
+          "zh": "分诊"
+        }
+      },
+      "retrospective": {
+        "title": {
+          "en": "Retrospective",
+          "zh": "复盘"
         }
       }
     }
@@ -191,6 +203,76 @@
             "url": "https://github.com/yumingtao/agent-skills",
             "commit": "eeb92bb6cb453bfe36979d97c0de74373cd13573",
             "path": "skills/workflow-skill-designer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "defect-detective",
+      "title": {
+        "en": "Defect Detective",
+        "zh": "缺陷分诊侦探"
+      },
+      "description": {
+        "en": "Read-only triage for a defect signal: normalize a fingerprint, search duplicate tickets, correlate recent changes, infer the owning team, then decide whether to file a new ticket.",
+        "zh": "对缺陷信号的只读分诊：归一化指纹、查重已有工单、关联近期变更、推断归属团队，再决定是否新建工单。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/defect-detective",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/defect-detective"
+      },
+      "metadata": {
+        "category": "review",
+        "labels": [
+          "triage"
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0.6",
+          "publishTimestamp": 1794814586,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "74074a962239b6cb944d52f7323269736a5428d9",
+            "path": "skills/defect-detective"
+          }
+        }
+      ]
+    },
+    {
+      "name": "session-retrospective",
+      "title": {
+        "en": "Session Retrospective",
+        "zh": "会话复盘"
+      },
+      "description": {
+        "en": "End-of-session retro that logs workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.",
+        "zh": "会话结束时把工作流问题写入结构化 JSONL 日志：复发自动升级优先级，一句话进入修复模式闭环。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/session-retrospective",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/session-retrospective"
+      },
+      "metadata": {
+        "category": "workflow",
+        "labels": [
+          "retrospective"
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0.5",
+          "publishTimestamp": 1794814586,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "74074a962239b6cb944d52f7323269736a5428d9",
+            "path": "skills/session-retrospective"
           }
         }
       ]

@@ -5,6 +5,10 @@ displayName: Workflow Skill Designer
 version: 1.3.0
 summary: Meta-skill for designing orchestrator + phases structured workflow skills.
 license: MIT
+tags:
+  - developer tools
+  - workflow
+  - meta-skill
 disable-model-invocation: true
 description: >
   Meta-skill for designing orchestrator+phases structured workflow skills. Creates SKILL.md coordinator with progressive phase loading, TodoWrite patterns, and data flow. Triggers on "design workflow skill", "create workflow skill", "workflow skill designer", "设计工作流技能", "创建 workflow skill".

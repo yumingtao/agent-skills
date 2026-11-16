@@ -1,0 +1,11 @@
+# yumingtao-session-retrospective bundle: installs the session-retrospective agent skill into the DSH
+# skill discovery root on web profile boot.
+#
+# Activate with:
+#   dsh plugin --profile web add yumingtao-session-retrospective
+#
+# On boot the row copies the packaged skill directory into the user-global
+# skill root (~/.agents/skills). Installation is idempotent.
+- insert:
+  - id: yumingtao-session-retrospective
+    name: 'yumingtao-session-retrospective'

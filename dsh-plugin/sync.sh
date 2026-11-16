@@ -27,12 +27,14 @@ repo_root="$(cd "$script_dir/.." && pwd)"
 # shellcheck source=sync/manifest.sh
 source "$repo_root/sync/manifest.sh"
 
-# The four standalone packages. Directory name == skill id == npm package suffix.
+# The standalone packages. Directory name == skill id == npm package suffix.
 DSH_SKILLS=(
   "diagram-generator"
   "clarify-before-acting"
   "insight-challenge"
   "workflow-skill-designer"
+  "defect-detective"
+  "session-retrospective"
 )
 
 src_root="$repo_root/skills"
