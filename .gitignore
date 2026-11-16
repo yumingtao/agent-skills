@@ -27,3 +27,4 @@ metrics/
 *.html
 !skills/diagram-generator/**/*.html
 !dsh-plugin/packages/**/*.html
+.trae-html-share-packages/
