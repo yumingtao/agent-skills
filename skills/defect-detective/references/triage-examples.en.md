@@ -2,6 +2,8 @@
 
 Three full cases covering the main path and both skip branches. For everyday triage the rules in SKILL.en.md are enough; read this when a branch call is unclear or when you need an output-format reference.
 
+> Ticket IDs, paths, payloads, and data in the examples are fictional or redacted for demonstration; they do not represent any real system or real ticket.
+
 ## Case A: Backend API error — dedup hit (main path)
 
 **Input signal:**
