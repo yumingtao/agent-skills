@@ -34,7 +34,7 @@ Load and follow these files before generating a diagram:
 4. If editing an existing diagram, inspect the current artifact first and preserve unrelated content, notes, and color semantics.
 5. Generate one complete standalone `.html` file using `resources/template.html` as the base.
 6. Replace every placeholder with concrete content from the user's brief or a clearly labeled assumption.
-7. Run the final audit checklist in `resources/generation-rules.md` before returning the file.
+7. **Must** run `node scripts/check-diagram.mjs <output.html>` before returning the file; any error reported with a non-zero exit code must be fixed and the checker re-run until it passes. If the checker is unavailable, perform manual verification per the "Reliability Guarantees" section of `resources/generation-rules.md`.
 
 Keep this file intentionally thin. Do not duplicate the shared design system, SVG rules, output-mode policy, or audit checklist here; update `resources/generation-rules.md` instead.
 

@@ -217,6 +217,48 @@ Optional replacement sections:
 - Deployment Notes
 - Runtime Snapshot, only when the user explicitly asks for current operational state.
 
+## Reliability Guarantees
+
+Every generated artifact must pass a deterministic validation gate before it is returned. The gate has three layers; a failure at any layer blocks delivery until resolved.
+
+### Layer 1 — Input Normalization (before rendering)
+
+- If the brief is ambiguous about the lens, default to `system` and state the assumption in the notes rail.
+- If a required entity (actor, entry, state, or external dependency) is missing from the brief, mark it as an assumption rather than inventing details.
+- If the input is a diagram-ir JSON, validate that `nodes` and `edges` are non-empty arrays before rendering.
+
+### Layer 2 — Machine Validation (after rendering)
+
+Run `node scripts/check-diagram.mjs <output.html>` and treat any error (exit code 1) as a blocking defect. The checker enforces:
+
+- No template placeholder text remains (E010).
+- IR `mode` is `create` or `revise`; IR `lens` is one of the seven supported lenses.
+- All IR node and region bounds are inside the viewBox (E005).
+- No two IR nodes overlap (E006).
+- Every edge references known source and target nodes (E007).
+- `data-node-id` / `data-edge-id` attributes match the IR registry bidirectionally (E008).
+- Every `marker-end` URL resolves to a defined `<marker>` with matching fill color (E009).
+- Connector endpoints land on node edges; no connector segment passes through or hugs any node (E014).
+- The artifact is self-contained — no external or relative asset references (E012).
+
+If the checker reports warnings (exit code 0 with W-codes), review them but they do not block delivery. The most common warning is W001 (no IR slot — legacy mode), which means geometry checks were skipped; re-emit the artifact with an embedded IR slot to restore full validation.
+
+### Layer 3 — Visual Verification (final gate)
+
+Render the complete HTML to a raster image (headless Chrome/Chromium, Playwright, or OS preview) and inspect it. Coordinate review alone misses overlaps, clipping, and arrows that fall short. If no renderer is available, fall back to coordinate inspection against the bounds registry and explicitly note the skip.
+
+### Failure Recovery
+
+When the checker fails, fix issues in this order:
+
+1. Placeholder text (E010) — replace with concrete content.
+2. Bounds and overlap errors (E005, E006) — adjust coordinates.
+3. Connector geometry errors (E014) — re-route connectors.
+4. Marker or self-containment errors (E009, E012) — fix references.
+5. Structural mismatches (E007, E008) — reconcile IR and SVG.
+
+Re-run the checker after each fix. Only return the artifact when the checker exits 0.
+
 ## Release Check
 
 Before final output, run `node scripts/check-diagram.mjs <output.html>`. The checker covers the items marked **[machine]** below (placeholder text, marker integrity, IR geometry, data-attribute cross-checks, region bounds, connector endpoints, connector routing around nodes, self-containment). Items marked **[manual]** need eyes or judgment — the checker cannot see rendered output. If the checker is unavailable, manually verify both groups:

@@ -82,7 +82,7 @@ function warn(msg) { warnings.push(`[${codeFor(msg, WARN_CODE_TABLE, 'W099')}] $
 let ir = null;
 const irMatch = html.match(/<script[^>]+id="diagram-ir"[^>]*>([\s\S]*?)<\/script>/);
 if (!irMatch) {
-  warn('No #diagram-ir slot found — running in legacy mode (geometry checks skipped).');
+  warn('No #diagram-ir slot found — running in legacy mode. Geometry checks (node bounds, overlap, region containment, connector endpoints, connector routing, labelAnchor overlap) are SKIPPED. Only placeholder, marker, self-containment, and structural checks run. Re-emit the artifact with an embedded IR slot to enable full validation.');
 } else {
   try {
     ir = JSON.parse(irMatch[1].trim());
@@ -126,6 +126,19 @@ if (viewBoxMatch) {
 if (ir) {
   if (typeof ir !== 'object' || Array.isArray(ir)) {
     fail('#diagram-ir must contain a JSON object.');
+  }
+
+  // Validate top-level IR fields: mode and lens must use supported values so
+  // downstream renderers and the revise workflow behave predictably.
+  const VALID_MODES = ['create', 'revise'];
+  // Accept both "data movement" (rules doc spelling) and "data-movement"
+  // (fixture/IR convention) so the checker does not reject valid artifacts.
+  const VALID_LENSES = ['system', 'implementation', 'infrastructure', 'trust', 'data movement', 'data-movement', 'deployment', 'process'];
+  if (ir.mode !== undefined && !VALID_MODES.includes(ir.mode)) {
+    fail(`IR mode "${ir.mode}" is not one of ${VALID_MODES.join(', ')}.`);
+  }
+  if (ir.lens !== undefined && !VALID_LENSES.includes(ir.lens)) {
+    fail(`IR lens "${ir.lens}" is not one of ${VALID_LENSES.join(', ')}.`);
   }
 
   const nodes = irNodes;
@@ -365,6 +378,7 @@ const PLACEHOLDER_PATTERNS = [
   /One sentence that states the system boundary/,
   /Summarize the runtime boundary/,
   /Describe the primary request path/,
+  /Describe identity, event, data-write/,
   /List scale, resilience/,
   /Record assumptions made because the source brief omitted/,
 ];

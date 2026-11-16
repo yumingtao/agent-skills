@@ -42,7 +42,7 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 ### 其他 agent
 
 - **diagram-generator** 自带逐平台适配层：`AGENTS.md`（Cursor / OpenCode / Windsurf）、`GEMINI.md`、`COPILOT-INSTRUCTIONS.md`、`CODEBUDDY.md`、`HERMES.md` —— 见其 [README](skills/diagram-generator/README.md#installation)。
-- 其余三个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
+- 其余五个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
 
 ### SkillHub（国内社区市场）
 
@@ -134,6 +134,8 @@ dsh plugin install diagram-generator
 dsh plugin install clarify-before-acting
 dsh plugin install insight-challenge
 dsh plugin install workflow-skill-designer
+dsh plugin install defect-detective
+dsh plugin install session-retrospective
 ```
 
 > 使用市场索引时，skill 内容从 `github.com/yumingtao/agent-skills` 按索引中记录的固定 commit 拉取，与所选索引 URL 无关。CDN/raw 的选择只影响索引文件本身的分发方式。

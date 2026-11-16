@@ -34,7 +34,7 @@ description: >
 4. 若编辑现有图表，先检查当前产物，保留不相关内容、注释和颜色语义。
 5. 以 `resources/template.html` 为基础，生成一个完整的独立 `.html` 文件。
 6. 用用户需求中的具体内容或明确标注的假设替换每个占位符。
-7. 返回文件前运行 `resources/generation-rules.md` 中的最终审计清单。
+7. 返回文件前**必须**运行 `node scripts/check-diagram.mjs <output.html>`；检查器以非零退出码报告的任何错误都必须修复后重新运行，直到通过。检查器不可用时，按 `resources/generation-rules.md` 的"Reliability Guarantees"章节执行人工校验。
 
 保持本文件有意精简。不要在此重复共享设计系统、SVG 规则、输出模式策略或审计清单；应更新 `resources/generation-rules.md`。
 
