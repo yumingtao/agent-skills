@@ -28,3 +28,7 @@ metrics/
 !skills/diagram-generator/**/*.html
 !dsh-plugin/packages/**/*.html
 .trae-html-share-packages/
+
+# Local SkillHub competitive-analysis reports.
+defect-detective-skillhub-comparison/
+session-retrospective-skillhub-comparison/
