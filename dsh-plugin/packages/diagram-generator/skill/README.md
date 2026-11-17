@@ -4,6 +4,12 @@
 
 该包面向 Claude、Codex、Cursor、OpenCode、Windsurf、Gemini、GitHub Copilot、CodeBuddy 和 Hermes 等智能体环境。共享行为位于 `resources/` 中；平台文件是有意精简的适配器，将各平台路由到相同的生成与审计工作流。
 
+## 在这套技能里的位置
+
+单独使用时，一份简报得到一张独立 HTML/SVG。它是执行站。视角或范围不清时，先用 [clarify-before-acting](../clarify-before-acting/)。图文件没有固定的下游技能。
+
+整条环见仓库 README 的[「单独使用，也可以串起来」](../../README.zh-CN.md#alone-or-together)。
+
 ## 产出物
 
 生成器从七种视角（lens）中选择一种，渲染独立 HTML/SVG 图。以下是各视角的实例，均由简短简报渲染并通过 `scripts/check-diagram.mjs` 校验。

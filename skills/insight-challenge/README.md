@@ -2,6 +2,12 @@
 
 对代码评审、静态分析或安全扫描产出的"发现"进行**对抗性验证**的技能：以怀疑立场独立查证每条发现是否真实成立，产出 overturned（推翻）/ weakened（削弱）/ confirmed（确认）三态结论，避免修复无中生有的问题。
 
+## 在这套技能里的位置
+
+单独使用时，一条发现得到推翻、削弱或确认。它是执行站。要挑战的范围不清时，先用 [clarify-before-acting](../clarify-before-acting/)。系统性误判在会话结束时交给 [session-retrospective](../session-retrospective/)。它产出裁决，代码修改留在后续流程。
+
+整条环见仓库 README 的[「单独使用，也可以串起来」](../../README.zh-CN.md#alone-or-together)。
+
 ## 目录结构
 
 ```

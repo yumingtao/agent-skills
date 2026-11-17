@@ -12,6 +12,8 @@ Original, platform-neutral agent skills — prompt assets that work across Claud
 
 No runtime dependencies, no network calls, no build step. Each skill is a self-contained folder of instructions; where a skill supports multiple platforms, the platform files are thin adapters that route every agent to the same shared behavior.
 
+Each of the six skills is complete on its own: install one and it works. Installed together, they sit on one engineering loop; see "Use one, or run them as a loop" below.
+
 ## Skills
 
 | Skill | What it does |
@@ -22,6 +24,46 @@ No runtime dependencies, no network calls, no build step. Each skill is a self-c
 | **[workflow-skill-designer](skills/workflow-skill-designer/)** | Meta-skill that designs orchestrator + phases workflow skills: a thin `SKILL.md` coordinator plus progressively loaded `phases/` files, with TodoWrite patterns, inter-phase data flow, and validation checklists. |
 | **[defect-detective](skills/defect-detective/)** | The first stop before fixing a bug — read-only triage for a defect signal (bug report, stack trace, or log) that answers: is this a known issue, who owns it, and what changed. Normalizes a stable fingerprint, searches the tracker for duplicates cross-stack, correlates recent changes when the implicated layer is known, and infers the owning team with an auditable evidence chain. Upstream of fix-it skills (triage, not repair); strictly read-only, with a ready-to-paste ticket draft but never files or mutates anything. Smoke-tested against a real Jira tracker (dedup hit and no-match paths) plus git blame correlation. |
 | **[session-retrospective](skills/session-retrospective/)** | End-of-session retro that logs development-workflow issues (wrong answers, skipped gates, wrong routing, MCP errors, skill/doc gaps, multi-turn corrections) as enum-validated JSONL signals — a recurring issue is a rule gap and its priority escalates; when nothing went wrong, one success entry, never fabricated. One phrase enters Fix Mode: items ordered by recurrence and priority, per-item proposals, one confirmation per item with an append-only audit trail, running from the log alone across sessions. Ships a zero-dependency validation script (Node 18+) that machine-checks log health and recurrence groups. The signal-data layer: machine-aggregable output, complementary to report- and memory-style retro skills. Smoke-tested on a real session across both the main path and the corrupted-line exception. |
+
+<a id="alone-or-together"></a>
+
+## Use one, or run them as a loop
+
+Install any one skill and it finishes its own job. Installed together, they sit on one engineering loop: an arrow is an optional handoff, and you stop at the station the task needs.
+
+```mermaid
+flowchart LR
+  gate["clarify-before-acting<br/>direction gate"]
+  diagram["diagram-generator"]
+  insight["insight-challenge"]
+  defect["defect-detective"]
+  retro["session-retrospective<br/>close the loop"]
+  meta["workflow-skill-designer<br/>meta-skill"]
+  gate --> diagram
+  gate --> insight
+  gate --> defect
+  diagram --> retro
+  insight --> retro
+  defect --> retro
+  retro --> meta
+```
+
+Arrows are handoffs. When an upstream skill is absent, the current skill continues under its own rules.
+
+| Station | Skill | On its own | Together |
+|---|---|---|---|
+| Direction gate | [clarify-before-acting](skills/clarify-before-acting/) | Resolves goal, constraints, success, and context, then hands off a task contract | When direction is unclear, pass through it before any execution station |
+| Execution | [diagram-generator](skills/diagram-generator/) | Turns a brief into a standalone HTML/SVG diagram | When the lens or scope is unclear, pass through the gate first |
+| Execution | [insight-challenge](skills/insight-challenge/) | Turns one review finding into overturned / weakened / confirmed | At session end, systemic misjudgments go to the closer |
+| Execution | [defect-detective](skills/defect-detective/) | Read-only answer to whether it is known, who owns it, and what changed, plus a ticket draft | A thin fingerprint goes through the gate first; a mis-triage goes to the closer; freezing the pipeline as a team workflow goes to the meta-skill |
+| Closer | [session-retrospective](skills/session-retrospective/) | Writes this session's systemic misses to JSONL, and can fix them one by one | Any working session can be logged; a recurring "a workflow is missing" goes to the meta-skill |
+| Meta-skill | [workflow-skill-designer](skills/workflow-skill-designer/) | Designs an orchestrator + phases skill package | Turns a loop that keeps recurring into a new skill. The generated skill runs its own phases |
+
+Three combinations you can follow as written:
+
+- Fix a bug: when direction is unclear, start with `clarify-before-acting`, then `defect-detective`. Filing and the fix stay on your own write path. Close the session with `session-retrospective`.
+- Check a review finding: `insight-challenge` emits the verdict. A misjudgment is logged to `session-retrospective` at session end.
+- Turn a repeated process into a skill: a gap that keeps showing up in `session-retrospective` goes to `workflow-skill-designer`.
 
 ## Install
 

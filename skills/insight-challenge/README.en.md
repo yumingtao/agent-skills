@@ -2,6 +2,12 @@
 
 A skill for **adversarial verification** of findings from code reviews, static analysis, or security scans: independently check whether each finding actually holds, and produce one of three verdicts — overturned / weakened / confirmed — so that no one wastes effort fixing phantom issues.
 
+## Where this skill sits
+
+On its own, one finding becomes overturned, weakened, or confirmed. This skill is an execution station. When the set of findings to challenge is unclear, start with [clarify-before-acting](../clarify-before-acting/). A systemic misjudgment goes to [session-retrospective](../session-retrospective/) at session end. This skill emits the verdict; code changes stay in the follow-up flow.
+
+The full loop is in the collection README, [Use one, or run them as a loop](../../README.md#alone-or-together).
+
 ## Directory Layout
 
 ```

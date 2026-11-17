@@ -4,6 +4,12 @@ Diagram Generator is a platform-neutral instruction pack for creating standalone
 
 The package is designed for agent environments such as Claude, Codex, Cursor, OpenCode, Windsurf, Gemini, GitHub Copilot, CodeBuddy, and Hermes. Shared behavior lives in `resources/`; platform files are intentionally thin adapters that route each platform to the same generation and audit workflow.
 
+## Where this skill sits
+
+On its own, a brief becomes one standalone HTML/SVG diagram. This skill is an execution station. When the lens or the scope is unclear, start with [clarify-before-acting](../clarify-before-acting/). The diagram file has no fixed downstream skill.
+
+The full loop is in the collection README, [Use one, or run them as a loop](../../README.md#alone-or-together).
+
 ## What It Produces
 
 The generator picks one of seven lenses and renders a standalone HTML/SVG map. Below are examples of the lenses in action, each rendered from a short brief and validated with `scripts/check-diagram.mjs`.
