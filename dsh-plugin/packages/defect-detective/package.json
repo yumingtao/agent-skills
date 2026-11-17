@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-defect-detective",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Read-only triage for a defect signal: normalize a fingerprint, search duplicate tickets, correlate recent changes, infer the owning team, then decide whether to file a new ticket.",
   "type": "module",
   "main": "index.js",
