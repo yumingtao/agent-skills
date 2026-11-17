@@ -1,0 +1,37 @@
+{
+  "name": "@yumingtao/agent-skills",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Six platform-neutral agent skills bundled for DeepSeek Harness: diagram-generator, clarify-before-acting, insight-challenge, workflow-skill-designer, defect-detective, session-retrospective.",
+  "type": "module",
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "dsh-plugin/packages/*/skill/**",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "agent-skills",
+    "diagram-generator",
+    "clarify-before-acting",
+    "insight-challenge",
+    "workflow-skill-designer",
+    "defect-detective",
+    "session-retrospective"
+  ],
+  "author": "yumingtao",
+  "homepage": "https://github.com/yumingtao/agent-skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yumingtao/agent-skills.git"
+  }
+}

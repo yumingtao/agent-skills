@@ -1,0 +1,11 @@
+# @yumingtao/agent-skills bundle: installs all six agent skills into the DSH
+# skill discovery root on web profile boot.
+#
+# Activate with:
+#   dsh plugin --profile web add github:yumingtao/agent-skills
+#
+# On boot the bundle copies every packaged skill directory into the user-global
+# skill root (~/.agents/skills). Installation is idempotent.
+- insert:
+  - id: '@yumingtao/agent-skills'
+    name: '@yumingtao/agent-skills'
