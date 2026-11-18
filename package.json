@@ -1,6 +1,6 @@
 {
   "name": "@yumingtao/agent-skills",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Six platform-neutral agent skills bundled for DeepSeek Harness: diagram-generator, clarify-before-acting, insight-challenge, workflow-skill-designer, defect-detective, session-retrospective.",
   "type": "module",
