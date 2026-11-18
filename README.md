@@ -12,6 +12,8 @@ Original, platform-neutral agent skills — prompt assets that work across Claud
 
 No runtime dependencies, no network calls, no build step. Each skill is a self-contained folder of instructions; where a skill supports multiple platforms, the platform files are thin adapters that route every agent to the same shared behavior.
 
+These skills were extracted from day-to-day development: each was used on real work, and its rules were written down here once they held.
+
 Each of the six skills is complete on its own: install one and it works. Installed together, they sit on one engineering loop; see "Use one, or run them as a loop" below.
 
 ## Skills
