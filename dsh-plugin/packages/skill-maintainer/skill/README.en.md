@@ -1,6 +1,6 @@
 # Skill Maintainer
 
-Edits a skill that already exists. It does not score one. Scoring belongs to SkillHub's official `skillhub-trace-evaluator`. It finds one gap with the public TRACE bands, writes a proposal, and edits only after confirmation. Any directory with `SKILL.md` can be maintained. "自动补到阈值" edits each scored sub-item in turn, default 4.8, for at most 5 rounds. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). This skill's version is `1.0.3`.
+Edits a skill that already exists. It does not score one. It finds one gap, writes a proposal, and edits only after confirmation. Any directory with `SKILL.md` can be maintained. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). This skill's version is `1.0.4`.
 
 ## Where this skill sits
 

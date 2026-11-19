@@ -7,7 +7,7 @@ Any one of the four signals can open a maintenance item: a TRACE pass, an evalua
 | 1 | A named security comment | A platform report names one sentence. Use that sentence only. Do not copy lab rules into the skill |
 | 2 | An evaluation comment | One version's comment names a phenomenon and it maps to one TRACE sub-item |
 | 3 | A recurring retro entry | The same skill and the same gap appear again in `metrics/workflow-feedback.jsonl` |
-| 4 | A TRACE pass | On "按 TRACE 过一遍", a sub-item is below the 4-point band |
+| 4 | A TRACE pass | On "按 TRACE 过一遍", a sub-item is not yet reliable to use in the bands. What counts as reliable is defined in [`trace-items.en.md`](trace-items.en.md) |
 | 5 | A structure check | zh/en `version` differs, `tags` counts differ, or the English install tree lacks a script the README names |
 
 Propose only the highest item. Put the rest under "Not in this change".
@@ -25,7 +25,7 @@ Enter only when the caller says "自动补到阈值". Each round still changes o
 ## Defer
 
 - An item that appears only on a third-party TRACE list and matches none of these 15 sub-items
-- A sub-item below the 4-point band when this run is not a TRACE pass and no comment or retro entry names it
+- A sub-item that is not yet reliable to use, when this run is not a TRACE pass and no comment or retro entry names it
 - A request to perform `trust.scan` locally
 
 ## Any directory

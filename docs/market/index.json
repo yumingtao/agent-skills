@@ -284,8 +284,8 @@
         "zh": "技能维护"
       },
       "description": {
-        "en": "Edits an existing skill. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. Default is one gap and a confirmation.",
-        "zh": "修改已有技能，不打分。打分交给 SkillHub 官方 skillhub-trace-evaluator。默认一次一条、确认后写入。"
+        "en": "Edits an existing skill. It does not score one. Default is one gap and a confirmation.",
+        "zh": "修改已有技能，不打分。默认一次一条、确认后写入。"
       },
       "author": "yumingtao",
       "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/skill-maintainer",

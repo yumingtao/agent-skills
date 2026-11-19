@@ -25,23 +25,23 @@ Signal: structure check
 Sub-item: same patch in both languages
 Band missed: the repo invariant says behavior and version move together; behavior already matches, and only the version number differs
 This change: set version in SKILL.en.md to the same value as SKILL.md
-Not in this change: other sub-items below the 4-point band that nothing named
+Not in this change: other sub-items that are not yet reliable to use and that nothing named
 Version: set the English patch number equal to the Chinese one; do not add another patch for the alignment itself
 Do not write before confirmation.
 ```
 
 ## Two more filled examples
 
-A TRACE pass. The target `SKILL.md` states no misuse, so `antiPatternFaq` sits on the 1-point band.
+A pass over the bands. The target `SKILL.md` never states what not to do, so that sub-item is not yet reliable to use.
 
 ```text
 Target skill: example-skill
 Gap: it never states what not to do
 Signal: TRACE pass
 Sub-item: convention.antiPatternFaq
-Band missed: 1 means no anti-pattern guidance; 4 requires the main misuses
+Band missed: the bands say a skill that never states what not to do is not yet reliable to use
 This change: add a "When not to use" section to SKILL.md and SKILL.en.md with two misuses
-Not in this change: sub-items already at 4.8 or above
+Not in this change: the other sub-items left for another pass
 Version: 1.2.0 → 1.2.1, both languages
 Do not write before confirmation.
 ```

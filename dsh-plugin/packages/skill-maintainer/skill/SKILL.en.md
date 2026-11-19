@@ -2,8 +2,8 @@
 name: skill-maintainer
 slug: yumingtao-skill-maintainer
 displayName: Skill Maintainer
-version: 1.0.3
-summary: Edits an existing skill. It does not score one. Scoring belongs to SkillHub's skillhub-trace-evaluator. Default is one gap and a confirmation.
+version: 1.0.4
+summary: Edits an existing skill. It does not score one. Default is one gap and a confirmation.
 license: MIT
 tags:
   - developer tools
@@ -11,18 +11,18 @@ tags:
   - workflow
 disable-model-invocation: true
 description: >
-  Edits a skill that already exists. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. Self-check uses only that skill's public TRACE bands (trust.scan is not scored). Any directory with SKILL.md can be maintained. A signal may come from a TRACE pass, one version's evaluation comments, a recurring session-retrospective entry, or a zh/en and install-tree structure check. By default, propose one gap and do not write before confirmation. "自动补到阈值" edits one sub-item per round until each scored sub-item meets the threshold, default 4.8, for at most 5 rounds, and stops on items that documents cannot raise. This repo's sync scripts run only when the target is under skills/ and the scripts are present. They do not publish. Triggers on "维护这个技能", "按 TRACE 过一遍", "按评测改技能", "自动补到阈值", "skill maintainer".
+  Edits a skill that already exists. It does not score one. Self-check uses only the scoring bands shipped with this skill (trust.scan is not scored). Any directory with SKILL.md can be maintained. A signal may come from a pass over those bands, one version's evaluation comments, a recurring session-retrospective entry, or a zh/en and install-tree structure check. By default, propose one gap and do not write before confirmation. "自动补到阈值" edits one item per round, and stops to list items a document change cannot raise. This repo's sync scripts run only when the target is under skills/ and the scripts are present. They do not publish. Triggers on "维护这个技能", "按 TRACE 过一遍", "按评测改技能", "自动补到阈值", "skill maintainer".
 ---
 
 # Skill Maintainer
 
-This skill edits a skill that already exists. It does not score one. Scoring belongs to SkillHub's official `skillhub-trace-evaluator`. It finds one gap with the public bands, writes a proposal, and edits files only after confirmation.
+This skill edits a skill that already exists. It does not score one. It finds one gap with the bundled scoring bands, writes a proposal, and edits files only after confirmation.
 
-This skill's version is `1.0.3`. The version line inside a proposal belongs to the **target skill**, not to this skill.
+This skill's version is `1.0.4`. The version line inside a proposal belongs to the **target skill**, not to this skill.
 
 ## Iron laws
 
-1. **Self-check uses only the public TRACE bands.** The bands are in [`references/trace-items.en.md`](references/trace-items.en.md). `trust.scan` is not scored. This skill does not carry Keen Lab or YunDing Lab detection rules.
+1. **Self-check uses only the bundled scoring bands.** The bands are in [`references/trace-items.en.md`](references/trace-items.en.md). `trust.scan` is not scored. This skill does not carry Keen Lab or YunDing Lab detection rules.
 2. **No signal, no rule change.** A signal comes from a TRACE pass, an evaluation comment, a recurring retro entry, or a structure check. An item that matches none of the 15 sub-items and none of the repo invariants is deferred.
 3. **One gap at a time.** Every other gap goes under "Not in this change".
 4. **By default, do not write before confirmation.** When behavior changes, bump the target skill's `version` patch in both languages together. A README-navigation-only edit does not bump that skill. Only "自动补到阈值" writes across rounds, still one item per round.
@@ -43,7 +43,7 @@ This skill's version is `1.0.3`. The version line inside a proposal belongs to t
 
 1. **Name the target skill.** If it is unclear, ask one question: which skill? Any directory with `SKILL.md` qualifies. It does not have to live in this repo.
 2. **Read the signal you were given.** Do not wait until all four source types are present:
-   - "按 TRACE 过一遍": read `SKILL.md` and the references it names against the bands. A sub-item below the 4-point band is a gap.
+   - "按 TRACE 过一遍": read `SKILL.md` and the references it names against the bands. A sub-item that is not yet reliable to use is a gap. What counts as reliable is defined in the bands file.
    - An evaluation comment or API result: map the named sentence onto one sub-item. If the API cannot be read, use the pasted report and say so in the proposal (SM-E08).
    - A retro log: default `metrics/workflow-feedback.jsonl`. Use only a recurring gap on the same skill.
    - A structure check: zh/en `version`, `tags` count, and whether the English install tree contains scripts the README names.
@@ -57,11 +57,10 @@ Priority, the threshold loop, and deferral: [`references/signal-rules.en.md`](re
 
 The entry is "自动补到阈值". Without that phrase, use the proposal and confirmation above.
 
-- The threshold applies to each scored sub-item, default `4.8`. The caller may set another number in `(0, 5.0]`. Do not use the five-dimension average.
+- Each round edits one sub-item a document change can raise, edits both languages, then reads the same bands again.
 - `trust.scan` is not in the loop.
-- Each round scores the sub-items with the same bands, edits one item that is below the threshold and that a document change can raise, edits both languages, then scores again with the same bands.
-- Stop when every scored sub-item meets the threshold, when the remaining low items need a real run, or when 5 rounds are done.
-- On stop, list the sub-items still below the threshold and why. Do not write an unrun result as verified (SM-E09).
+- The threshold, the allowed range, and the stop conditions are in [`references/signal-rules.en.md`](references/signal-rules.en.md). Do not repeat the numbers here.
+- On stop, list the sub-items that still fall short and why. Do not write an unrun result as verified (SM-E09).
 
 ## Repo invariants
 
@@ -94,14 +93,14 @@ This skill's own `version` stays at its current value unless the target of this 
 
 ## FAQ
 
-**Q: Does the threshold use the five-dimension average?**
-A: No. Each scored sub-item is compared with the threshold, default 4.8.
+**Q: Does the threshold use an average across items?**
+A: No. Each scored sub-item is compared with the threshold on its own. The numbers are in [`references/signal-rules.en.md`](references/signal-rules.en.md).
 
-**Q: Will the loop edit until everything is 5?**
-A: No. It stops at 5 rounds, or when every remaining low item needs a real run, and it lists what is still below the threshold.
+**Q: Will the loop keep editing without a stop?**
+A: No. It stops when a stop condition in signal-rules is met, and it lists the sub-items that still fall short.
 
 **Q: Does a normal request edit files immediately?**
 A: No. Only "自动补到阈值" writes across rounds. Every other entry starts with a proposal.
 
 **Q: Does this skill score a skill?**
-A: No. Scoring belongs to SkillHub's official `skillhub-trace-evaluator`. This skill only edits.
+A: No. This skill only edits. It does not produce a score.

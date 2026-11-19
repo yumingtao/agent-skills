@@ -1,7 +1,7 @@
 {
   "name": "yumingtao-skill-maintainer",
-  "version": "1.0.0",
-  "description": "Edits an existing skill. It does not score one. Scoring belongs to SkillHub's skillhub-trace-evaluator. Default is one gap and a confirmation.",
+  "version": "1.0.1",
+  "description": "Edits an existing skill. It does not score one. Default is one gap and a confirmation.",
   "type": "module",
   "main": "index.js",
   "files": [

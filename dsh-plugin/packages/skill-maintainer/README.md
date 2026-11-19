@@ -3,7 +3,7 @@
 A [DSH](https://www.dsh.so) bundle that installs the `skill-maintainer` agent skill into
 your DSH skill discovery root.
 
-Edits an existing skill. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. Default is one gap and a confirmation.
+Edits an existing skill. It does not score one. Default is one gap and a confirmation.
 
 ## Install
 
