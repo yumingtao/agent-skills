@@ -1,6 +1,6 @@
 # Skill Maintainer
 
-Edits a skill that already exists. It does not score one. It finds one gap, writes a proposal, and edits only after confirmation. Any directory with `SKILL.md` can be maintained. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). This skill's version is `1.0.4`.
+Edits a skill that already exists. It does not score one. It finds one gap, writes a proposal, and edits only after confirmation. Any directory with `SKILL.md` can be maintained. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). This skill's version is `1.0.5`.
 
 ## Where this skill sits
 

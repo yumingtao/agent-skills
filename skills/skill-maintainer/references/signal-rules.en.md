@@ -16,7 +16,7 @@ Propose only the highest item. Put the rest under "Not in this change".
 
 Enter only when the caller says "自动补到阈值". Each round still changes one item, then scores again with the same bands.
 
-- The threshold is the minimum for each scored sub-item, default `4.8`, or another number in `(0, 5.0]`. Do not use the five-dimension average.
+- The threshold is the minimum for each scored sub-item, default `4.8`, or another number in `(0, 5.0]`. Do not use the five-dimension average. A number outside that range does not start the loop. Ask once (SM-E13). Do not replace an out-of-range number with the default.
 - `trust.scan` stays out of the loop.
 - Pick a sub-item a document edit can raise, such as a missing case, a recovery step, or an error code. A sub-item that needs a real run is not rewritten as passed.
 - Stop when every scored sub-item meets the threshold, when every remaining low item needs a real run, or after 5 rounds.

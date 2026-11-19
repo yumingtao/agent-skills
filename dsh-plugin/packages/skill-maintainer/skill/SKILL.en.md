@@ -2,7 +2,7 @@
 name: skill-maintainer
 slug: yumingtao-skill-maintainer
 displayName: Skill Maintainer
-version: 1.0.4
+version: 1.0.5
 summary: Edits an existing skill. It does not score one. Default is one gap and a confirmation.
 license: MIT
 tags:
@@ -18,7 +18,7 @@ description: >
 
 This skill edits a skill that already exists. It does not score one. It finds one gap with the bundled scoring bands, writes a proposal, and edits files only after confirmation.
 
-This skill's version is `1.0.4`. The version line inside a proposal belongs to the **target skill**, not to this skill.
+This skill's version is `1.0.5`. The version line inside a proposal belongs to the **target skill**, not to this skill.
 
 ## Iron laws
 
@@ -26,6 +26,7 @@ This skill's version is `1.0.4`. The version line inside a proposal belongs to t
 2. **No signal, no rule change.** A signal comes from a TRACE pass, an evaluation comment, a recurring retro entry, or a structure check. An item that matches none of the 15 sub-items and none of the repo invariants is deferred.
 3. **One gap at a time.** Every other gap goes under "Not in this change".
 4. **By default, do not write before confirmation.** When behavior changes, bump the target skill's `version` patch in both languages together. A README-navigation-only edit does not bump that skill. Only "自动补到阈值" writes across rounds, still one item per round.
+5. **A gap already in the target is left as it is.** When the target files already contain the text that gap asks for, do not propose it and do not write it. Running again only reports that it is already there. This skill makes no network call and sets no timeout.
 
 ## When to use
 
@@ -47,9 +48,9 @@ This skill's version is `1.0.4`. The version line inside a proposal belongs to t
    - An evaluation comment or API result: map the named sentence onto one sub-item. If the API cannot be read, use the pasted report and say so in the proposal (SM-E08).
    - A retro log: default `metrics/workflow-feedback.jsonl`. Use only a recurring gap on the same skill.
    - A structure check: zh/en `version`, `tags` count, and whether the English install tree contains scripts the README names.
-3. **Keep one gap.** Priority: a security comment that names an item → an evaluation comment → a recurring retro entry → a TRACE pass → a structure mismatch. A security comment contributes only the sentence it names. Do not add lab rules from it.
+3. **Keep one gap.** Priority: a security comment that names an item → an evaluation comment → a recurring retro entry → a TRACE pass → a structure mismatch. A security comment contributes only the sentence it names. Do not add lab rules from it. If the target already contains the text that gap asks for, skip it, report that it is already there (SM-E10), and take the next gap. If every gap is already there, stop and do not write.
 4. **Write the proposal and stop.** Template: [`references/proposal-template.en.md`](references/proposal-template.en.md).
-5. **Write only after confirmation.** Edit the matching Chinese and English passages together. The main path ends there. Only when the target is under this repo's `skills/<name>/` and the scripts are beside it, optionally run `sync/check.sh --collection-only`, then run `dsh-plugin/sync.sh` without `--publish` if that script exists too. When the scripts are absent, or the target is elsewhere, skip them and say so under "Not in this change". If a script fails, fix the reported error and run it once more. A second failure stops the run and is not recorded as a pass. Do not publish to SkillHub and do not run `npm publish`.
+5. **Write only after confirmation.** When both language files exist, edit the matching passages together. When only one language file exists, edit that file, do not create the other language, and name the file that is absent (SM-E11). The main path ends there. Only when the target is under this repo's `skills/<name>/` and the scripts are beside it, optionally run `sync/check.sh --collection-only`, then run `dsh-plugin/sync.sh` without `--publish` if that script exists too. When the scripts are absent, or the target is elsewhere, skip them and say so under "Not in this change". If a script fails, fix the reported error and run it once more. A second failure stops the run and is not recorded as a pass (SM-E12). Do not publish to SkillHub and do not run `npm publish`.
 
 Priority, the threshold loop, and deferral: [`references/signal-rules.en.md`](references/signal-rules.en.md).
 
@@ -57,9 +58,9 @@ Priority, the threshold loop, and deferral: [`references/signal-rules.en.md`](re
 
 The entry is "自动补到阈值". Without that phrase, use the proposal and confirmation above.
 
-- Each round edits one sub-item a document change can raise, edits both languages, then reads the same bands again.
+- Each round edits one sub-item a document change can raise. When both language files exist, edit both. When only one exists, follow SM-E11. Then read the same bands again.
 - `trust.scan` is not in the loop.
-- The threshold, the allowed range, and the stop conditions are in [`references/signal-rules.en.md`](references/signal-rules.en.md). Do not repeat the numbers here.
+- The threshold, the allowed range, and the stop conditions are in [`references/signal-rules.en.md`](references/signal-rules.en.md). A number outside that range does not start the loop. Ask once (SM-E13).
 - On stop, list the sub-items that still fall short and why. Do not write an unrun result as verified (SM-E09).
 
 ## Repo invariants
@@ -78,12 +79,16 @@ A gap may land on one of these instead of a TRACE sub-item:
 | SM-E01 | No target skill | Ask one question. Do not start the pass |
 | SM-E02 | The gap matches no sub-item and no repo invariant | Defer it. Do not write |
 | SM-E03 | Several gaps arrive at once | Keep the highest-priority one. List the rest under "Not in this change" |
-| SM-E04 | Only the Chinese file changed | Stop. Add the English passage and the version first |
+| SM-E04 | Both language files exist, but only one was edited | Stop. Add the other language and the version first |
 | SM-E05 | Asked to run a local security scan | Say `trust.scan` is not scored. Do not invent a scan score |
 | SM-E06 | The request is for a new skill | Hand off to `workflow-skill-designer` |
 | SM-E07 | The request is to log this session | Hand off to `session-retrospective` |
 | SM-E08 | The evaluation API cannot be read | Use the pasted report. Say the API was not read. Do not retry a scan |
 | SM-E09 | The threshold loop stops with sub-items still below the bar | List the sub-items and why, then stop. Do not mark them as passed |
+| SM-E10 | The target already contains the text the gap asks for | Report that it is already there. Do not propose it and do not write it. Take the next gap if one remains |
+| SM-E11 | The target has only one language file | Edit the file that exists. Do not create the missing language. Name the file that is absent |
+| SM-E12 | A sync script fails a second time | Stop and report the error. Do not record the failure as a pass. Start a new run after the error is fixed |
+| SM-E13 | The given threshold is outside the range in signal-rules | Do not start the loop. Ask once. Do not replace the out-of-range number with the default |
 
 ## The target skill's version
 
