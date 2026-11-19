@@ -301,12 +301,12 @@
       },
       "versions": [
         {
-          "version": "1.0.3",
-          "publishTimestamp": 1795076297,
+          "version": "1.0.4",
+          "publishTimestamp": 1795085097,
           "source": {
             "type": "git",
             "url": "https://github.com/yumingtao/agent-skills",
-            "commit": "b46a63f58a40d6ee0d252dea89cd83a1f76c3e44",
+            "commit": "76dd04c6c8e8965191a7330b3ba2df42ad6e073f",
             "path": "skills/skill-maintainer"
           }
         }
