@@ -1,6 +1,6 @@
 # yumingtao agent skills — DSH bundles
 
-Six standalone [DSH](https://www.dsh.so) bundles, one per skill. Each bundle
+Seven standalone [DSH](https://www.dsh.so) bundles, one per skill. Each bundle
 copies a single agent skill into your DSH skill discovery root on web profile
 boot, so each skill can be installed (and tracked) independently.
 
@@ -17,6 +17,7 @@ boot, so each skill can be installed (and tracked) independently.
 | `yumingtao-workflow-skill-designer` | `workflow-skill-designer` | Meta-skill for designing orchestrator + phases structured workflow skills with progressive phase loading, task tracking, and inter-phase data flow. |
 | `yumingtao-defect-detective` | `defect-detective` | Read-only triage for a defect signal: normalize a fingerprint, search duplicate tickets, correlate recent changes, infer the owning team, then decide whether to file a new ticket. |
 | `yumingtao-session-retrospective` | `session-retrospective` | End-of-session retro that logs workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop. |
+| `yumingtao-skill-maintainer` | `skill-maintainer` | Edits an existing skill. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. |
 
 ## Install
 
@@ -29,6 +30,7 @@ dsh plugin --profile web add yumingtao-insight-challenge
 dsh plugin --profile web add yumingtao-workflow-skill-designer
 dsh plugin --profile web add yumingtao-defect-detective
 dsh plugin --profile web add yumingtao-session-retrospective
+dsh plugin --profile web add yumingtao-skill-maintainer
 ```
 
 Or from the GitHub repository directly:
@@ -91,7 +93,8 @@ dsh-plugin/
 │   ├── insight-challenge/
 │   ├── workflow-skill-designer/
 │   ├── defect-detective/
-│   └── session-retrospective/
+│   ├── session-retrospective/
+│   └── skill-maintainer/
 ├── sync.sh                     # sync + bump + publish all packages
 └── README.md
 ```

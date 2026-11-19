@@ -4,7 +4,7 @@ Original, platform-neutral agent skills — prompt assets that work across Claud
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![SkillHub](https://img.shields.io/badge/SkillHub-6%20published-green)](https://skillhub.cn/user/user_95900c57)
+[![SkillHub](https://img.shields.io/badge/SkillHub-7%20published-green)](https://skillhub.cn/user/user_95900c57)
 [![ClawHub](https://img.shields.io/badge/ClawHub-6%20published-orange)](https://clawhub.ai/@yumingtao)
 [![skills.sh](https://skills.sh/b/yumingtao/agent-skills)](https://skills.sh/yumingtao/agent-skills)
 [![DSH Index](https://img.shields.io/badge/DSH-market--index-blue)](https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json)
@@ -91,7 +91,7 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 ### Other agents
 
 - **diagram-generator** ships per-platform adapters: `AGENTS.md` (Cursor / OpenCode / Windsurf), `GEMINI.md`, `COPILOT-INSTRUCTIONS.md`, `CODEBUDDY.md`, `HERMES.md` — see its [README](skills/diagram-generator/README.md#installation).
-- The other five skills are Claude-skill-format folders; on platforms without a skills mechanism, point the agent at the skill's `SKILL.md` as an instruction file.
+- The other six skills are Claude-skill-format folders; on platforms without a skills mechanism, point the agent at the skill's `SKILL.md` as an instruction file.
 
 ### SkillHub (Community Marketplace)
 
@@ -108,6 +108,7 @@ skillhub install yumingtao-insight-challenge --namespace user_95900c57
 skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
 skillhub install yumingtao-defect-detective --namespace user_95900c57
 skillhub install yumingtao-session-retrospective --namespace user_95900c57
+skillhub install yumingtao-skill-maintainer --namespace user_95900c57
 ```
 
 ### ClawHub (OpenClaw official registry)
@@ -158,12 +159,13 @@ dsh plugin --profile web add yumingtao-insight-challenge
 dsh plugin --profile web add yumingtao-workflow-skill-designer
 dsh plugin --profile web add yumingtao-defect-detective
 dsh plugin --profile web add yumingtao-session-retrospective
+dsh plugin --profile web add yumingtao-skill-maintainer
 ```
 
 On first boot of the web profile each bundle copies its skill directory into
 `~/.agents/skills` (the user-global skill root shared by DSH and Codex CLI).
 
-#### Method 2 — market index (add all six at once)
+#### Method 2 — market index (add all seven at once)
 
 Add the market index, then install any skill. Pick one index URL:
 
@@ -187,6 +189,7 @@ dsh plugin install insight-challenge
 dsh plugin install workflow-skill-designer
 dsh plugin install defect-detective
 dsh plugin install session-retrospective
+dsh plugin install skill-maintainer
 ```
 
 > With the market index, skill content is fetched from `github.com/yumingtao/agent-skills` at the pinned commit recorded in the index, regardless of which index URL you use. The CDN/raw choice only affects how the index file itself is delivered.

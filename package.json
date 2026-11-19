@@ -2,7 +2,7 @@
   "name": "@yumingtao/agent-skills",
   "version": "1.0.0",
   "private": true,
-  "description": "Six platform-neutral agent skills bundled for DeepSeek Harness: diagram-generator, clarify-before-acting, insight-challenge, workflow-skill-designer, defect-detective, session-retrospective.",
+  "description": "Seven platform-neutral agent skills bundled for DeepSeek Harness: diagram-generator, clarify-before-acting, insight-challenge, workflow-skill-designer, defect-detective, session-retrospective, skill-maintainer.",
   "type": "module",
   "main": "./index.js",
   "files": [
@@ -26,7 +26,8 @@
     "insight-challenge",
     "workflow-skill-designer",
     "defect-detective",
-    "session-retrospective"
+    "session-retrospective",
+    "skill-maintainer"
   ],
   "author": "yumingtao",
   "homepage": "https://github.com/yumingtao/agent-skills",

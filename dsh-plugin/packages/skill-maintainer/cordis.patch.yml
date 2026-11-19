@@ -1,0 +1,11 @@
+# yumingtao-skill-maintainer bundle: installs the skill-maintainer agent skill into the DSH
+# skill discovery root on web profile boot.
+#
+# Activate with:
+#   dsh plugin --profile web add yumingtao-skill-maintainer
+#
+# On boot the row copies the packaged skill directory into the user-global
+# skill root (~/.agents/skills). Installation is idempotent.
+- insert:
+  - id: yumingtao-skill-maintainer
+    name: 'yumingtao-skill-maintainer'

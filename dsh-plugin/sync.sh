@@ -35,6 +35,7 @@ DSH_SKILLS=(
   "workflow-skill-designer"
   "defect-detective"
   "session-retrospective"
+  "skill-maintainer"
 )
 
 src_root="$repo_root/skills"

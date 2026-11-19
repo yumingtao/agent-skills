@@ -4,7 +4,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![SkillHub](https://img.shields.io/badge/SkillHub-6%20published-green)](https://skillhub.cn/user/user_95900c57)
+[![SkillHub](https://img.shields.io/badge/SkillHub-7%20published-green)](https://skillhub.cn/user/user_95900c57)
 [![ClawHub](https://img.shields.io/badge/ClawHub-6%20published-orange)](https://clawhub.ai/@yumingtao)
 [![skills.sh](https://skills.sh/b/yumingtao/agent-skills)](https://skills.sh/yumingtao/agent-skills)
 [![DSH Index](https://img.shields.io/badge/DSH-market--index-blue)](https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json)
@@ -91,7 +91,7 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 ### 其他 agent
 
 - **diagram-generator** 自带逐平台适配层：`AGENTS.md`（Cursor / OpenCode / Windsurf）、`GEMINI.md`、`COPILOT-INSTRUCTIONS.md`、`CODEBUDDY.md`、`HERMES.md` —— 见其 [README](skills/diagram-generator/README.md#installation)。
-- 其余五个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
+- 其余六个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
 
 ### SkillHub（国内社区市场）
 
@@ -108,6 +108,7 @@ skillhub install yumingtao-insight-challenge --namespace user_95900c57
 skillhub install yumingtao-workflow-skill-designer --namespace user_95900c57
 skillhub install yumingtao-defect-detective --namespace user_95900c57
 skillhub install yumingtao-session-retrospective --namespace user_95900c57
+skillhub install yumingtao-skill-maintainer --namespace user_95900c57
 ```
 
 ### ClawHub（OpenClaw 官方全球 Registry）
@@ -158,11 +159,12 @@ dsh plugin --profile web add yumingtao-insight-challenge
 dsh plugin --profile web add yumingtao-workflow-skill-designer
 dsh plugin --profile web add yumingtao-defect-detective
 dsh plugin --profile web add yumingtao-session-retrospective
+dsh plugin --profile web add yumingtao-skill-maintainer
 ```
 
 web 配置首次启动时，每个包会将其 skill 目录复制到 `~/.agents/skills`（DSH 与 Codex CLI 共享的用户全局 skill 根目录）。
 
-#### 方式二 — 市场索引（一次性添加全部 6 个）
+#### 方式二 — 市场索引（一次性添加全部 7 个）
 
 添加市场索引后安装任意 skill。索引 URL 三选一：
 
@@ -186,6 +188,7 @@ dsh plugin install insight-challenge
 dsh plugin install workflow-skill-designer
 dsh plugin install defect-detective
 dsh plugin install session-retrospective
+dsh plugin install skill-maintainer
 ```
 
 > 使用市场索引时，skill 内容从 `github.com/yumingtao/agent-skills` 按索引中记录的固定 commit 拉取，与所选索引 URL 无关。CDN/raw 的选择只影响索引文件本身的分发方式。

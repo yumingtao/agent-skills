@@ -5,8 +5,8 @@
     "zh": "Yumingtao Agent Skills"
   },
   "description": {
-    "en": "Standalone agent skills for diagram generation, clarification discipline, adversarial review, workflow skill design, defect triage, and session retrospectives.",
-    "zh": "面向 Agent 的独立技能集：架构图生成、需求澄清、对抗式审查、工作流技能设计、缺陷分诊、会话复盘。"
+    "en": "Standalone agent skills for diagram generation, clarification discipline, adversarial review, workflow skill design, defect triage, session retrospectives, and skill maintenance.",
+    "zh": "面向 Agent 的独立技能集：架构图生成、需求澄清、对抗式审查、工作流技能设计、缺陷分诊、会话复盘、技能维护。"
   },
   "metadata": {
     "categories": {
@@ -273,6 +273,41 @@
             "url": "https://github.com/yumingtao/agent-skills",
             "commit": "74074a962239b6cb944d52f7323269736a5428d9",
             "path": "skills/session-retrospective"
+          }
+        }
+      ]
+    },
+    {
+      "name": "skill-maintainer",
+      "title": {
+        "en": "Skill Maintainer",
+        "zh": "技能维护"
+      },
+      "description": {
+        "en": "Edits an existing skill. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. Default is one gap and a confirmation.",
+        "zh": "修改已有技能，不打分。打分交给 SkillHub 官方 skillhub-trace-evaluator。默认一次一条、确认后写入。"
+      },
+      "author": "yumingtao",
+      "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/skill-maintainer",
+      "repository": {
+        "url": "https://github.com/yumingtao/agent-skills",
+        "directory": "skills/skill-maintainer"
+      },
+      "metadata": {
+        "category": "workflow",
+        "labels": [
+          "meta-skill"
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0.3",
+          "publishTimestamp": 1795076297,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/yumingtao/agent-skills",
+            "commit": "b46a63f58a40d6ee0d252dea89cd83a1f76c3e44",
+            "path": "skills/skill-maintainer"
           }
         }
       ]

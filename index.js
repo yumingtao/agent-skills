@@ -1,5 +1,5 @@
 /**
- * @yumingtao/agent-skills: installs all six bundled agent skills into the DSH
+ * @yumingtao/agent-skills: installs all seven bundled agent skills into the DSH
  * skill discovery root when the web profile boots.
  *
  * Each skill is copied from dsh-plugin/packages/<name>/skill/ into the
@@ -24,6 +24,7 @@ const SKILL_IDS = [
   'workflow-skill-designer',
   'defect-detective',
   'session-retrospective',
+  'skill-maintainer',
 ]
 
 const PACKAGES_BASE = fileURLToPath(new URL('./dsh-plugin/packages/', import.meta.url))
