@@ -2,8 +2,8 @@
 name: skill-maintainer
 slug: yumingtao-skill-maintainer
 displayName: Skill Maintainer
-version: 1.0.2
-summary: Maintain an existing skill against SkillHub's public TRACE bands. Default is one gap and a confirmation. "自动补到阈值" edits until each scored sub-item meets the threshold.
+version: 1.0.3
+summary: Edits an existing skill. It does not score one. Scoring belongs to SkillHub's skillhub-trace-evaluator. Default is one gap and a confirmation.
 license: MIT
 tags:
   - developer tools
@@ -11,14 +11,14 @@ tags:
   - workflow
 disable-model-invocation: true
 description: >
-  Maintain a skill that already exists. Self-check uses only the public TRACE bands from SkillHub's skillhub-trace-evaluator (trust.scan is not scored). A signal may come from a TRACE pass, one version's evaluation comments, a recurring session-retrospective entry, or a zh/en and install-tree structure check. By default, propose one gap and do not write before confirmation. "自动补到阈值" edits one sub-item per round until each scored sub-item meets the threshold, default 4.8, for at most 5 rounds, and stops on items that documents cannot raise. Bump the target skill's patch version in both language frontmatters only when its behavior changes. Triggers on "维护这个技能", "按 TRACE 过一遍", "按评测改技能", "自动补到阈值", "skill maintainer".
+  Edits a skill that already exists. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. Self-check uses only that skill's public TRACE bands (trust.scan is not scored). Any directory with SKILL.md can be maintained. A signal may come from a TRACE pass, one version's evaluation comments, a recurring session-retrospective entry, or a zh/en and install-tree structure check. By default, propose one gap and do not write before confirmation. "自动补到阈值" edits one sub-item per round until each scored sub-item meets the threshold, default 4.8, for at most 5 rounds, and stops on items that documents cannot raise. This repo's sync scripts run only when the target is under skills/ and the scripts are present. They do not publish. Triggers on "维护这个技能", "按 TRACE 过一遍", "按评测改技能", "自动补到阈值", "skill maintainer".
 ---
 
 # Skill Maintainer
 
-Maintain a skill that already exists. Find one gap with the public TRACE bands, write a proposal, and edit files only after confirmation.
+This skill edits a skill that already exists. It does not score one. Scoring belongs to SkillHub's official `skillhub-trace-evaluator`. It finds one gap with the public bands, writes a proposal, and edits files only after confirmation.
 
-This skill's version is `1.0.2`. The version line inside a proposal belongs to the **target skill**, not to this skill.
+This skill's version is `1.0.3`. The version line inside a proposal belongs to the **target skill**, not to this skill.
 
 ## Iron laws
 
@@ -31,7 +31,7 @@ This skill's version is `1.0.2`. The version line inside a proposal belongs to t
 
 - "维护这个技能", "按 TRACE 过一遍", "按评测改技能", "自动补到阈值", "skill maintainer"
 - You have an evaluation comment, a retro entry, or a zh/en mismatch
-- Example: "维护 note-stub，先给提案。" Do not edit before confirmation. After the caller says "确认", edit only the item in the proposal.
+- Example: "维护 example-skill，先给提案。" Do not edit before confirmation. After the caller says "确认", edit only the item in the proposal.
 
 ## When not to use
 
@@ -41,7 +41,7 @@ This skill's version is `1.0.2`. The version line inside a proposal belongs to t
 
 ## Procedure
 
-1. **Name the target skill.** If it is unclear, ask one question: which skill? Its directory must contain `SKILL.md`.
+1. **Name the target skill.** If it is unclear, ask one question: which skill? Any directory with `SKILL.md` qualifies. It does not have to live in this repo.
 2. **Read the signal you were given.** Do not wait until all four source types are present:
    - "按 TRACE 过一遍": read `SKILL.md` and the references it names against the bands. A sub-item below the 4-point band is a gap.
    - An evaluation comment or API result: map the named sentence onto one sub-item. If the API cannot be read, use the pasted report and say so in the proposal (SM-E08).
@@ -49,7 +49,7 @@ This skill's version is `1.0.2`. The version line inside a proposal belongs to t
    - A structure check: zh/en `version`, `tags` count, and whether the English install tree contains scripts the README names.
 3. **Keep one gap.** Priority: a security comment that names an item → an evaluation comment → a recurring retro entry → a TRACE pass → a structure mismatch. A security comment contributes only the sentence it names. Do not add lab rules from it.
 4. **Write the proposal and stop.** Template: [`references/proposal-template.en.md`](references/proposal-template.en.md).
-5. **Write only after confirmation.** Edit the matching Chinese and English passages together. When the target is under `skills/<name>/`, run `sync/check.sh --collection-only`, then run `dsh-plugin/sync.sh` without `--publish` if that script exists. When the target is not under `skills/`, skip both: the sync script only refreshes collection packages and does not check this target. If the collection check or the sync script fails, fix the reported error and run it once more. A second failure stops the run and is not recorded as a pass. Do not publish to SkillHub and do not run `npm publish`.
+5. **Write only after confirmation.** Edit the matching Chinese and English passages together. The main path ends there. Only when the target is under this repo's `skills/<name>/` and the scripts are beside it, optionally run `sync/check.sh --collection-only`, then run `dsh-plugin/sync.sh` without `--publish` if that script exists too. When the scripts are absent, or the target is elsewhere, skip them and say so under "Not in this change". If a script fails, fix the reported error and run it once more. A second failure stops the run and is not recorded as a pass. Do not publish to SkillHub and do not run `npm publish`.
 
 Priority, the threshold loop, and deferral: [`references/signal-rules.en.md`](references/signal-rules.en.md).
 
@@ -102,3 +102,6 @@ A: No. It stops at 5 rounds, or when every remaining low item needs a real run, 
 
 **Q: Does a normal request edit files immediately?**
 A: No. Only "自动补到阈值" writes across rounds. Every other entry starts with a proposal.
+
+**Q: Does this skill score a skill?**
+A: No. Scoring belongs to SkillHub's official `skillhub-trace-evaluator`. This skill only edits.

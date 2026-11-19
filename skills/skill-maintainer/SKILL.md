@@ -2,8 +2,8 @@
 name: skill-maintainer
 slug: yumingtao-skill-maintainer
 displayName: Skill Maintainer
-version: 1.0.2
-summary: 用 SkillHub 公开的 TRACE 评分档维护已有技能。默认一次一条、确认后写入；「自动补到阈值」按子项分数连续改。
+version: 1.0.3
+summary: 修改已有技能，不打分。打分交给 SkillHub 官方 skillhub-trace-evaluator。默认一次一条、确认后写入。
 license: MIT
 tags:
   - 开发工具
@@ -11,14 +11,14 @@ tags:
   - 工作流
 disable-model-invocation: true
 description: >
-  维护已经存在的技能。自检只使用 SkillHub 官方 skillhub-trace-evaluator 公开的 TRACE 五维评分档（trust.scan 不评）。信号可以来自 TRACE 对照、某一版评测评语、session-retrospective 的复发日志，或中英文与安装树的结构检查。默认一次只提案一条缺口，确认前不写入。说「自动补到阈值」时，按每个可评子项的阈值连续改，默认 4.8，最多 5 轮，文档改不动的子项停下并列出。目标技能的版本号只在其行为变化时，于中英文 frontmatter 同时升一个补丁。触发词："维护这个技能"、"按 TRACE 过一遍"、"按评测改技能"、"自动补到阈值"、"skill maintainer"。
+  修改已经存在的技能，不负责打分。打分使用 SkillHub 官方 skillhub-trace-evaluator。自检只使用它公开的 TRACE 五维评分档（trust.scan 不评）。任何含 SKILL.md 的目录都可以维护。信号可以来自 TRACE 对照、某一版评测评语、session-retrospective 的复发日志，或中英文与安装树的结构检查。默认一次只提案一条缺口，确认前不写入。说「自动补到阈值」时，按每个可评子项的阈值连续改，默认 4.8，最多 5 轮，文档改不动的子项停下并列出。本仓库的 sync 脚本只在目标位于 skills/ 且脚本存在时可选运行，不发布。触发词："维护这个技能"、"按 TRACE 过一遍"、"按评测改技能"、"自动补到阈值"、"skill maintainer"。
 ---
 
 # 技能维护
 
-维护已经存在的技能。用 TRACE 公开评分档找出一处缺口，写出提案，确认后才改文件。
+这只技能修改已经存在的技能，不负责打分。打分使用 SkillHub 官方 `skillhub-trace-evaluator`。本技能用公开评分档找出一处缺口，写出提案，确认后才改文件。
 
-本技能的版本是 `1.0.2`。提案里的版本行属于**被维护的那只技能**，不是本技能。
+本技能的版本是 `1.0.3`。提案里的版本行属于**被维护的那只技能**，不是本技能。
 
 ## 铁律
 
@@ -31,7 +31,7 @@ description: >
 
 - 「维护这个技能」「按 TRACE 过一遍」「按评测改技能」「自动补到阈值」「skill maintainer」
 - 手里有一份评测评语、一条复盘，或一次中英文不一致
-- 示例：「维护 note-stub，先给提案。」确认前不改文件。对方回复「确认」后，只改提案里的那一处。
+- 示例：「维护 example-skill，先给提案。」确认前不改文件。对方回复「确认」后，只改提案里的那一处。
 
 ## 何时不用
 
@@ -41,7 +41,7 @@ description: >
 
 ## 流程
 
-1. **确定目标技能。** 没说清就只问一个问题：改哪一只。其目录里要有 `SKILL.md`。
+1. **确定目标技能。** 没说清就只问一个问题：改哪一只。任何含 `SKILL.md` 的目录都可以，不要求它在本仓库里。
 2. **读取信号。** 按入口读取，不要等四类信号齐全：
    - 「按 TRACE 过一遍」：用评分档读 `SKILL.md` 与它点名的引用，某一子项达不到 4 分档即构成缺口。
    - 评测评语或评测接口结果：把点名的句子对上一个子项。接口读不到时用贴来的报告，并在提案里写明（SM-E08）。
@@ -49,7 +49,7 @@ description: >
    - 结构检查：中英文 `version`、`tags` 数量、英文安装树是否含有 README 点名的脚本。
 3. **只留一条。** 优先级：安全评语点名的项 → 评测评语 → 复盘复发 → TRACE 对照 → 结构偏差。安全评语只使用对方点名的那一句，不据此补写实验室规则。
 4. **写出提案后停下。** 模板见 [`references/proposal-template.md`](references/proposal-template.md)。
-5. **确认后才写入。** 中英文对应段落一起改。目标在 `skills/<name>/` 时，改完运行 `sync/check.sh --collection-only`；若存在 `dsh-plugin/sync.sh`，再运行它，不带 `--publish`。目标不在 `skills/` 下时不跑这两步：同步脚本只刷新集合里的包，检查不到这只技能。集合检查或同步脚本失败时，按报错修一次再跑；第二次仍失败就停下并报告，不把失败记成通过。不发布到 SkillHub，不执行 `npm publish`。
+5. **确认后才写入。** 中英文对应段落一起改。主路径到此结束。只有目标位于本仓库的 `skills/<name>/`，并且脚本就在旁边时，才可选地运行 `sync/check.sh --collection-only`；若同时存在 `dsh-plugin/sync.sh`，再运行它，不带 `--publish`。脚本不存在，或目标在别的目录，就跳过，并在「本次不改」里写明。脚本失败时按报错修一次再跑；第二次仍失败就停下并报告，不把失败记成通过。不发布到 SkillHub，不执行 `npm publish`。
 
 信号优先级、阈值循环与暂缓条件在 [`references/signal-rules.md`](references/signal-rules.md)。
 
@@ -102,3 +102,6 @@ description: >
 
 **问：没说「自动补到阈值」也会直接改文件吗？**
 答：不会。那个入口才会连续写入。其他入口先给提案。
+
+**问：这只技能负责打分吗？**
+答：不负责。打分使用 SkillHub 官方 `skillhub-trace-evaluator`。本技能只修改。

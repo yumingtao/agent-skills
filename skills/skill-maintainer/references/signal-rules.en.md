@@ -28,10 +28,13 @@ Enter only when the caller says "自动补到阈值". Each round still changes o
 - A sub-item below the 4-point band when this run is not a TRACE pass and no comment or retro entry names it
 - A request to perform `trust.scan` locally
 
-## Target outside skills/
+## Any directory
 
-A directory with `SKILL.md` is enough. That includes `tmp/` and a directory outside this repo.
+A directory with `SKILL.md` is enough. That is the main path.
 
-- Do not run `dsh-plugin/sync.sh`. It only refreshes published collection packages and does not check this target.
-- Do not run `sync/check.sh` when the edit did not touch `skills/`, `skills-en/`, a README, or `dsh-plugin/`.
-- Say in "Not in this change" that repo sync was not run.
+Sync in this repo is optional. Run it only when the target is under `skills/<name>/` and the scripts are beside it:
+
+- `sync/check.sh --collection-only`
+- `dsh-plugin/sync.sh`, without `--publish`
+
+When the scripts are absent, or the target is elsewhere, skip them and say in "Not in this change" that repo sync was not run.

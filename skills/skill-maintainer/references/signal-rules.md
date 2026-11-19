@@ -28,10 +28,13 @@
 - 低于 4 分档，但本次入口不是「按 TRACE 过一遍」，也没有评语或复盘点名
 - 要求在本地补做 `trust.scan`
 
-## 目标不在 skills/ 下
+## 任意目录
 
-目录里有 `SKILL.md` 就可以维护，包括 `tmp/` 和仓库之外。
+目录里有 `SKILL.md` 就可以维护。这是主路径。
 
-- 不运行 `dsh-plugin/sync.sh`。它只刷新集合里已发布的包，不检查这个目标。
-- 没有改到 `skills/`、`skills-en/`、README 或 `dsh-plugin/` 时，不运行 `sync/check.sh`。
-- 在提案的「本次不改」里写明没有跑仓库同步。
+本仓库的同步是可选步骤，只在目标位于 `skills/<name>/` 且脚本就在旁边时运行：
+
+- `sync/check.sh --collection-only`
+- `dsh-plugin/sync.sh`，不带 `--publish`
+
+脚本不存在，或目标在别的目录，就跳过，并在「本次不改」里写明没有跑仓库同步。
