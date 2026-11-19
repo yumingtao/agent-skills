@@ -14,7 +14,7 @@
 
 这些技能从日常开发里收出来：先在真实工作中用，规则稳定后再写进仓库。
 
-六个技能各自完整，只安装一个就能用。装在一起时，它们落在同一条工程环上，见下方「单独使用，也可以串起来」。
+七个技能各自完整，只安装一个就能用。装在一起时，它们落在同一条工程环上，见下方「单独使用，也可以串起来」。
 
 ## Skills
 
@@ -26,6 +26,7 @@
 | **[workflow-skill-designer](skills/workflow-skill-designer/)** | 设计 orchestrator + phases 结构化 workflow skill 的元技能：薄 `SKILL.md` 协调器 + 渐进加载的 `phases/` 文件，含 TodoWrite 模式、跨阶段数据流与校验清单。 |
 | **[defect-detective](skills/defect-detective/)** | 修 bug 之前的第一站 —— 对缺陷信号（bug 报告、堆栈或日志）做只读分诊：这是已知问题吗、该归谁、最近改了什么。归一化稳定指纹、跨栈查重复工单、按涉及层关联近期变更，以可审计的证据链推断归属团队，输出结构化结论与可直接复制的建票建议。与修复类技能上下游互补（只分诊、不修复）；严格只读，绝不建票、绝不改动任何东西。已对真实 Jira 工单系统完成三级查重冒烟（命中/无匹配双路径）与 git blame 关联验证。 |
 | **[session-retrospective](skills/session-retrospective/)** | 会话结束回顾 —— 把开发工作流问题（需纠正的错误答案、跳过的闸门、错误路由、MCP 错误、skill/文档缺口、多轮纠正）记成字段枚举校验的 JSONL 信号：同一问题复发即规则缺口、优先级自动升级，无事记一条 success、绝不编造。一句"开始修复"进入修复模式：按复发与优先级排序逐项出预案、一项一确认闭环回写，只凭日志即可跨会话执行。内置零依赖校验脚本（Node 18+），机器校验日志健康度与复发分组。数据层定位：产出机器可聚合的信号，与报告类、记忆类复盘技能上下游互补。已对真实会话完成主路径与损坏行异常双场景冒烟。 |
+| **[skill-maintainer](skills/skill-maintainer/)** | 维护已经存在的技能。自检使用 SkillHub 公开的 TRACE 评分档，默认一次提案一条缺口，确认后才写入。说「自动补到阈值」时按每个可评子项连续改，默认 4.8，最多 5 轮。`trust.scan` 不评。 |
 
 <a id="alone-or-together"></a>
 
@@ -41,12 +42,14 @@ flowchart LR
   defect["defect-detective"]
   retro["session-retrospective<br/>收口"]
   meta["workflow-skill-designer<br/>元技能"]
+  maintain["skill-maintainer<br/>维护"]
   gate --> diagram
   gate --> insight
   gate --> defect
   diagram --> retro
   insight --> retro
   defect --> retro
+  retro --> maintain
   retro --> meta
 ```
 
@@ -58,7 +61,8 @@ flowchart LR
 | 执行站 | [diagram-generator](skills/diagram-generator/) | 简报做成独立 HTML/SVG | 视角或范围不清时，先经闸门 |
 | 执行站 | [insight-challenge](skills/insight-challenge/) | 一条审查发现做成推翻 / 削弱 / 确认 | 会话结束时，系统性误判交给收口 |
 | 执行站 | [defect-detective](skills/defect-detective/) | 只读回答是否已知、归谁、改了什么，并给出建票草稿 | 指纹缺口先经闸门；误判交给收口；要固化成团队流程时交给元技能 |
-| 收口 | [session-retrospective](skills/session-retrospective/) | 把本次系统性失误写入 JSONL，并可逐项修复 | 任何工作会话结束时都可以记；复发的「缺一条工作流」交给元技能 |
+| 收口 | [session-retrospective](skills/session-retrospective/) | 把本次系统性失误写入 JSONL，并可逐项修复 | 任何工作会话结束时都可以记；复发的缺口可以交给维护 |
+| 维护 | [skill-maintainer](skills/skill-maintainer/) | 对照 TRACE 评分档，一次提案一条已有技能的缺口 | 复盘、评测评语或结构检查都可以交给它；新技能仍交给元技能 |
 | 元技能 | [workflow-skill-designer](skills/workflow-skill-designer/) | 设计一个 orchestrator + phases 技能包 | 把上面这条反复出现的环做成新技能。生成的技能自己运行其中的阶段 |
 
 三条可以直接照做的组合：
@@ -66,6 +70,7 @@ flowchart LR
 - 修一个 bug：方向不清时先 `clarify-before-acting`，然后 `defect-detective`，建票和修复仍走你自己的写流程，会话结束用 `session-retrospective`。
 - 核对一条审查发现：`insight-challenge` 出裁决，误判在会话结束时记入 `session-retrospective`。
 - 把重复流程做成技能：`session-retrospective` 里反复出现的缺口，交给 `workflow-skill-designer`。
+- 改一只已有技能：把评测评语、复发日志或「按 TRACE 过一遍」交给 `skill-maintainer`，确认后再写入。
 
 ## 安装
 
@@ -127,7 +132,7 @@ clawhub install yumingtao/session-retrospective
 无需注册——技能直接从本公开仓库索引。通过 `skills` CLI 安装：
 
 ```bash
-# 一次性安装全部 6 个 skill
+# 一次性安装全部 7 个 skill
 npx skills add yumingtao/agent-skills
 
 # 或安装单个 skill
@@ -137,6 +142,7 @@ npx skills add yumingtao/agent-skills --skill insight-challenge
 npx skills add yumingtao/agent-skills --skill workflow-skill-designer
 npx skills add yumingtao/agent-skills --skill defect-detective
 npx skills add yumingtao/agent-skills --skill session-retrospective
+npx skills add yumingtao/agent-skills --skill skill-maintainer
 ```
 
 ### DeepSeek Harness（DSH）

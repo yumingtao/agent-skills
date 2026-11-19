@@ -2,7 +2,7 @@
 name: workflow-skill-designer
 slug: yumingtao-workflow-skill-designer
 displayName: Workflow Skill Designer
-version: 1.3.0
+version: 1.3.1
 summary: Meta-skill for designing orchestrator + phases structured workflow skills.
 license: MIT
 tags:

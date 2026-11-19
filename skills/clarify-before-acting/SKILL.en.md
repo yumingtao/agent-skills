@@ -2,7 +2,7 @@
 name: clarify-before-acting
 slug: yumingtao-clarify-before-acting
 displayName: Clarify Before Acting
-version: 1.3.0
+version: 1.3.1
 summary: Resolve direction-changing ambiguity before acting on complex or high-cost requests.
 license: MIT
 tags:

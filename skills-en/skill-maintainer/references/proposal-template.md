@@ -1,0 +1,1 @@
+../../../skills/skill-maintainer/references/proposal-template.en.md
