@@ -14,7 +14,7 @@
 
 这些技能从日常开发里收出来：先在真实工作中用，规则稳定后再写进仓库。
 
-七个技能各自完整，只安装一个就能用。装在一起时，它们落在同一条工程环上，见下方「单独使用，也可以串起来」。
+本仓库有八个技能。其中七个各自完整，只安装一个就能用；装在一起时，它们落在同一条工程环上，见下方「单独使用，也可以串起来」。`public-push-check` 检查发往公开远端的推送。它留在本仓库里，也会被 skills.sh 索引。它不发布到 SkillHub，也不发布到 DSH。
 
 ## Skills
 
@@ -27,6 +27,7 @@
 | **[defect-detective](skills/defect-detective/)** | 修 bug 之前的第一站 —— 对缺陷信号（bug 报告、堆栈或日志）做只读分诊：这是已知问题吗、该归谁、最近改了什么。归一化稳定指纹、跨栈查重复工单、按涉及层关联近期变更，以可审计的证据链推断归属团队，输出结构化结论与可直接复制的建票建议。与修复类技能上下游互补（只分诊、不修复）；严格只读，绝不建票、绝不改动任何东西。已对真实 Jira 工单系统完成三级查重冒烟（命中/无匹配双路径）与 git blame 关联验证。 |
 | **[session-retrospective](skills/session-retrospective/)** | 会话结束回顾 —— 把开发工作流问题（需纠正的错误答案、跳过的闸门、错误路由、MCP 错误、skill/文档缺口、多轮纠正）记成字段枚举校验的 JSONL 信号：同一问题复发即规则缺口、优先级自动升级，无事记一条 success、绝不编造。一句"开始修复"进入修复模式：按复发与优先级排序逐项出预案、一项一确认闭环回写，只凭日志即可跨会话执行。内置零依赖校验脚本（Node 18+），机器校验日志健康度与复发分组。数据层定位：产出机器可聚合的信号，与报告类、记忆类复盘技能上下游互补。已对真实会话完成主路径与损坏行异常双场景冒烟。 |
 | **[skill-maintainer](skills/skill-maintainer/)** | 修改已经存在的技能，不负责打分。打分使用 SkillHub 官方 skillhub-trace-evaluator。本技能用公开评分档一次提案一条缺口，确认后才写入。任何含 SKILL.md 的目录都可以维护。 |
+| **[public-push-check](skills/public-push-check/)** | 推送到公开远端之前，检查即将推送的提交：敏感信息、作者身份、用户可见变更时的 README，以及差异里的安全问题。作者和提交者只能是允许名单中的人，出现 AI 作者就失败。终端里直接执行的 git push 不会跑它。不发布到 SkillHub，也不发布到 DSH。 |
 
 <a id="alone-or-together"></a>
 
@@ -72,6 +73,8 @@ flowchart LR
 - 把重复流程做成技能：`session-retrospective` 里反复出现的缺口，交给 `workflow-skill-designer`。
 - 改一只已有技能：把评测评语、复发日志或「按 TRACE 过一遍」交给 `skill-maintainer`，确认后再写入。
 
+推送到公开远端之前，用 `public-push-check`。它不在这条环上，也不发布到 SkillHub 或 DSH。
+
 ## 安装
 
 每个 skill 独立可用 —— 只复制或软链你需要的。
@@ -91,7 +94,7 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 ### 其他 agent
 
 - **diagram-generator** 自带逐平台适配层：`AGENTS.md`（Cursor / OpenCode / Windsurf）、`GEMINI.md`、`COPILOT-INSTRUCTIONS.md`、`CODEBUDDY.md`、`HERMES.md` —— 见其 [README](skills/diagram-generator/README.md#installation)。
-- 其余六个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
+- 其余七个 skill 是 Claude skill 格式文件夹；在没有 skill 机制的平台，把 agent 指向该 skill 的 `SKILL.md` 作为指令文件即可。
 
 ### SkillHub（国内社区市场）
 
@@ -133,7 +136,7 @@ clawhub install yumingtao/session-retrospective
 无需注册——技能直接从本公开仓库索引。通过 `skills` CLI 安装：
 
 ```bash
-# 一次性安装全部 7 个 skill
+# 一次性安装全部 8 个 skill
 npx skills add yumingtao/agent-skills
 
 # 或安装单个 skill
@@ -144,6 +147,7 @@ npx skills add yumingtao/agent-skills --skill workflow-skill-designer
 npx skills add yumingtao/agent-skills --skill defect-detective
 npx skills add yumingtao/agent-skills --skill session-retrospective
 npx skills add yumingtao/agent-skills --skill skill-maintainer
+npx skills add yumingtao/agent-skills --skill public-push-check
 ```
 
 ### DeepSeek Harness（DSH）

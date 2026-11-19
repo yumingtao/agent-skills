@@ -14,7 +14,7 @@ No runtime dependencies, no network calls, no build step. Each skill is a self-c
 
 These skills were extracted from day-to-day development: each was used on real work, and its rules were written down here once they held.
 
-Each of the seven skills is complete on its own: install one and it works. Installed together, they sit on one engineering loop; see "Use one, or run them as a loop" below.
+Eight skills live in this repository. Seven are complete on their own and, installed together, sit on one engineering loop; see "Use one, or run them as a loop" below. `public-push-check` checks a push to a public remote. It stays in this repository and on the skills.sh index. It is not published to SkillHub or DSH.
 
 ## Skills
 
@@ -27,6 +27,7 @@ Each of the seven skills is complete on its own: install one and it works. Insta
 | **[defect-detective](skills/defect-detective/)** | The first stop before fixing a bug — read-only triage for a defect signal (bug report, stack trace, or log) that answers: is this a known issue, who owns it, and what changed. Normalizes a stable fingerprint, searches the tracker for duplicates cross-stack, correlates recent changes when the implicated layer is known, and infers the owning team with an auditable evidence chain. Upstream of fix-it skills (triage, not repair); strictly read-only, with a ready-to-paste ticket draft but never files or mutates anything. Smoke-tested against a real Jira tracker (dedup hit and no-match paths) plus git blame correlation. |
 | **[session-retrospective](skills/session-retrospective/)** | End-of-session retro that logs development-workflow issues (wrong answers, skipped gates, wrong routing, MCP errors, skill/doc gaps, multi-turn corrections) as enum-validated JSONL signals — a recurring issue is a rule gap and its priority escalates; when nothing went wrong, one success entry, never fabricated. One phrase enters Fix Mode: items ordered by recurrence and priority, per-item proposals, one confirmation per item with an append-only audit trail, running from the log alone across sessions. Ships a zero-dependency validation script (Node 18+) that machine-checks log health and recurrence groups. The signal-data layer: machine-aggregable output, complementary to report- and memory-style retro skills. Smoke-tested on a real session across both the main path and the corrupted-line exception. |
 | **[skill-maintainer](skills/skill-maintainer/)** | Edits a skill that already exists. It does not score one. Scoring belongs to SkillHub's official skillhub-trace-evaluator. It proposes one gap from the public bands and writes only after confirmation. Any directory with SKILL.md can be maintained. |
+| **[public-push-check](skills/public-push-check/)** | Checks the commits about to be pushed to a public remote: secrets, author identity, the README when a change is user-visible, and security issues in the diff. The author and the committer must be the allowlisted person. An AI author fails. A git push typed in a terminal does not run it. Not published to SkillHub or DSH. |
 
 <a id="alone-or-together"></a>
 
@@ -72,6 +73,8 @@ Three combinations you can follow as written:
 - Turn a repeated process into a skill: a gap that keeps showing up in `session-retrospective` goes to `workflow-skill-designer`.
 - Change a skill that already exists: hand an evaluation comment, a recurring log entry, or "按 TRACE 过一遍" to `skill-maintainer`, and write only after confirmation.
 
+Before a push to a public remote, run `public-push-check`. It is not a station on this loop, and it is not published to SkillHub or DSH.
+
 ## Install
 
 Each skill is standalone — copy or symlink only what you need.
@@ -91,7 +94,7 @@ ln -s /absolute/path/to/agent-skills/skills/<skill-name> ~/.codex/skills/<skill-
 ### Other agents
 
 - **diagram-generator** ships per-platform adapters: `AGENTS.md` (Cursor / OpenCode / Windsurf), `GEMINI.md`, `COPILOT-INSTRUCTIONS.md`, `CODEBUDDY.md`, `HERMES.md` — see its [README](skills/diagram-generator/README.md#installation).
-- The other six skills are Claude-skill-format folders; on platforms without a skills mechanism, point the agent at the skill's `SKILL.md` as an instruction file.
+- The other seven skills are Claude-skill-format folders; on platforms without a skills mechanism, point the agent at the skill's `SKILL.md` as an instruction file.
 
 ### SkillHub (Community Marketplace)
 
@@ -133,7 +136,7 @@ clawhub install yumingtao/session-retrospective
 No sign-up required — skills are indexed directly from this public repository. Install via the `skills` CLI:
 
 ```bash
-# Install all seven skills at once
+# Install all eight skills at once
 npx skills add yumingtao/agent-skills
 
 # Or install a single skill
@@ -144,6 +147,7 @@ npx skills add yumingtao/agent-skills --skill workflow-skill-designer
 npx skills add yumingtao/agent-skills --skill defect-detective
 npx skills add yumingtao/agent-skills --skill session-retrospective
 npx skills add yumingtao/agent-skills --skill skill-maintainer
+npx skills add yumingtao/agent-skills --skill public-push-check
 ```
 
 ### DeepSeek Harness (DSH)
