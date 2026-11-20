@@ -1,6 +1,6 @@
 # Skill Maintainer
 
-Edits a skill that already exists. It does not score one. It finds one gap, writes a proposal, and edits only after confirmation. Any directory with `SKILL.md` can be maintained. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). This skill's version is `1.0.5`.
+Edits a skill that already exists. It does not score one. It finds one gap, writes a proposal, and edits only after confirmation. Any directory with `SKILL.md` can be maintained. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). This skill's version is `1.0.6`.
 
 ## Where this skill sits
 
@@ -16,5 +16,5 @@ The full loop is in the collection README, [Use one, or run them as a loop](../.
 |---|---|
 | Iron laws, procedure, exception codes | [SKILL.en.md](SKILL.en.md) |
 | The 15 sub-item bands | [references/trace-items.en.md](references/trace-items.en.md) |
-| Signal priority | [references/signal-rules.en.md](references/signal-rules.en.md) |
+| Signal priority, threshold conversion, uncommon combinations | [references/signal-rules.en.md](references/signal-rules.en.md) |
 | Proposal template and filled examples | [references/proposal-template.en.md](references/proposal-template.en.md) |

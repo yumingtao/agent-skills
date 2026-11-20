@@ -1,6 +1,6 @@
 # 技能维护
 
-修改已经存在的技能，不负责打分。本技能找出一处缺口，写出提案，确认后才写入。任何含 `SKILL.md` 的目录都可以维护。行为规则在 [`SKILL.md`](SKILL.md)。本技能版本是 `1.0.5`。
+修改已经存在的技能，不负责打分。本技能找出一处缺口，写出提案，确认后才写入。任何含 `SKILL.md` 的目录都可以维护。行为规则在 [`SKILL.md`](SKILL.md)。本技能版本是 `1.0.6`。
 
 ## 在这套技能里的位置
 
@@ -16,5 +16,5 @@
 |---|---|
 | 铁律、流程、异常码 | [SKILL.md](SKILL.md) |
 | 15 个子项评分档 | [references/trace-items.md](references/trace-items.md) |
-| 信号优先级 | [references/signal-rules.md](references/signal-rules.md) |
+| 信号优先级、阈值折算、少见组合 | [references/signal-rules.md](references/signal-rules.md) |
 | 提案模板与例子 | [references/proposal-template.md](references/proposal-template.md) |
