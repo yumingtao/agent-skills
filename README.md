@@ -5,7 +5,7 @@ Original, platform-neutral agent skills — prompt assets that work across Claud
 [English](README.md) | [简体中文](README.zh-CN.md)
 
 [![SkillHub](https://img.shields.io/badge/SkillHub-7%20published-green)](https://skillhub.cn/user/user_95900c57)
-[![ClawHub](https://img.shields.io/badge/ClawHub-6%20published-orange)](https://clawhub.ai/@yumingtao)
+[![ClawHub](https://img.shields.io/badge/ClawHub-7%20published-orange)](https://clawhub.ai/@yumingtao)
 [![skills.sh](https://skills.sh/b/yumingtao/agent-skills)](https://skills.sh/yumingtao/agent-skills)
 [![DSH Index](https://img.shields.io/badge/DSH-market--index-blue)](https://cdn.jsdelivr.net/gh/yumingtao/agent-skills@main/docs/market/index.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -129,6 +129,7 @@ clawhub install yumingtao/insight-challenge
 clawhub install yumingtao/workflow-skill-designer
 clawhub install yumingtao/defect-detective
 clawhub install yumingtao/session-retrospective
+clawhub install yumingtao/skill-maintainer
 ```
 
 ### skills.sh (decentralized GitHub index)
