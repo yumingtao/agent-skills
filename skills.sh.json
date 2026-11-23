@@ -1,0 +1,26 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Code Quality",
+      "description": "审查代码质量发现、分诊缺陷信号，修 bug 前先查重与归因。",
+      "skills": ["insight-challenge", "defect-detective"]
+    },
+    {
+      "title": "Workflow",
+      "description": "澄清方向、设计工作流技能、会话复盘、维护已有技能。",
+      "skills": [
+        "clarify-before-acting",
+        "workflow-skill-designer",
+        "session-retrospective",
+        "skill-maintainer"
+      ]
+    },
+    {
+      "title": "Docs & Diagrams",
+      "description": "生成专业独立 HTML/SVG 技术图表。",
+      "skills": ["diagram-generator"]
+    }
+  ]
+}
