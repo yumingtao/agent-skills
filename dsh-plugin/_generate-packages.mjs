@@ -69,11 +69,6 @@ for (const s of skills) {
     license: 'MIT',
     author: 'yumingtao',
     homepage: `https://github.com/yumingtao/agent-skills/tree/main/skills/${s.id}`,
-    repository: {
-      type: 'git',
-      url: 'git+https://github.com/yumingtao/agent-skills.git',
-      directory: `dsh-plugin/packages/${s.id}`,
-    },
     bugs: { url: 'https://github.com/yumingtao/agent-skills/issues' },
   }
   writeFileSync(join(pkgDir, 'package.json'), JSON.stringify(pkg, null, 2) + '\n')
