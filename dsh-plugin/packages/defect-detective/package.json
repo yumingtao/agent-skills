@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-defect-detective",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Read-only triage for a defect signal: normalize a fingerprint, search duplicate tickets, correlate recent changes, infer the owning team, then decide whether to file a new ticket.",
   "type": "module",
   "main": "index.js",
@@ -26,11 +26,6 @@
   "license": "MIT",
   "author": "yumingtao",
   "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/defect-detective",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yumingtao/agent-skills.git",
-    "directory": "dsh-plugin/packages/defect-detective"
-  },
   "bugs": {
     "url": "https://github.com/yumingtao/agent-skills/issues"
   }

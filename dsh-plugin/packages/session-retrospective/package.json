@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-session-retrospective",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "End-of-session retro that logs workflow issues as structured JSONL signals; recurrence escalates priority, and one phrase enters fix mode to close the loop.",
   "type": "module",
   "main": "index.js",
@@ -26,11 +26,6 @@
   "license": "MIT",
   "author": "yumingtao",
   "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/session-retrospective",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yumingtao/agent-skills.git",
-    "directory": "dsh-plugin/packages/session-retrospective"
-  },
   "bugs": {
     "url": "https://github.com/yumingtao/agent-skills/issues"
   }

@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-skill-maintainer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Edits an existing skill. It does not score one. Default is one gap and a confirmation.",
   "type": "module",
   "main": "index.js",
@@ -25,11 +25,6 @@
   "license": "MIT",
   "author": "yumingtao",
   "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/skill-maintainer",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yumingtao/agent-skills.git",
-    "directory": "dsh-plugin/packages/skill-maintainer"
-  },
   "bugs": {
     "url": "https://github.com/yumingtao/agent-skills/issues"
   }

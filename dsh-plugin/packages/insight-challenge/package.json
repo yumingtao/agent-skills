@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-insight-challenge",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Adversarial review of code-quality findings. Challenges insights with counter-evidence, verifies claims against source code, and produces structured verdicts.",
   "type": "module",
   "main": "index.js",
@@ -26,11 +26,6 @@
   "license": "MIT",
   "author": "yumingtao",
   "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/insight-challenge",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yumingtao/agent-skills.git",
-    "directory": "dsh-plugin/packages/insight-challenge"
-  },
   "bugs": {
     "url": "https://github.com/yumingtao/agent-skills/issues"
   }

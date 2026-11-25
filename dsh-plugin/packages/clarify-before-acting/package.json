@@ -1,6 +1,6 @@
 {
   "name": "yumingtao-clarify-before-acting",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Resolve direction-changing ambiguity before acting on complex, ambiguous, or high-cost requests. Skips trivial, mechanical, low-risk tasks.",
   "type": "module",
   "main": "index.js",
@@ -26,11 +26,6 @@
   "license": "MIT",
   "author": "yumingtao",
   "homepage": "https://github.com/yumingtao/agent-skills/tree/main/skills/clarify-before-acting",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yumingtao/agent-skills.git",
-    "directory": "dsh-plugin/packages/clarify-before-acting"
-  },
   "bugs": {
     "url": "https://github.com/yumingtao/agent-skills/issues"
   }
