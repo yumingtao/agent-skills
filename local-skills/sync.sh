@@ -47,6 +47,23 @@ TARGETS=(
 
 GREEN=$'\033[0;32m'; YELLOW=$'\033[0;33m'; RED=$'\033[0;31m'; NC=$'\033[0m'
 
+# Relative path from $1 (base dir) to $2 (target), both absolute. Pure bash,
+# no external deps. Used so repo-internal symlinks stay portable across
+# machines and never bake a machine-specific absolute path into git history.
+relpath() {
+  local base="${1%/}" target="${2%/}"
+  local IFS='/'
+  local -a b=($base) t=($target)
+  local i=0
+  while [[ $i -lt ${#b[@]} && $i -lt ${#t[@]} && "${b[$i]}" == "${t[$i]}" ]]; do i=$((i+1)); done
+  local up="" j
+  for ((j=i; j<${#b[@]}; j++)); do up="../$up"; done
+  local down=""
+  for ((j=i; j<${#t[@]}; j++)); do down="$down${t[$j]}/"; done
+  down="${down%/}"
+  echo "${up}${down}"
+}
+
 ok()   { echo "${GREEN}  ok${NC}   $*"; }
 warn() { echo "${YELLOW}  warn${NC} $*"; }
 skip() { echo "${RED}  skip${NC} $*"; }
@@ -83,6 +100,16 @@ for skill_path in "$SOURCE"/*/; do
     fi
     dest="$base/$skill"
 
+    # For targets inside the repo, use a relative symlink so it stays portable
+    # across machines and never bakes a machine-specific absolute path into git history.
+    # Global agent dirs (~/.<agent>/skills) keep the absolute path (correct,
+    # since they live outside the repo).
+    if [[ "$base" == "$REPO/"* ]]; then
+      link_target="$(relpath "$base" "$src")"
+    else
+      link_target="$src"
+    fi
+
     if [[ -L "$dest" ]]; then
       cur="$(readlink "$dest")"
       # Resolve to absolute for comparison (relative symlinks are fine too).
@@ -93,7 +120,7 @@ for skill_path in "$SOURCE"/*/; do
         warn "$base/$skill -> $cur (points elsewhere, relinking)"
         if [[ $DRY_RUN -eq 0 ]]; then
           rm -f "$dest"
-          ln -s "$src" "$dest"
+          ln -s "$link_target" "$dest"
         fi
         relinked=$((relinked+1))
       fi
@@ -101,10 +128,10 @@ for skill_path in "$SOURCE"/*/; do
       skip "$base/$skill exists as a REAL dir/file — NOT overwritten (remove it manually first if intended)"
       skipped=$((skipped+1))
     else
-      info "$base/$skill -> $src"
+      info "$base/$skill -> $link_target"
       if [[ $DRY_RUN -eq 0 ]]; then
         mkdir -p "$base"
-        ln -s "$src" "$dest"
+        ln -s "$link_target" "$dest"
       fi
       linked=$((linked+1))
     fi
