@@ -2,12 +2,14 @@
 name: public-push-check
 displayName: Public Push Check
 version: 1.0.1
-summary: 推送到公开远端之前，按固定清单检查即将推送的提交。作者只能是允许名单中的人。不改写历史，不发布到 SkillHub 或 DSH。
+summary: 推送到公开远端之前，按固定清单检查即将推送的提交。作者只能是允许名单中的人。不改写历史。标记为 internal，不发布到任何技能市场，对 skills.sh 等公开索引隐藏。
 license: MIT
 tags:
   - 推送检查
   - 公开仓库
   - 工作流
+metadata:
+  internal: true
 description: >
   在把提交推到公开远端之前运行。检查即将推送的整段提交：敏感信息、作者身份、用户可见变更时 README 是否更新、差异里的安全问题、仓库自有的公开表面、第三方许可、不该入库的文件，以及未读的二进制。作者和提交者只能是仓库允许名单中的人。身份字段里出现代理、机器人或模型就失败，写进允许名单也仍然失败。远端非公开时跳过并说明。清单不过就不推送，不改写历史。终端里直接执行的 git push 不会触发本技能。触发词：「推送到公开仓库」「push 前检查」「帮我 push」「before you push」。
 ---

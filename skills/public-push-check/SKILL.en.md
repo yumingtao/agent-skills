@@ -2,12 +2,14 @@
 name: public-push-check
 displayName: Public Push Check
 version: 1.0.1
-summary: Checks the commits about to be pushed to a public remote against a fixed list. The only author is the allowlisted person. It does not rewrite history and it is not published to SkillHub or DSH.
+summary: Checks the commits about to be pushed to a public remote against a fixed list. The only author is the allowlisted person. It does not rewrite history. Marked internal — not published to any skill marketplace, hidden from public indexes such as skills.sh.
 license: MIT
 tags:
   - push check
   - public repository
   - workflow
+metadata:
+  internal: true
 description: >
   Runs before commits are pushed to a public remote. Checks the whole unpushed range: secrets, author identity, README updates when a change is user-visible, security issues in the diff, the repository's own public surface, third-party license notices, files that should not be tracked, and unread binaries. The author and the committer must be the person on the repository allowlist. An agent, bot, or model in an identity field fails even if that identity is later added to the allowlist. A remote that is not public skips the list and says so. A failed list blocks the push and does not rewrite history. A git push typed in a terminal does not trigger this skill. Triggers on "推送到公开仓库", "push 前检查", "帮我 push", "before you push".
 ---
