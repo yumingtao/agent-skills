@@ -2,7 +2,7 @@
 
 Checks the commits about to be pushed to a public remote against a fixed list. A pass means those items passed. It is not a safety certification. A `git push` typed in a terminal does not run it. The behavior rules are in [`SKILL.en.md`](SKILL.en.md). The author and the committer must be the person on the repository allowlist. An agent, bot, or model in an identity field fails. This skill's version is `1.0.1`.
 
-It is not published to SkillHub or DSH.
+Marked `internal`: omitted from default skills.sh CLI discovery, and not published to SkillHub, DSH, ClawHub, or npm. The website listing may lag.
 
 ## Where this skill sits
 

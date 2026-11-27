@@ -2,7 +2,7 @@
 name: public-push-check
 displayName: Public Push Check
 version: 1.0.1
-summary: Checks the commits about to be pushed to a public remote against a fixed list. The only author is the allowlisted person. It does not rewrite history. Marked internal — not published to any skill marketplace, hidden from public indexes such as skills.sh.
+summary: Checks the commits about to be pushed to a public remote against a fixed list. The only author is the allowlisted person. It does not rewrite history. Marked internal — not published to any skill marketplace, and omitted from default skills.sh CLI discovery.
 license: MIT
 tags:
   - push check
@@ -18,7 +18,7 @@ description: >
 
 This skill runs a fixed list against the range about to be pushed to a public remote. A pass means those items passed. It does not certify the repository as safe.
 
-This skill's version is `1.0.1`. It stays in the repository and can be indexed by skills.sh. It is not published to SkillHub or DSH.
+This skill's version is `1.0.1`. It stays in the repository for maintainers of this repo. Frontmatter sets `metadata.internal: true`: it is omitted from default skills.sh CLI discovery and bulk install; the website listing may lag. It is not published to SkillHub, DSH, ClawHub, or npm. A knowing install (for example an explicit `--skill` or `INSTALL_INTERNAL_SKILLS=1`) may still succeed.
 
 A `git push` typed in a terminal does not invoke this skill. The skill runs only when an agent is asked to push or to check before a push.
 

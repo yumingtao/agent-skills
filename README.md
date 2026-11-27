@@ -14,7 +14,7 @@ No runtime dependencies, no network calls, no build step. Each skill is a self-c
 
 These skills were extracted from day-to-day development: each was used on real work, and its rules were written down here once they held.
 
-Eight skills live in this repository. Seven are complete on their own and, installed together, sit on one engineering loop; see "Use one, or run them as a loop" below. `public-push-check` checks a push to a public remote. It stays in this repository: marked `internal`, it is hidden from skills.sh discovery and is not published to any marketplace (SkillHub, DSH, ClawHub, npm).
+Eight skills live in this repository. Seven are complete on their own and, installed together, sit on one engineering loop; see "Use one, or run them as a loop" below. `public-push-check` checks a push to a public remote. It stays in this repository: marked `internal`, so default skills.sh CLI discovery and bulk install skip it, and it is not published to any marketplace (SkillHub, DSH, ClawHub, npm). The skills.sh website listing may lag behind that flag.
 
 ## Skills
 
@@ -27,7 +27,7 @@ Eight skills live in this repository. Seven are complete on their own and, insta
 | **[defect-detective](skills/defect-detective/)** | The first stop before fixing a bug — read-only triage for a defect signal (bug report, stack trace, or log) that answers: is this a known issue, who owns it, and what changed. Normalizes a stable fingerprint, searches the tracker for duplicates cross-stack, correlates recent changes when the implicated layer is known, and infers the owning team with an auditable evidence chain. Upstream of fix-it skills (triage, not repair); strictly read-only, with a ready-to-paste ticket draft but never files or mutates anything. Smoke-tested against a real Jira tracker (dedup hit and no-match paths) plus git blame correlation. |
 | **[session-retrospective](skills/session-retrospective/)** | End-of-session retro that logs development-workflow issues (wrong answers, skipped gates, wrong routing, MCP errors, skill/doc gaps, multi-turn corrections) as enum-validated JSONL signals — a recurring issue is a rule gap and its priority escalates; when nothing went wrong, one success entry, never fabricated. One phrase enters Fix Mode: items ordered by recurrence and priority, per-item proposals, one confirmation per item with an append-only audit trail, running from the log alone across sessions. Ships a zero-dependency validation script (Node 18+) that machine-checks log health and recurrence groups. The signal-data layer: machine-aggregable output, complementary to report- and memory-style retro skills. Smoke-tested on a real session across both the main path and the corrupted-line exception. |
 | **[skill-maintainer](skills/skill-maintainer/)** | Edits a skill that already exists. It does not score one. It proposes one gap and writes only after confirmation. Any directory with SKILL.md can be maintained. |
-| **[public-push-check](skills/public-push-check/)** | Checks the commits about to be pushed to a public remote: secrets, author identity, the README when a change is user-visible, and security issues in the diff. The author and the committer must be the allowlisted person. An AI author fails. A git push typed in a terminal does not run it. Marked internal — hidden from skills.sh and not published to any marketplace. |
+| **[public-push-check](skills/public-push-check/)** | Checks the commits about to be pushed to a public remote: secrets, author identity, the README when a change is user-visible, and security issues in the diff. The author and the committer must be the allowlisted person. An AI author fails. A git push typed in a terminal does not run it. Marked internal — skipped by default skills.sh CLI discovery, not published to any marketplace. |
 
 <a id="alone-or-together"></a>
 
@@ -73,7 +73,7 @@ Three combinations you can follow as written:
 - Turn a repeated process into a skill: a gap that keeps showing up in `session-retrospective` goes to `workflow-skill-designer`.
 - Change a skill that already exists: hand an evaluation comment, a recurring log entry, or "按 TRACE 过一遍" to `skill-maintainer`, and write only after confirmation.
 
-Before a push to a public remote, run `public-push-check`. It is not a station on this loop. Marked internal, it is hidden from skills.sh discovery and not published to any marketplace.
+Before a push to a public remote, run `public-push-check`. It is not a station on this loop. Marked internal, so default skills.sh CLI discovery skips it, and it is not published to any marketplace.
 
 ## Install
 
@@ -137,7 +137,7 @@ clawhub install yumingtao/skill-maintainer
 No sign-up required — skills are indexed directly from this public repository. Install via the `skills` CLI:
 
 ```bash
-# Install all eight skills at once
+# Install the seven discoverable skills at once (skips internal)
 npx skills add yumingtao/agent-skills
 
 # Or install a single skill
@@ -150,7 +150,7 @@ npx skills add yumingtao/agent-skills --skill session-retrospective
 npx skills add yumingtao/agent-skills --skill skill-maintainer
 ```
 
-`public-push-check` is marked `internal` and is excluded from the list above: it is meant for maintainers of this repository only and is hidden from public skills.sh discovery.
+`public-push-check` is marked `internal` and is excluded from the list above: it is for maintainers of this repository. Default skills.sh CLI discovery and bulk install skip it. A knowing install (`--skill public-push-check` or `INSTALL_INTERNAL_SKILLS=1`) may still succeed. The skills.sh website listing may lag until the index refreshes.
 
 ### DeepSeek Harness (DSH)
 

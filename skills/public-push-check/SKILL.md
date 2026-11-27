@@ -2,7 +2,7 @@
 name: public-push-check
 displayName: Public Push Check
 version: 1.0.1
-summary: 推送到公开远端之前，按固定清单检查即将推送的提交。作者只能是允许名单中的人。不改写历史。标记为 internal，不发布到任何技能市场，对 skills.sh 等公开索引隐藏。
+summary: 推送到公开远端之前，按固定清单检查即将推送的提交。作者只能是允许名单中的人。不改写历史。标记为 internal，不发布到任何技能市场，默认不进入 skills.sh CLI 发现。
 license: MIT
 tags:
   - 推送检查
@@ -18,7 +18,7 @@ description: >
 
 这只技能在把提交推到公开远端之前，对即将推送的范围跑一份固定清单。清单通过只表示这些项过了，不是对仓库的安全认证。
 
-本技能版本是 `1.0.1`。它留在仓库里，可被 skills.sh 索引。不发布到 SkillHub，不发布到 DSH。
+本技能版本是 `1.0.1`。它留在仓库里，供本仓库维护使用。frontmatter 已标 `metadata.internal: true`：默认不进入 skills.sh CLI 发现与批量安装；站点列表可能延迟更新。不发布到 SkillHub、DSH、ClawHub 或 npm。知情安装（例如显式 `--skill` 或 `INSTALL_INTERNAL_SKILLS=1`）仍可能装上。
 
 终端里直接执行的 `git push` 不会调用本技能。本技能只在代理被要求推送或做推送前检查时运行。
 
